@@ -1,12 +1,13 @@
 
 var KEYS = {
+  8: 'backspace',
+  9: 'tab',
+  13: 'return',
   37: 'left',
   38: 'up',
   39: 'right',
   40: 'down',
-  9: 'tab',
-  13: 'return',
-  8: 'backspace'
+  46: 'delete'
 }
 
 function keys(keys) {
@@ -43,6 +44,16 @@ DefaultNode.prototype = {
   blur: function () {
     this.stopEditing();
   },
+  addEditText: function (text) {
+    var pl = this.name.length
+    this.editing = true;
+    this.name += text
+    this.input.value = this.name;
+    this.text.innerText = this.name;
+    this.node.replaceChild(this.input, this.text)
+    this.input.focus();
+    this.input.selectionStart = this.input.selectionEnd = pl;
+  },
   setupNode: function () {
     this.node = document.createElement('div')
     this.input = document.createElement('input')
@@ -68,10 +79,12 @@ DefaultNode.prototype = {
   stopEditing: function () {
     if (!this.editing) return
     this.editing = false
-    this.text.innerText = this.input.value
+    if (this.name != this.input.value) {
+      this.text.innerText = this.input.value
+      this.name = this.input.value
+      this.o.changed('name', this.name)
+    }
     this.node.replaceChild(this.text, this.input)
-    this.name = this.input.value
-    this.o.changed('name', this.name)
   },
   registerListeners: function () {
     this.node.addEventListener('click', function (e) {
@@ -99,12 +112,44 @@ DefaultNode.prototype = {
       down: function () {
         this.o.goDown()
       },
+      left: function () {
+        var ss = this.input.selectionStart
+        if (ss === 0) {
+          return this.o.goUp()
+        }
+        return true
+      },
+      right: function () {
+        var ss = this.input.selectionStart
+        if (ss === this.input.value.length) {
+          return this.o.goDown(true)
+        }
+        return true
+      },
       'shift tab': function (e) {
       },
       tab: function (e) {
       },
       'return': function () {
-        this.o.addAfter()
+        var ss = this.input.selectionStart
+          , name = this.input.value
+          , rest = null
+        if (ss < name.length) {
+          rest = name.slice(ss)
+          this.name = name.slice(0, ss)
+          this.input.value = this.name
+          this.text.innerText = this.name
+        }
+        this.o.addAfter(rest)
+      },
+      backspace: function () {
+        if (!this.input.value) {
+          return this.o.remove()
+        }
+        if (this.input.selectionStart == this.input.selectionEnd && this.input.selectionStart === 0) {
+          return this.o.remove(this.input.value)
+        }
+        return true
       }
     }).bind(this)
 

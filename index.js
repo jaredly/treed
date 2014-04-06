@@ -45,10 +45,10 @@ Listed.prototype = {
     }
     this.dom[previd].body.startEditing();
   },
-  goDown: function (id) {
+  goDown: function (id, fromStart) {
     if (this.ids[id].children && this.ids[id].children.length && !this.dom[id].collapsed) {
       this.dom[id].body.stopEditing()
-      return this.dom[this.ids[id].children[0]].body.startEditing()
+      return this.dom[this.ids[id].children[0]].body.startEditing(fromStart)
     }
     var pid = this.ids[id].parent
       , parent = this.ids[pid]
@@ -56,7 +56,7 @@ Listed.prototype = {
     var ix = parent.children.indexOf(id)
     if (ix < parent.children.length - 1) {
       this.dom[id].body.stopEditing()
-      return this.dom[parent.children[ix + 1]].body.startEditing()
+      return this.dom[parent.children[ix + 1]].body.startEditing(fromStart)
     }
     while (ix == parent.children.length - 1) {
       parent = this.ids[parent.parent]
@@ -65,7 +65,7 @@ Listed.prototype = {
       pid = parent.id
     }
     this.dom[id].body.stopEditing()
-    this.dom[parent.children[ix + 1]].body.startEditing()
+    this.dom[parent.children[ix + 1]].body.startEditing(fromStart)
   },
   addAfter: function (id, text) {
     var pid = this.ids[id].parent
@@ -73,7 +73,7 @@ Listed.prototype = {
       , parent = this.ids[pid]
     if (!parent) return false
     var ix = parent.children.indexOf(id)
-      , nid = this.newNode()
+      , nid = this.newNode(text)
       , dom = this.construct(nid)
     parent.children.splice(ix+1, 0, nid)
 
@@ -84,10 +84,31 @@ Listed.prototype = {
     } else {
       this.dom[pid].ul.insertBefore(dom, node.main.nextSibling)
     }
-    this.dom[nid].body.startEditing()
+    this.dom[nid].body.startEditing(true)
   },
-
-  newNode: function () {
+  remove: function (id, addText) {
+    var pid = this.ids[id].parent
+    if (!pid) return
+    var parent = this.ids[pid]
+      , ix = parent.children.indexOf(id)
+      , prev
+    if (ix === 0) {
+      prev = pid
+    } else {
+      prev = parent.children[ix-1]
+    }
+    this.dom[pid].ul.removeChild(this.dom[id].main)
+    delete this.ids[id]
+    delete this.dom[id]
+    parent.children.splice(ix, 1)
+    if (addText) {
+      this.ids[prev].data.name += addText
+      this.dom[prev].body.addEditText(addText)
+    } else {
+      this.dom[prev].body.startEditing()
+    }
+  },
+  newNode: function (text) {
     while (this.ids[this.nextid]) {
       this.nextid += 1
     }
@@ -95,7 +116,7 @@ Listed.prototype = {
     this.nextid += 1
     var node = {
       id: id,
-      data: {name: ''},
+      data: {name: text || ''},
       children: []
     }
     this.ids[id] = node
@@ -136,7 +157,8 @@ Listed.prototype = {
       toggleCollapse: this.toggleCollapse.bind(this, id),
       goUp: this.goUp.bind(this, id),
       goDown: this.goDown.bind(this, id),
-      addAfter: this.addAfter.bind(this, id)
+      addAfter: this.addAfter.bind(this, id),
+      remove: this.remove.bind(this, id)
       // TODO: goUp, goDown, indent, dedent, etc.
     })
     return dom
