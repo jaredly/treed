@@ -27,15 +27,13 @@ Listed.prototype = {
   },
 
   // movement
-  goUp: function (id) {
-    // should I check to see if it's ok?
+  idAbove: function (id) {
     var pid = this.ids[id].parent
       , parent = this.ids[pid]
-    if (!parent) return
-    this.dom[id].body.stopEditing();
+    if (!parent) return false
     var ix = parent.children.indexOf(id)
     if (ix == 0) {
-      return this.dom[pid].body.startEditing()
+      return pid
     }
     var previd = parent.children[ix - 1]
     while (this.ids[previd].children &&
@@ -43,46 +41,82 @@ Listed.prototype = {
           !this.dom[previd].collapsed) {
       previd = this.ids[previd].children[this.ids[previd].children.length - 1]
     }
-    this.dom[previd].body.startEditing();
+    return previd
   },
-  goDown: function (id, fromStart) {
-    if (this.ids[id].children && this.ids[id].children.length && !this.dom[id].collapsed) {
-      this.dom[id].body.stopEditing()
-      return this.dom[this.ids[id].children[0]].body.startEditing(fromStart)
+  idBelow: function (id) {
+    if (this.ids[id].children &&
+        this.ids[id].children.length &&
+        !this.dom[id].collapsed) {
+      return this.ids[id].children[0]
     }
     var pid = this.ids[id].parent
       , parent = this.ids[pid]
     if (!parent) return
     var ix = parent.children.indexOf(id)
-    if (ix < parent.children.length - 1) {
-      this.dom[id].body.stopEditing()
-      return this.dom[parent.children[ix + 1]].body.startEditing(fromStart)
-    }
     while (ix == parent.children.length - 1) {
       parent = this.ids[parent.parent]
-      if (!parent) return
+      if (!parent) return false
       ix = parent.children.indexOf(pid)
       pid = parent.id
     }
-    this.dom[id].body.stopEditing()
-    this.dom[parent.children[ix + 1]].body.startEditing(fromStart)
+    return parent.children[ix + 1]
   },
-  addAfter: function (id, text) {
+
+  // actually move
+  goUp: function (id) {
+    // should I check to see if it's ok?
+    var above = this.idAbove(id)
+    if (above === false) return
+    this.dom[id].body.stopEditing();
+    this.dom[above].body.startEditing();
+  },
+  goDown: function (id, fromStart) {
+    var below = this.idBelow(id)
+    if (below === false) return
+    this.dom[id].body.stopEditing()
+    this.dom[below].body.startEditing(fromStart)
+  },
+
+  idNew: function (id, text) {
     var pid = this.ids[id].parent
       , node = this.dom[id]
-      , parent = this.ids[pid]
+      , parent
+      , pid
+      , nix
+    if (this.ids[id].children &&
+        this.ids[id].children.length &&
+        !this.dom[id].collapsed) {
+      pid = id
+      parent = this.ids[id]
+      nix = 0
+    } else {
+      parent = this.ids[pid]
+      nix = parent.children.indexOf(id) + 1
+    }
     if (!parent) return false
-    var ix = parent.children.indexOf(id)
-      , nid = this.newNode(text)
+    var nid = this.newNode(text)
       , dom = this.construct(nid)
-    parent.children.splice(ix+1, 0, nid)
-
+    parent.children.splice(nix, 0, nid)
     this.ids[nid].parent = pid
 
-    if (ix+2 === parent.children.length) {
+    return {
+      id: nid,
+      pid: pid
+    }
+  },
+  addAfter: function (id, text) {
+    var news = this.idNew(id, text)
+      , nid = news.id
+      , pid = news.pid
+      , parent = this.ids[pid]
+      , pix = parent.children.indexOf(nid)
+      , dom = this.dom[nid].main
+
+    if (pix === parent.children.length - 1) {
       this.dom[pid].ul.appendChild(dom)
     } else {
-      this.dom[pid].ul.insertBefore(dom, node.main.nextSibling)
+      var after = this.dom[parent.children[pix + 1]].main
+      this.dom[pid].ul.insertBefore(dom, after)
     }
     this.dom[nid].body.startEditing(true)
   },
