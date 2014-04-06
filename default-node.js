@@ -46,17 +46,18 @@ DefaultNode.prototype = {
   setupNode: function () {
     this.node = document.createElement('div')
     this.input = document.createElement('input')
+    this.text = document.createElement('div')
     this.node.classList.add('listless__default-node')
 
-    this.node.innerText = this.name
+    this.text.innerText = this.name
+    this.node.appendChild(this.text)
     this.registerListeners();
   },
   startEditing: function (fromStart) {
     if (this.editing) return
     this.editing = true;
-    this.node.innerHTML = '';
     this.input.value = this.name;
-    this.node.appendChild(this.input);
+    this.node.replaceChild(this.input, this.text)
     this.input.focus();
     if (fromStart) {
       this.input.selectionStart = this.input.selectionEnd = 0;
@@ -67,9 +68,9 @@ DefaultNode.prototype = {
   stopEditing: function () {
     if (!this.editing) return
     this.editing = false
-    this.node.removeChild(this.input)
+    this.text.innerText = this.input.value
+    this.node.replaceChild(this.text, this.input)
     this.name = this.input.value
-    this.node.innerText = this.name
     this.o.changed('name', this.name)
   },
   registerListeners: function () {
@@ -101,6 +102,9 @@ DefaultNode.prototype = {
       'shift tab': function (e) {
       },
       tab: function (e) {
+      },
+      'return': function () {
+        this.o.addAfter()
       }
     }).bind(this)
 
