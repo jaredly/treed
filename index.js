@@ -1,55 +1,11 @@
 
-function defaultNode(data, options) {
-  var span = document.createElement('div')
-    , input = document.createElement('input')
-    , name = data.name
-    , editing = false;
-  span.classList.add('listless__default-node')
-  span.innerText = name
-  span.addEventListener('click', function (e) {
-    if (editing) return
-    editing = true;
-    span.innerHTML = '';
-    input.value = name;
-    span.appendChild(input);
-    input.focus();
-  })
-  input.addEventListener('blur', function () {
-    editing = false
-    span.removeChild(input)
-    name = input.value
-    span.innerText = input.value
-    options.changed('name', input.value)
-  });
-  input.addEventListener('keydown', function (e) {
-    console.log(e.keyCode);
-    switch (e.keyCode) {
-      case 37: // left
-        break;
-      case 38: // up
-        break;
-      case 39: // right
-        break;
-      case 40: // down
-        break;
-      case 9:  // tab
-        break;
-      case 13: // return
-        break;
-    }
-  })
-  return {
-    node: span
-  }
-}
-
 function Listed(id, ids, node, options) {
   this.id = id
   this.ids = ids
   this.dom = {}
   this.node = node
   this.o = extend({
-    node: defaultNode
+    node: DefaultNode
   }, options)
   node.appendChild(this.construct(id))
 }
@@ -65,17 +21,60 @@ Listed.prototype = {
       what = !!this.dom[id].collapsed
     }
     this.dom[id].main.classList[what ? 'add' : 'remove']('collapsed')
+    this.dom[id].collapsed = what
     // TODO: event listeners?
   },
   /** returns a dom node **/
   bodyFor: function (id) {
     var node = this.ids[id]
-    var dom = this.o.node(node.data, {
+    var dom = new this.o.node(node.data, {
       changed: this.nodeChanged.bind(this, id),
       toggleCollapse: this.toggleCollapse.bind(this, id),
+      goUp: this.goUp.bind(this, id),
+      goDown: this.goDown.bind(this, id)
       // TODO: goUp, goDown, indent, dedent, etc.
     })
     return dom
+  },
+  goUp: function (id) {
+    // should I check to see if it's ok?
+    var pid = this.ids[id].parent
+      , parent = this.ids[pid]
+    if (!parent) return
+    this.dom[id].body.stopEditing();
+    var ix = parent.children.indexOf(id)
+    if (ix == 0) {
+      return this.dom[pid].body.startEditing()
+    }
+    var previd = parent.children[ix - 1]
+    while (this.ids[previd].children &&
+           this.ids[previd].children.length &&
+          !this.dom[previd].collapsed) {
+      previd = this.ids[previd].children[this.ids[previd].children.length - 1]
+    }
+    this.dom[previd].body.startEditing();
+  },
+  goDown: function (id) {
+    if (this.ids[id].children && this.ids[id].children.length && !this.dom[id].collapsed) {
+      this.dom[id].body.stopEditing()
+      return this.dom[this.ids[id].children[0]].body.startEditing()
+    }
+    var pid = this.ids[id].parent
+      , parent = this.ids[pid]
+    if (!parent) return
+    var ix = parent.children.indexOf(id)
+    if (ix < parent.children.length - 1) {
+      this.dom[id].body.stopEditing()
+      return this.dom[parent.children[ix + 1]].body.startEditing()
+    }
+    while (ix == parent.children.length - 1) {
+      parent = this.ids[parent.parent]
+      if (!parent) return
+      ix = parent.children.indexOf(pid)
+      pid = parent.id
+    }
+    this.dom[id].body.stopEditing()
+    this.dom[parent.children[ix + 1]].body.startEditing()
   },
   /** returns a dom node... **/
   construct: function (id) {
@@ -86,7 +85,6 @@ Listed.prototype = {
     dom.classList.add('listless__item')
     dom.appendChild(body.node);
     this.dom[id] = {main: dom, body: body}
-    // dom.appendChild(this.o.node(node.data))
     if (node.children && node.children.length) {
       var ul = document.createElement('ul')
       ul.classList.add('listless__children')

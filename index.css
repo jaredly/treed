@@ -3,8 +3,13 @@
   list-style: none
 }
 
+.listless__item.collapsed .listless__children {
+  display: none;
+}
+
 .listless__children {
-  padding: none;
+  padding: 0 0 0 20px;
+  margin: 0;
 }
 
 .listless__default-node:hover {
