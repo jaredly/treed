@@ -1,0 +1,19 @@
+
+.listless__item {
+  list-style: none
+}
+
+.listless__children {
+  padding: none;
+}
+
+.listless__default-node:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.listless__default-node input {
+  border: 1px dotted #ccc;
+  width: 100%;
+}
+
