@@ -75,6 +75,7 @@ DefaultNode.prototype = {
     } else {
       this.input.selectionStart = this.input.selectionEnd = this.name.length;
     }
+    this.o.setEditing()
   },
   stopEditing: function () {
     if (!this.editing) return
@@ -85,9 +86,10 @@ DefaultNode.prototype = {
       this.o.changed('name', this.name)
     }
     this.node.replaceChild(this.text, this.input)
+    this.o.doneEditing();
   },
   registerListeners: function () {
-    this.node.addEventListener('click', function (e) {
+    this.text.addEventListener('mousedown', function (e) {
       this.startEditing();
       e.preventDefault()
       return false

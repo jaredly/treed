@@ -3,6 +3,14 @@
   list-style: none
 }
 
+.listless__item.collapsed .listless__default-node {
+  background-color: #eef;
+}
+
+.listless__item.selected > .listless__body {
+  background-color: #afc;
+}
+
 .listless__item.collapsed .listless__children {
   display: none;
 }
@@ -14,6 +22,8 @@
 
 .listless__default-node {
   height: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .listless__default-node:hover {
@@ -23,10 +33,12 @@
 
 .listless__default-node input {
   border: 1px dotted #ccc;
-  padding: 1px 3px;
+  padding: 0px 3px;
+  margin: 0;
   width: 100%;
   font-size: 16px;
   font-family: sans-serif;
+  background-color: transparent;
 }
 
 .listless__default-node input:focus {
@@ -34,9 +46,10 @@
 }
 
 .listless__default-node div {
-  padding: 2px 4px;
+  padding: 3px 4px;
   font-size: 16px;
   display: block;
   font-family: sans-serif;
 }
+
 

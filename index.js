@@ -4,11 +4,14 @@ function Listed(id, ids, node, options) {
   this.ids = ids
   this.dom = {}
   this.node = node
+  this.editing = false
+  this.selection = []
   this.o = extend({
     node: DefaultNode
   }, options)
   this.nextid = 0
   node.appendChild(this.construct(id))
+  this.attachListeners()
 }
 
 Listed.prototype = {
@@ -20,6 +23,15 @@ Listed.prototype = {
   toggleCollapse: function (id, what) {
     if (arguments.length === 1) {
       what = !!this.dom[id].collapsed
+    }
+    if (what &&
+        (!this.ids[id].children ||
+         !this.ids[id].children.length ||
+          this.dom[id].collapsed)) {
+      if (this.ids[id].parent !== undefined) {
+        id = this.ids[id].parent
+        this.dom[id].body.startEditing()
+      }
     }
     this.dom[id].main.classList[what ? 'add' : 'remove']('collapsed')
     this.dom[id].collapsed = what
@@ -62,21 +74,6 @@ Listed.prototype = {
     return parent.children[ix + 1]
   },
 
-  // actually move
-  goUp: function (id) {
-    // should I check to see if it's ok?
-    var above = this.idAbove(id)
-    if (above === false) return
-    this.dom[id].body.stopEditing();
-    this.dom[above].body.startEditing();
-  },
-  goDown: function (id, fromStart) {
-    var below = this.idBelow(id)
-    if (below === false) return
-    this.dom[id].body.stopEditing()
-    this.dom[below].body.startEditing(fromStart)
-  },
-
   idNew: function (id, text) {
     var pid = this.ids[id].parent
       , node = this.dom[id]
@@ -103,6 +100,26 @@ Listed.prototype = {
       id: nid,
       pid: pid
     }
+  },
+
+  // moveSelection
+  attachListeners: function () {
+    // window.addEventListener(
+  },
+
+  // actually move
+  goUp: function (id) {
+    // should I check to see if it's ok?
+    var above = this.idAbove(id)
+    if (above === false) return
+    this.dom[id].body.stopEditing();
+    this.dom[above].body.startEditing();
+  },
+  goDown: function (id, fromStart) {
+    var below = this.idBelow(id)
+    if (below === false) return
+    this.dom[id].body.stopEditing()
+    this.dom[below].body.startEditing(fromStart)
   },
   addAfter: function (id, text) {
     var news = this.idNew(id, text)
@@ -157,7 +174,6 @@ Listed.prototype = {
     return id
   },
 
-
   /** returns a dom node... **/
   construct: function (id) {
     var node = this.ids[id]
@@ -183,6 +199,33 @@ Listed.prototype = {
     }
     return dom
   },
+
+  setEditing: function (id) {
+    if (this.selection.length !== 1 ||
+        this.selection[0] !== id) {
+      this.deSelection()
+      this.selection = [id]
+      this.colorSelection()
+    }
+    this.editing = true
+  },
+  doneEditing: function (id) {
+    if (this.selection.length && this.selection[0] == id) {
+      this.editing = false
+    }
+  },
+  deSelection: function () {
+    for (var i=0; i<this.selection.length; i++) {
+      this.dom[this.selection[i]].main.classList.remove('selected')
+    }
+    this.selection = [];
+  },
+  colorSelection: function () {
+    for (var i=0; i<this.selection.length; i++) {
+      this.dom[this.selection[i]].main.classList.add('selected')
+    }
+  },
+
   /** returns a dom node **/
   bodyFor: function (id) {
     var node = this.ids[id]
@@ -192,9 +235,12 @@ Listed.prototype = {
       goUp: this.goUp.bind(this, id),
       goDown: this.goDown.bind(this, id),
       addAfter: this.addAfter.bind(this, id),
-      remove: this.remove.bind(this, id)
+      remove: this.remove.bind(this, id),
+      setEditing: this.setEditing.bind(this, id),
+      doneEditing: this.doneEditing.bind(this, id)
       // TODO: goUp, goDown, indent, dedent, etc.
     })
+    dom.node.classList.add('listless__body')
     return dom
   }
 }
