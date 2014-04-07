@@ -3,11 +3,16 @@ var KEYS = {
   8: 'backspace',
   9: 'tab',
   13: 'return',
+  27: 'escape',
   37: 'left',
   38: 'up',
   39: 'right',
   40: 'down',
-  46: 'delete'
+  46: 'delete',
+  72: 'h',
+  74: 'j',
+  75: 'k',
+  76: 'l'
 }
 
 function keys(keys) {
@@ -152,6 +157,9 @@ DefaultNode.prototype = {
           return this.o.remove(this.input.value)
         }
         return true
+      },
+      escape: function () {
+        this.stopEditing();
       }
     }).bind(this)
 

@@ -104,7 +104,42 @@ Listed.prototype = {
 
   // moveSelection
   attachListeners: function () {
-    // window.addEventListener(
+    var keydown = keys({
+      'return': function () {
+        if (!this.selection.length) return
+        this.dom[this.selection[0]].body.startEditing()
+      },
+      k: function () {
+        var selection = this.selection
+        this.deSelection()
+        if (!selection.length) {
+          this.selection = [this.id]
+        } else {
+          var top = selection[0]
+            , above = this.idAbove(top)
+          if (above === false) above = top
+          this.selection = [above]
+        }
+        this.colorSelection()
+      },
+      j: function () {
+        var selection = this.selection
+        this.deSelection()
+        if (!selection.length) {
+          this.selection = [this.id]
+        } else {
+          var top = selection[0]
+            , below = this.idBelow(top)
+          if (below === false) below = top
+          this.selection = [below]
+        }
+        this.colorSelection()
+      },
+    })
+    window.addEventListener('keydown', function (e) {
+      if (this.editing) return // do I really want to skip this?
+      keydown.call(this, e)
+    }.bind(this))
   },
 
   // actually move
