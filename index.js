@@ -156,6 +156,8 @@ Listed.prototype = {
     this.dom[id].body.stopEditing()
     this.dom[below].body.startEditing(fromStart)
   },
+
+  // modifications
   addAfter: function (id, text) {
     var news = this.idNew(id, text)
       , nid = news.id
