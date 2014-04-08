@@ -143,6 +143,7 @@ View.prototype = {
     dom.classList.add('listless__item')
     dom.appendChild(body.node);
     var ul = document.createElement('ul')
+    ul.classList.add('listless__children')
     dom.appendChild(ul)
     this.dom[id] = {main: dom, body: body, ul: ul}
     return dom
@@ -160,6 +161,9 @@ View.prototype = {
   toggleCollapse: function (id, what) {
     this.dom[id].main.classList[what ? 'add' : 'remove']('collapsed')
     this.collapsed[id] = what
+    if (what) {
+      this.startEditing(id)
+    }
     // TODO: event listeners?
   },
   goUp: function (id) {
