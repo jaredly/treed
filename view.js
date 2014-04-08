@@ -1,6 +1,5 @@
 
 function View(bindActions, model, ctrl, options) {
-  this.collapsed = {}
   this.selection = {}
   this.editing = false
   this.o = extend({
@@ -71,7 +70,7 @@ View.prototype = {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
-            , above = this.model.idAbove(top, this.collapsed)
+            , above = this.model.idAbove(top)
           if (above === undefined) above = top
           this.setSelection([above])
         }
@@ -82,7 +81,7 @@ View.prototype = {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
-            , above = this.model.idBelow(top, this.collapsed)
+            , above = this.model.idBelow(top)
           if (above === undefined) above = top
           this.setSelection([above])
         }
@@ -102,22 +101,9 @@ View.prototype = {
           return this.setSelection([this.root])
         }
         var right = this.model.getChild(this.selection[0])
-        if (this.collapsed[this.selection[0]]) return
+        if (this.model.isCollapsed(this.selection[0])) return
         if (undefined === right) return
         this.setSelection([right])
-      },
-      'alt h, alt left': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        var id = this.model.findCollapser(this.selection[0], this.collapsed)
-        this.toggleCollapse(id, true)
-      },
-      'alt l, alt right': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.toggleCollapse(this.selection[0], false)
       },
       'alt j, alt down': function () {
         if (!this.selection.length) {
@@ -136,6 +122,21 @@ View.prototype = {
         this.setSelection([sib])
       },
       // movez!
+      'alt h, alt left': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var id = this.model.findCollapser(this.selection[0])
+        if (this.model.isCollapsed(id)) return
+        this.ctrl.executeCommands('collapse', [id, true])
+      },
+      'alt l, alt right': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        if (!this.model.hasChildren(this.selection[0]) || !this.model.isCollapsed(this.selection[0])) return
+        this.ctrl.executeCommands('collapse', [this.selection[0], false])
+      },
       'shift alt l, shift alt right': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
@@ -241,11 +242,8 @@ View.prototype = {
     this.selection = sel
     this.vl.showSelection(sel)
   },
-
-  // non-modifying stuff
-  toggleCollapse: function (id, what) {
+  setCollapsed: function (id, what) {
     this.vl.setCollapsed(id, what)
-    this.collapsed[id] = what
     if (what) {
       if (this.editing) {
         this.startEditing(id)
@@ -255,6 +253,8 @@ View.prototype = {
     }
     // TODO: event listeners?
   },
+
+  // non-modifying stuff
   goUp: function (id) {
     // should I check to see if it's ok?
     var above = this.model.idAbove(id)
@@ -263,7 +263,7 @@ View.prototype = {
     this.vl.body(above).body.startEditing();
   },
   goDown: function (id, fromStart) {
-    var below = this.model.idBelow(id, this.view.collapsed)
+    var below = this.model.idBelow(id)
     if (below === false) return
     this.vl.body(id).body.stopEditing()
     this.vl.body(below).body.startEditing(fromStart)

@@ -16,6 +16,25 @@ Model.prototype = {
     return id
   },
 
+  dumpData: function (id) {
+    if (arguments.length === 0) {
+      id = this.root
+    }
+    var res = {}
+      , n = this.ids[id]
+    for (var name in n.data) {
+      res[name] = n.data[name]
+    }
+    if (n.children.length) {
+      res.children = []
+      for (var i=0; i<n.children.length; i++) {
+        res.children.push(this.dumpData(n.children[i]))
+      }
+    }
+    res._collapsed = n.collapsed
+    return res
+  },
+
   // operations
   create: function (pid, index, text) {
     var node = {
@@ -52,6 +71,15 @@ Model.prototype = {
     for (var name in data) {
       this.ids[id].data[name] = data[name]
     }
+  },
+  setCollapsed: function (id, isCollapsed) {
+    this.ids[id].collapsed = isCollapsed
+  },
+  isCollapsed: function (id) {
+    return this.ids[id].collapsed
+  },
+  hasChildren: function (id) {
+    return this.ids[id].children.length
   },
   // add back something that was removed
   readd: function (saved) {
@@ -120,10 +148,9 @@ Model.prototype = {
     if (ix === 0) return pid
     return this.ids[pid].children[0]
   },
-  idAbove: function (id, collapsed) {
+  idAbove: function (id) {
     var pid = this.ids[id].parent
       , parent = this.ids[pid]
-    collapsed = collapsed || {}
     if (!parent) return
     var ix = parent.children.indexOf(id)
     if (ix == 0) {
@@ -132,7 +159,7 @@ Model.prototype = {
     var previd = parent.children[ix - 1]
     while (this.ids[previd].children &&
            this.ids[previd].children.length &&
-           !collapsed[previd]) {
+           !this.ids[previd].collapsed) {
       previd = this.ids[previd].children[this.ids[previd].children.length - 1]
     }
     return previd
@@ -180,10 +207,10 @@ Model.prototype = {
       ix: ix + 1
     }
   },
-  idBelow: function (id, collapsed) {
+  idBelow: function (id) {
     if (this.ids[id].children &&
         this.ids[id].children.length &&
-        !collapsed[id]) {
+        !this.ids[id].collapsed) {
       return this.ids[id].children[0]
     }
     var pid = this.ids[id].parent
@@ -198,14 +225,14 @@ Model.prototype = {
     }
     return parent.children[ix + 1]
   },
-  idNew: function (id, collapsed) {
+  idNew: function (id) {
     var pid = this.ids[id].parent
       , parent
       , nix
     if (id === this.root ||
         (this.ids[id].children &&
         this.ids[id].children.length &&
-        !collapsed[id])) {
+        !this.ids[id].collapsed)) {
       pid = id
       nix = 0
     } else {
@@ -217,10 +244,10 @@ Model.prototype = {
       index: nix
     }
   },
-  findCollapser: function (id, collapsed) {
+  findCollapser: function (id) {
     if ((!this.ids[id].children ||
          !this.ids[id].children.length ||
-         collapsed[id]) &&
+         this.ids[id].collapsed) &&
         this.ids[id].parent !== undefined) {
       id = this.ids[id].parent
     }

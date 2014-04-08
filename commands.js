@@ -8,6 +8,17 @@ function copy(one) {
 }
 
 var commands = {
+  collapse: {
+    args: ['id', 'doCollapse'],
+    apply: function (view, model) {
+      model.setCollapsed(this.id, this.doCollapse)
+      view.setCollapsed(this.id, this.doCollapse)
+    },
+    undo: function (view, model) {
+      model.setCollapsed(this.id, !this.doCollapse)
+      view.setCollapsed(this.id, !this.doCollapse)
+    },
+  },
   newNode: {
     args: ['pid', 'index', 'text'],
     apply: function (view, model) {

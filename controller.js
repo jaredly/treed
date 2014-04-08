@@ -109,12 +109,12 @@ Controller.prototype = {
     },
     goUp: function (id) {
       // should I check to see if it's ok?
-      var above = this.model.idAbove(id, this.view.collapsed)
+      var above = this.model.idAbove(id)
       if (above === false) return
       this.view.startEditing(above);
     },
     goDown: function (id, fromStart) {
-      var below = this.model.idBelow(id, this.view.collapsed)
+      var below = this.model.idBelow(id)
       if (below === false) return
       this.view.startEditing(below, fromStart);
     },
@@ -130,20 +130,23 @@ Controller.prototype = {
     },
     toggleCollapse: function (id, yes) {
       if (arguments.length === 1) {
-        yes = !this.view.collapsed[id]
+        yes = !this.model.isCollapsed(id)
       }
-      if (!yes) {
-        return this.view.toggleCollapse(id, yes)
+      if (yes) {
+        id = this.model.findCollapser(id)
+        if (!this.model.hasChildren(id) || this.model.isCollapsed(id)) return
+      } else {
+        if (!this.model.hasChildren(id) || !this.model.isCollapsed(id)) return
       }
-      var tocollapse = this.model.findCollapser(id, this.view.collapsed)
-      this.view.toggleCollapse(tocollapse, yes)
+      // this.view.toggleCollapse(tocollapse, yes)
+      this.executeCommands('collapse', [id, yes])
     },
     addAfter: function (id, text) {
-      var nw = this.model.idNew(id, this.view.collapsed)
+      var nw = this.model.idNew(id)
       this.executeCommands('newNode', [nw.pid, nw.index, text])
     },
     remove: function (id, addText) {
-      var before = this.model.idAbove(id, this.view.collapsed)
+      var before = this.model.idAbove(id)
       this.executeCommands(
         'remove', [id],
         'appendText', [before, addText || '']
@@ -153,7 +156,7 @@ Controller.prototype = {
     doneEditing: 'view'
   },
   addAfter: function (id, text) {
-    var nw = this.model.idNew(id, this.view.collapsed)
+    var nw = this.model.idNew(id)
     this.executeCommands('newNode', [nw.pid, nw.index, text])
   }
 }
