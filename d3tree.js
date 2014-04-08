@@ -37,6 +37,7 @@ function start(flare) {
 
   function setCollapsed(id, doCollapse) {
     listed.ctrl.setCollapsed(id, doCollapse)
+    listed.ctrl.view.startEditing(id)
   }
 
   var root = listed.ctrl.model.dumpData()
@@ -85,9 +86,9 @@ function update(source, setCollapsed) {
       });
 
   nodeEnter.append("text")
-      .attr("x", function(d) { return d.children ? -10 : 10; })
+      .attr("x", function(d) { return d.hidesChildren ? -10 : 10; })
       .attr("dy", ".35em")
-      .attr("text-anchor", function(d) { return d.children ? "end" : "start"; })
+      .attr("text-anchor", function(d) { return d.hidesChildren ? "end" : "start"; })
       .text(function(d) { return d.name; })
       .style("fill-opacity", 1e-6);
 
@@ -105,6 +106,7 @@ function update(source, setCollapsed) {
       });
 
   nodeUpdate.select("text")
+      .text(function(d) { return d.name; })
       .style("fill-opacity", 1);
 
   // Transition exiting nodes to the parent's new position.

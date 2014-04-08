@@ -21,7 +21,7 @@
 }
 
 .listless__default-node {
-  height: 20px;
+  min-height: 20px;
   display: flex;
   flex-direction: column;
 }

@@ -3,7 +3,7 @@ function Model(root, ids, db) {
   this.ids = ids
   this.root = root
   this.db = db
-  this.nextid = 0
+  this.nextid = 100
 }
 
 Model.prototype = {

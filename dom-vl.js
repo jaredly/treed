@@ -1,4 +1,12 @@
 
+function ensureInView(item) {
+  var bb = item.getBoundingClientRect()
+  if (bb.top < 0) return item.scrollIntoView()
+  if (bb.bottom > window.innerHeight) {
+    item.scrollIntoView(false)
+  }
+}
+
 function DomViewLayer(o) {
   this.dom = {}
   this.o = o
@@ -45,6 +53,8 @@ DomViewLayer.prototype = {
     }
   },
   showSelection: function (selection) {
+    if (!selection.length) return
+    ensureInView(this.dom[selection[0]].main)
     for (var i=0; i<selection.length; i++) {
       this.dom[selection[i]].main.classList.add('selected')
     }
