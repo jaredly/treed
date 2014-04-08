@@ -18,6 +18,11 @@ function Controller(root, ids) {
   this.histpos = 0
   this.working = false
   this.listeners = {}
+
+  for (var name in this.actions) {
+    if ('string' === typeof this.actions[name]) continue
+    this.actions[name] = this.actions[name].bind(this)
+  }
   // connect the two.
 }
 
@@ -127,12 +132,12 @@ Controller.prototype = {
     goUp: function (id) {
       // should I check to see if it's ok?
       var above = this.model.idAbove(id)
-      if (above === false) return
+      if (above === undefined) return
       this.view.startEditing(above);
     },
     goDown: function (id, fromStart) {
       var below = this.model.idBelow(id)
-      if (below === false) return
+      if (below === undefined) return
       this.view.startEditing(below, fromStart);
     },
     goLeft: function (id) {
@@ -144,6 +149,48 @@ Controller.prototype = {
       var child = this.model.getChild(id)
       if (!child) return
       this.view.startEditing(child)
+    },
+    moveRight: function (id) {
+      var sib = this.model.prevSibling(id, true)
+      if (undefined === sib) return
+      if (!this.model.isCollapsed(sib)) {
+        this.executeCommands('move', [id, sib, false])
+      }
+      this.executeCommands('collapse', [sib, false], 'move', [id, sib, false])
+    },
+    moveLeft: function (id) {
+      // TODO handle multiple selected
+      var place = this.model.shiftLeftPlace(id)
+      if (!place) return
+      this.executeCommands('move', [id, place.pid, place.ix])
+    },
+    moveUp: function (id) {
+      // TODO handle multiple selected
+      var place = this.model.shiftUpPlace(id)
+      if (!place) return
+      this.executeCommands('move', [id, place.pid, place.ix])
+    },
+    moveDown: function (id) {
+      // TODO handle multiple selected
+      var place = this.model.shiftDownPlace(id)
+      if (!place) return
+      this.executeCommands('move', [id, place.pid, place.ix])
+    },
+    moveToTop: function (id) {
+      var first = this.model.firstSibling(id)
+      if (undefined === first) return
+      var pid = this.model.ids[first].parent
+      if (pid === undefined) return
+      var ix = this.models.ids[pid].children.indexOf(first)
+      this.executeCommand('move', [id, pid, ix])
+    },
+    moveToBottom: function (id) {
+      var last = this.model.lastSibling(id)
+      if (undefined === last) return
+      var pid = this.model.ids[last].parent
+      if (pid === undefined) return
+      var ix = this.models.ids[pid].children.indexOf(last)
+      this.executeCommand('move', [id, pid, ix + 1])
     },
     toggleCollapse: function (id, yes) {
       if (arguments.length === 1) {

@@ -59,6 +59,18 @@ View.prototype = {
         if (undefined === last) return
         this.setSelection([last])
       },
+      'shift alt [': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        this.ctrl.actions.moveToTop(this.selection[0])
+      },
+      'shift alt ]': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        this.ctrl.actions.moveToBottom(this.selection[0])
+      },
       o: function () {
         if (!this.selection.length) return
         this.ctrl.addAfter(this.selection[0])
@@ -126,30 +138,24 @@ View.prototype = {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
-        var id = this.model.findCollapser(this.selection[0])
-        if (this.model.isCollapsed(id)) return
-        this.ctrl.executeCommands('collapse', [id, true])
+        this.ctrl.actions.toggleCollapse(this.selection[0], true)
+        // var id = this.model.findCollapser(this.selection[0])
+        // if (this.model.isCollapsed(id)) return
+        // this.ctrl.executeCommands('collapse', [id, true])
       },
       'alt l, alt right': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
-        if (!this.model.hasChildren(this.selection[0]) || !this.model.isCollapsed(this.selection[0])) return
-        this.ctrl.executeCommands('collapse', [this.selection[0], false])
+        this.ctrl.actions.toggleCollapse(this.selection[0], false)
+        // if (!this.model.hasChildren(this.selection[0]) || !this.model.isCollapsed(this.selection[0])) return
+        // this.ctrl.executeCommands('collapse', [this.selection[0], false])
       },
       'shift alt l, shift alt right': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
-        // TODO handle multiple selected
-        var id = this.selection[0]
-        var sib = this.model.prevSibling(id, true)
-        if (undefined === sib) return
-        if (!this.model.isCollapsed(sib)) {
-          this.ctrl.executeCommands('move', [id, sib, false])
-        }
-        this.ctrl.executeCommands('collapse', [sib, false], 'move', [id, sib, false])
-
+        this.ctrl.actions.moveRight(this.selection[0])
       },
       'shift alt h, shift alt left': function () {
         this.shiftLeft()
@@ -158,21 +164,16 @@ View.prototype = {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
-        // TODO handle multiple selected
-        var id = this.selection[0]
-        var place = this.model.shiftDownPlace(id)
-        if (!place) return
-        this.ctrl.executeCommands('move', [id, place.pid, place.ix])
+        this.ctrl.actions.moveDown(this.selection[0])
       },
       'shift alt k, shift alt up': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
-        // TODO handle multiple selected
-        var id = this.selection[0]
-        var place = this.model.shiftUpPlace(id)
-        if (!place) return
-        this.ctrl.executeCommands('move', [id, place.pid, place.ix])
+        this.ctrl.actions.moveUp(this.selection[0])
+      },
+      'f2': function () {
+        this.startEditing()
       },
       // changes
       'ctrl z, u': function () {
@@ -191,11 +192,7 @@ View.prototype = {
     if (!this.selection.length) {
       return this.setSelection([this.root])
     }
-    // TODO handle multiple selected
-    var id = this.selection[0]
-    var place = this.model.shiftLeftPlace(id)
-    if (!place) return
-    this.ctrl.executeCommands('move', [id, place.pid, place.ix])
+    this.ctrl.actions.moveLeft(this.selection[0])
   },
 
 
@@ -213,7 +210,9 @@ View.prototype = {
     }
   },
   remove: function (id) {
-    this.vl.remove(id)
+    var pid = this.model.ids[id]
+      , parent = this.model.ids[pid]
+    this.vl.remove(id, pid, parent && parent.children.length === 1)
     var ix = this.selection.indexOf(id)
     if (ix !== -1) {
       this.selection.splice(ix, 1)
@@ -228,10 +227,15 @@ View.prototype = {
   appendText: function (id, text) {
     this.vl.body(id).addEditText(text)
   },
-  move: function (id, pid, before) {
-    this.vl.move(id, pid, before)
+  move: function (id, pid, before, ppid, lastchild) {
+    var ed = this.editing
+    this.vl.move(id, pid, before, ppid, lastchild)
+    if (ed) this.startEditing(id)
   },
   startEditing: function (id, fromStart) {
+    if (arguments.length === 0) {
+      id = this.selection.length ? this.selection[0] : this.root
+    }
     this.vl.body(id).startEditing(fromStart)
   },
   setEditing: function (id) {

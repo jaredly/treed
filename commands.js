@@ -85,11 +85,14 @@ var commands = {
       this.opid = model.ids[this.id].parent
       this.oindex = model.ids[this.opid].children.indexOf(this.id)
       var before = model.move(this.id, this.pid, this.index)
-      view.move(this.id, this.pid, before)
+      var parent = model.ids[this.opid]
+        , lastchild = parent.children.length === 0
+      view.move(this.id, this.pid, before, this.opid, lastchild)
     },
     undo: function (view, model) {
       var before = model.move(this.id, this.opid, this.oindex)
-      view.move(this.id, this.opid, before)
+        , lastchild = model.ids[this.pid].children.length === 0
+      view.move(this.id, this.opid, before, this.pid, lastchild)
     }
   }
 }

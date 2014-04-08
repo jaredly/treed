@@ -1,6 +1,11 @@
 
+#main {
+  padding-left: 20px;
+}
+
 .listless__item {
-  list-style: none
+  list-style: none;
+  padding-left: 20px;
 }
 
 .listless__item.collapsed .listless__default-node {
@@ -15,14 +20,44 @@
   display: none;
 }
 
+.listless__item--parent {
+  /*border-left: 1px solid black;*/
+}
+
+.listless__collapser {
+  position: relative;
+  display: none;
+  cursor: pointer;
+}
+
+.listless__item--parent > .listless__collapser {
+  display: block;
+}
+
+.listless__collapser::before {
+  content: "-";
+  position: absolute;
+  left: 6px;
+  top: -1px;
+  font-weight: bold;
+  font-family: monospace;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.listless__item.collapsed .listless__collapser::before {
+  content: "+";
+}
+
 .listless__children {
-  padding: 0 0 0 20px;
+  padding: 0;
   margin: 0;
 }
 
 .listless__default-node {
   min-height: 20px;
   display: flex;
+  padding-left: 20px;
   flex-direction: column;
 }
 
@@ -33,9 +68,9 @@
 
 .listless__default-node input {
   border: 1px dotted #ccc;
-  padding: 0px 3px;
+  padding: 2px 3px;
   margin: 0;
-  width: 100%;
+  display: block;
   font-size: 16px;
   font-family: sans-serif;
   background-color: transparent;

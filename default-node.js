@@ -29,6 +29,7 @@ var KEYS = {
   88: 'x',
   89: 'y',
   90: 'z',
+  113: 'f2',
   219: '[',
   221: ']'
 }
@@ -152,6 +153,18 @@ DefaultNode.prototype = {
       },
       'alt right': function () {
         this.o.toggleCollapse(false)
+      },
+      'shift alt left': function () {
+        this.o.moveLeft()
+      },
+      'shift alt right': function () {
+        this.o.moveRight()
+      },
+      'shift alt up': function () {
+        this.o.moveUp()
+      },
+      'shift alt down': function () {
+        this.o.moveDown()
       },
       up: function () {
         this.o.goUp();
