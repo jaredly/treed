@@ -11,8 +11,7 @@ function makeCommand(type, args) {
 function Controller(root, ids) {
   this.model = new Model(root, ids, null)
   this.view = new View(this.bindActions.bind(this),
-                       this.model.idAbove.bind(this.model),
-                       this.model.idBelow.bind(this.model),
+                       this.model,
                        this.undo.bind(this),
                        this.redo.bind(this))
   this.node = this.view.initialize(root, ids)
@@ -121,6 +120,16 @@ Controller.prototype = {
       var below = this.model.idBelow(id, this.view.collapsed)
       if (below === false) return
       this.view.startEditing(below, fromStart);
+    },
+    goLeft: function (id) {
+      var parent = this.model.getParent(id)
+      if (!parent) return
+      this.view.startEditing(parent)
+    },
+    goRight: function (id) {
+      var child = this.model.getChild(id)
+      if (!child) return
+      this.view.startEditing(child)
     },
     toggleCollapse: function (id, yes) {
       if (arguments.length === 1) {

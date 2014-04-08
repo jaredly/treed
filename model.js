@@ -81,6 +81,12 @@ Model.prototype = {
   },
 
   // movement calculation
+  getParent: function (id) {
+    return this.ids[id].parent
+  },
+  getChild: function (id) {
+    return this.ids[id].children && this.ids[id].children[0]
+  },
   idAbove: function (id, collapsed) {
     var pid = this.ids[id].parent
       , parent = this.ids[pid]

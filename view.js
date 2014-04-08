@@ -1,5 +1,5 @@
 
-function View(bindActions, idAbove, idBelow, undo, redo, options) {
+function View(bindActions, model, undo, redo, options) {
   this.dom = {}
   this.collapsed = {}
   this.selection = {}
@@ -8,8 +8,7 @@ function View(bindActions, idAbove, idBelow, undo, redo, options) {
     node: DefaultNode
   }, options)
   this.bindActions = bindActions
-  this.idAbove = idAbove
-  this.idBelow = idBelow
+  this.model = model
   this.undo = undo
   this.redo = redo
   this.attachListeners()
@@ -44,7 +43,7 @@ View.prototype = {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
-            , above = this.idAbove(top, this.collapsed)
+            , above = this.model.idAbove(top, this.collapsed)
           if (above === false) above = top
           this.setSelection([above])
         }
@@ -55,10 +54,42 @@ View.prototype = {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
-            , above = this.idBelow(top, this.collapsed)
+            , above = this.model.idBelow(top, this.collapsed)
           if (above === false) above = top
           this.setSelection([above])
         }
+      },
+      h: function () {
+        var selection = this.selection
+        if (!selection.length) {
+          return this.setSelection([this.root])
+        }
+        var left = this.model.getParent(this.selection[0])
+        if (!left) return
+        this.setSelection([left])
+      },
+      l: function () {
+        var selection = this.selection
+        if (!selection.length) {
+          return this.setSelection([this.root])
+        }
+        var right = this.model.getChild(this.selection[0])
+        if (this.collapsed[this.selection[0]]) return
+        if (!right) return
+        this.setSelection([right])
+      },
+      'alt h': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var id = this.model.findCollapser(this.selection[0], this.collapsed)
+        this.toggleCollapse(id, true)
+      },
+      'alt l': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        this.toggleCollapse(this.selection[0], false)
       },
       'ctrl z': function () {
         this.undo();
@@ -162,19 +193,23 @@ View.prototype = {
     this.dom[id].main.classList[what ? 'add' : 'remove']('collapsed')
     this.collapsed[id] = what
     if (what) {
-      this.startEditing(id)
+      if (this.editing) {
+        this.startEditing(id)
+      } else {
+        this.setSelection([id])
+      }
     }
     // TODO: event listeners?
   },
   goUp: function (id) {
     // should I check to see if it's ok?
-    var above = this.idAbove(id)
+    var above = this.model.idAbove(id)
     if (above === false) return
     this.dom[id].body.stopEditing();
     this.dom[above].body.startEditing();
   },
   goDown: function (id, fromStart) {
-    var below = this.idBelow(id, this.view.collapsed)
+    var below = this.model.idBelow(id, this.view.collapsed)
     if (below === false) return
     this.dom[id].body.stopEditing()
     this.dom[below].body.startEditing(fromStart)
