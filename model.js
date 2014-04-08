@@ -31,7 +31,8 @@ Model.prototype = {
         res.children.push(this.dumpData(n.children[i]))
       }
     }
-    res._collapsed = n.collapsed
+    res.id = id
+    res.collapsed = n.collapsed
     return res
   },
 

@@ -13,6 +13,9 @@ DomViewLayer.prototype = {
   addNew: function (node, bounds, before) {
     var dom = this.makeNode(node.id, node.data, bounds)
     this.add(node.parent, before, dom)
+    if (node.collapsed && node.children.length) {
+      this.setCollapsed(node.id, true)
+    }
   },
   add: function (parent, before, dom) {
     var p = this.dom[parent]

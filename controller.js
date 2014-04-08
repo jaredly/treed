@@ -17,6 +17,7 @@ function Controller(root, ids) {
   this.commands = []
   this.histpos = 0
   this.working = false
+  this.listeners = {}
   // connect the two.
 }
 
@@ -39,6 +40,15 @@ Controller.prototype = {
     for (var i=0; i<cmds.length; i++) {
       this.doCommand(cmds[i])
     }
+    for (var item in this.listeners.change) {
+      this.listeners.change[item]()
+    }
+  },
+  on: function (what, cb) {
+    if (!this.listeners[what]) {
+      this.listeners[what] = []
+    }
+    this.listeners[what].push(cb)
   },
   undo: function () {
     document.activeElement.blur()
@@ -97,6 +107,13 @@ Controller.prototype = {
       actions[action] = val
     }
     return actions
+  },
+
+  // public
+  setCollapsed: function (id, doCollapse) {
+    if (!this.model.hasChildren(id)) return
+    if (this.model.isCollapsed(id) === doCollapse) return
+    this.executeCommands('collapse', [id, doCollapse]);
   },
 
   actions: {

@@ -145,7 +145,11 @@ View.prototype = {
         var id = this.selection[0]
         var sib = this.model.prevSibling(id, true)
         if (undefined === sib) return
-        this.ctrl.executeCommands('move', [id, sib, false])
+        if (!this.model.isCollapsed(sib)) {
+          this.ctrl.executeCommands('move', [id, sib, false])
+        }
+        this.ctrl.executeCommands('collapse', [sib, false], 'move', [id, sib, false])
+
       },
       'shift alt h, shift alt left': function () {
         this.shiftLeft()
