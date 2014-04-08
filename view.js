@@ -1,12 +1,12 @@
 
 function View(bindActions, model, ctrl, options) {
-  this.dom = {}
   this.collapsed = {}
   this.selection = {}
   this.editing = false
   this.o = extend({
     node: DefaultNode
   }, options)
+  this.vl = new DomViewLayer(this.o)
   this.bindActions = bindActions
   this.model = model
   this.ctrl = ctrl
@@ -16,7 +16,7 @@ function View(bindActions, model, ctrl, options) {
 View.prototype = {
   initialize: function (root, ids) {
     var node = ids[root]
-      , rootNode = this.makeNode(root, node.data, this.bindActions(root))
+      , rootNode = this.vl.makeNode(root, node.data, this.bindActions(root))
     this.populateChildren(root, ids)
     this.root = root
     return rootNode
@@ -36,13 +36,13 @@ View.prototype = {
         if (!this.selection.length) {
           this.selection = [this.root]
         }
-        this.dom[this.selection[0]].body.startEditing()
+        this.vl.body(this.selection[0]).startEditing()
       },
       'i, shift i': function () {
         if (!this.selection.length) {
           this.selection = [this.root]
         }
-        this.dom[this.selection[0]].body.startEditing(true)
+        this.vl.body(this.selection[0]).startEditing(true)
       },
       'shift [': function () {
         if (!this.selection.length) {
@@ -197,52 +197,37 @@ View.prototype = {
 
   // operations
   add: function (node, before, dontfocus) {
-    var p = this.dom[node.parent]
-      , ed = this.editing
-      , dom = this.makeNode(node.id, node.data, this.bindActions(node.id))
-    if (before === false) {
-      p.ul.appendChild(dom)
-    } else {
-      var bef = this.dom[before]
-      p.ul.insertBefore(dom, bef.main)
-    }
+    var ed = this.editing
+    this.vl.addNew(node, this.bindActions(node.id), before)
     if (!dontfocus) {
       if (ed) {
-        this.dom[node.id].body.startEditing()
+        this.vl.body(node.id).startEditing()
       } else {
         this.setSelection([node.id])
       }
     }
   },
   remove: function (id) {
-    var n = this.dom[id]
-    n.main.parentNode.removeChild(n.main)
-    delete this.dom[id]
+    this.vl.remove(id)
     var ix = this.selection.indexOf(id)
     if (ix !== -1) {
       this.selection.splice(ix, 1)
     }
   },
   setData: function (id, data) {
-    this.dom[id].body.setData(data)
+    this.vl.body(id).setData(data)
     if (this.editing) {
-      this.dom[id].body.startEditing()
+      this.vl.body(id).startEditing()
     }
   },
   appendText: function (id, text) {
-    this.dom[id].body.addEditText(text)
+    this.vl.body(id).addEditText(text)
   },
   move: function (id, pid, before) {
-    var d = this.dom[id]
-    d.main.parentNode.removeChild(d.main)
-    if (before === false) {
-      this.dom[pid].ul.appendChild(d.main)
-    } else {
-      this.dom[pid].ul.insertBefore(d.main, this.dom[before].main)
-    }
+    this.vl.move(id, pid, before)
   },
   startEditing: function (id, fromStart) {
-    this.dom[id].body.startEditing(fromStart)
+    this.vl.body(id).startEditing(fromStart)
   },
   setEditing: function (id) {
     this.editing = true
@@ -252,41 +237,14 @@ View.prototype = {
     this.editing = false
   },
   setSelection: function (sel) {
-    for (var i=0; i<this.selection.length; i++) {
-      if (!this.dom[this.selection[i]]) continue;
-      this.dom[this.selection[i]].main.classList.remove('selected')
-    }
+    this.vl.clearSelection(this.selection)
     this.selection = sel
-    for (var i=0; i<sel.length; i++) {
-      this.dom[sel[i]].main.classList.add('selected')
-    }
+    this.vl.showSelection(sel)
   },
-
-  // stuff
-  makeNode: function (id, data, bounds) {
-    var dom = document.createElement('li')
-      , body = this.bodyFor(id, data, bounds)
-
-    dom.classList.add('listless__item')
-    dom.appendChild(body.node);
-    var ul = document.createElement('ul')
-    ul.classList.add('listless__children')
-    dom.appendChild(ul)
-    this.dom[id] = {main: dom, body: body, ul: ul}
-    return dom
-  },
-
-  /** returns a dom node **/
-  bodyFor: function (id, data, bounds) {
-    var dom = new this.o.node(data, bounds)
-    dom.node.classList.add('listless__body')
-    return dom
-  },
-
 
   // non-modifying stuff
   toggleCollapse: function (id, what) {
-    this.dom[id].main.classList[what ? 'add' : 'remove']('collapsed')
+    this.vl.setCollapsed(id, what)
     this.collapsed[id] = what
     if (what) {
       if (this.editing) {
@@ -301,14 +259,14 @@ View.prototype = {
     // should I check to see if it's ok?
     var above = this.model.idAbove(id)
     if (above === false) return
-    this.dom[id].body.stopEditing();
-    this.dom[above].body.startEditing();
+    this.vl.body(id).body.stopEditing();
+    this.vl.body(above).body.startEditing();
   },
   goDown: function (id, fromStart) {
     var below = this.model.idBelow(id, this.view.collapsed)
     if (below === false) return
-    this.dom[id].body.stopEditing()
-    this.dom[below].body.startEditing(fromStart)
+    this.vl.body(id).body.stopEditing()
+    this.vl.body(below).body.startEditing(fromStart)
   },
 }
 

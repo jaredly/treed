@@ -226,20 +226,5 @@ Model.prototype = {
     }
     return id
   },
-
-  // event handling things...
-  bounds: function (id) {
-    return {
-      // changed: this.nodeChanged.bind(this, id),
-      // toggleCollapse: this.toggleCollapse.bind(this, id),
-      // goUp: this.goUp.bind(this, id),
-      // goDown: this.goDown.bind(this, id),
-      // addAfter: this.addAfter.bind(this, id),
-      // remove: this.remove.bind(this, id),
-      // setEditing: this.setEditing.bind(this, id),
-      // doneEditing: this.doneEditing.bind(this, id)
-      // TODO: goUp, goDown, indent, dedent, etc.
-    }
-  },
 }
 
