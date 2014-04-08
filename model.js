@@ -69,10 +69,12 @@ Model.prototype = {
       , p = this.ids[n.parent]
       , ix = p.children.indexOf(id)
     p.children.splice(ix, 1)
+    if (index === false) index = this.ids[pid].children.length
     this.ids[pid].children.splice(index, 0, id)
+    this.ids[id].parent = pid
     var before = false
-    if (ix < p.children.length - 1) {
-      before = p.children[index + 1]
+    if (index < this.ids[pid].children.length - 1) {
+      before = this.ids[pid].children[index + 1]
     }
     return before
   },
@@ -90,30 +92,30 @@ Model.prototype = {
     }
     return this.nextSibling(id)
   },
-  prevSibling: function (id) {
+  prevSibling: function (id, noparent) {
     var pid = this.ids[id].parent
-    if (!pid) return
+    if (undefined === pid) return
     var ix = this.ids[pid].children.indexOf(id)
     if (ix > 0) return this.ids[pid].children[ix-1]
-    return pid
+    if (!noparent) return pid
   },
   nextSibling: function (id) {
     var pid = this.ids[id].parent
-    if (!pid) return this.ids[id].children[0]
+    if (undefined === pid) return this.ids[id].children[0]
     var ix = this.ids[pid].children.indexOf(id)
     if (ix < this.ids[pid].children.length - 1) return this.ids[pid].children[ix + 1]
     return this.ids[id].children[0]
   },
   lastSibling: function (id) {
     var pid = this.ids[id].parent
-    if (!pid) return this.ids[id].children[0]
+    if (undefined === pid) return this.ids[id].children[0]
     var ix = this.ids[pid].children.indexOf(id)
     if (ix === this.ids[pid].children.length - 1) return this.ids[id].children[0]
     return this.ids[pid].children[this.ids[pid].children.length - 1]
   },
   firstSibling: function (id) {
     var pid = this.ids[id].parent
-    if (!pid) return // this.ids[id].children[0]
+    if (undefined === pid) return // this.ids[id].children[0]
     var ix = this.ids[pid].children.indexOf(id)
     if (ix === 0) return pid
     return this.ids[pid].children[0]
@@ -134,6 +136,49 @@ Model.prototype = {
       previd = this.ids[previd].children[this.ids[previd].children.length - 1]
     }
     return previd
+  },
+  // get the place to shift left to
+  shiftLeftPlace: function (id) {
+    var pid = this.ids[id].parent
+      , parent = this.ids[pid]
+    if (!parent) return
+    var ppid = parent.parent
+      , pparent = this.ids[ppid]
+    if (!pparent) return
+    var pix = pparent.children.indexOf(pid)
+    return {
+      pid: ppid,
+      ix: pix + 1
+    }
+  },
+  shiftUpPlace: function (id) {
+    var pid = this.ids[id].parent
+      , parent = this.ids[pid]
+    if (!parent) return
+    var ix = parent.children.indexOf(id)
+    if (ix == 0) {
+      var pl = this.shiftLeftPlace(id)
+      if (!pl) return
+      pl.ix -= 1
+      return pl
+    }
+    return {
+      pid: pid,
+      ix: ix - 1
+    }
+  },
+  shiftDownPlace: function (id) {
+    var pid = this.ids[id].parent
+      , parent = this.ids[pid]
+    if (!parent) return
+    var ix = parent.children.indexOf(id)
+    if (ix >= parent.children.length - 1) {
+      return this.shiftLeftPlace(id)
+    }
+    return {
+      pid: pid,
+      ix: ix + 1
+    }
   },
   idBelow: function (id, collapsed) {
     if (this.ids[id].children &&

@@ -135,6 +135,41 @@ View.prototype = {
         if (undefined === sib) return
         this.setSelection([sib])
       },
+      // movez!
+      'shift alt l, shift alt right': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        // TODO handle multiple selected
+        var id = this.selection[0]
+        var sib = this.model.prevSibling(id, true)
+        if (undefined === sib) return
+        this.ctrl.executeCommands('move', [id, sib, false])
+      },
+      'shift alt h, shift alt left': function () {
+        this.shiftLeft()
+      },
+      'shift alt j, shift alt down': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        // TODO handle multiple selected
+        var id = this.selection[0]
+        var place = this.model.shiftDownPlace(id)
+        if (!place) return
+        this.ctrl.executeCommands('move', [id, place.pid, place.ix])
+      },
+      'shift alt k, shift alt up': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        // TODO handle multiple selected
+        var id = this.selection[0]
+        var place = this.model.shiftUpPlace(id)
+        if (!place) return
+        this.ctrl.executeCommands('move', [id, place.pid, place.ix])
+      },
+      // changes
       'ctrl z, u': function () {
         this.ctrl.undo();
       },
@@ -146,6 +181,16 @@ View.prototype = {
       if (this.editing) return // do I really want to skip this?
       keydown.call(this, e)
     }.bind(this))
+  },
+  shiftLeft: function () {
+    if (!this.selection.length) {
+      return this.setSelection([this.root])
+    }
+    // TODO handle multiple selected
+    var id = this.selection[0]
+    var place = this.model.shiftLeftPlace(id)
+    if (!place) return
+    this.ctrl.executeCommands('move', [id, place.pid, place.ix])
   },
 
 

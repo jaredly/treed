@@ -36,8 +36,8 @@ Controller.prototype = {
       this.histpos = 0
     }
     this.commands.push(cmds)
-    console.log('Executing', this.histpos, this.commands.length)
-    for (var i=0;i<this.commands.length;i++){console.log(' >',this.commands[i][0].type, this.commands[i].length)}
+    // console.log('Executing', this.histpos, this.commands.length)
+    // for (var i=0;i<this.commands.length;i++){console.log(' >',this.commands[i][0].type, this.commands[i].length)}
     for (var i=0; i<cmds.length; i++) {
       this.doCommand(cmds[i])
     }
@@ -50,7 +50,7 @@ Controller.prototype = {
       return false // no more undo!
     }
     var cmds = this.commands[ix]
-    for (var i=0;i<this.commands.length;i++){console.log(this.commands[i][0].type, this.commands[i].length)}
+    // for (var i=0;i<this.commands.length;i++){console.log(this.commands[i][0].type, this.commands[i].length)}
     for (var i=cmds.length-1; i>=0; i--) {
       this.undoCommand(cmds[i])
     }
@@ -64,7 +64,7 @@ Controller.prototype = {
       return false // no more to redo!
     }
     var cmds = this.commands[ix]
-    for (var i=0;i<this.commands.length;i++){console.log(this.commands[i][0].type, this.commands[i].length)}
+    // for (var i=0;i<this.commands.length;i++){console.log(this.commands[i][0].type, this.commands[i].length)}
     for (var i=0; i<cmds.length; i++) {
       this.redoCommand(cmds[i])
     }
@@ -72,17 +72,17 @@ Controller.prototype = {
     return true
   },
   doCommand: function (cmd) {
-    console.log('do command', cmd.type, cmd.data);
+    // console.log('do command', cmd.type, cmd.data);
     commands[cmd.type].apply.call(cmd.data, this.view, this.model)
   },
   undoCommand: function (cmd) {
-    console.log('undo command', cmd.type, cmd.data);
+    // console.log('undo command', cmd.type, cmd.data);
     this.working = true
     commands[cmd.type].undo.call(cmd.data, this.view, this.model)
     this.working = false
   },
   redoCommand: function (cmd) {
-    console.log('redo command', cmd.type, cmd.data);
+    // console.log('redo command', cmd.type, cmd.data);
     var c = commands[cmd.type]
     ;(c.redo || c.apply).call(cmd.data, this.view, this.model)
   },
