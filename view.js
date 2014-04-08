@@ -1,5 +1,5 @@
 
-function View(bindActions, model, undo, redo, options) {
+function View(bindActions, model, ctrl, options) {
   this.dom = {}
   this.collapsed = {}
   this.selection = {}
@@ -9,8 +9,7 @@ function View(bindActions, model, undo, redo, options) {
   }, options)
   this.bindActions = bindActions
   this.model = model
-  this.undo = undo
-  this.redo = redo
+  this.ctrl = ctrl
   this.attachListeners()
 }
 
@@ -33,69 +32,114 @@ View.prototype = {
 
   attachListeners: function () {
     var keydown = keys({
-      'return': function () {
-        if (!this.selection.length) return
+      'return, a, shift a': function () {
+        if (!this.selection.length) {
+          this.selection = [this.root]
+        }
         this.dom[this.selection[0]].body.startEditing()
       },
-      k: function () {
+      'i, shift i': function () {
+        if (!this.selection.length) {
+          this.selection = [this.root]
+        }
+        this.dom[this.selection[0]].body.startEditing(true)
+      },
+      'shift [': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var first = this.model.firstSibling(this.selection[0])
+        if (undefined === first) return
+        this.setSelection([first])
+      },
+      'shift ]': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var last = this.model.lastSibling(this.selection[0])
+        if (undefined === last) return
+        this.setSelection([last])
+      },
+      o: function () {
+        if (!this.selection.length) return
+        this.ctrl.addAfter(this.selection[0])
+        this.startEditing(this.selection[0])
+      },
+      'up, k': function () {
         var selection = this.selection
         if (!selection.length) {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
             , above = this.model.idAbove(top, this.collapsed)
-          if (above === false) above = top
+          if (above === undefined) above = top
           this.setSelection([above])
         }
       },
-      j: function () {
+      'down, j': function () {
         var selection = this.selection
         if (!selection.length) {
           this.setSelection([this.root])
         } else {
           var top = selection[0]
             , above = this.model.idBelow(top, this.collapsed)
-          if (above === false) above = top
+          if (above === undefined) above = top
           this.setSelection([above])
         }
       },
-      h: function () {
+      'left, h': function () {
         var selection = this.selection
         if (!selection.length) {
           return this.setSelection([this.root])
         }
         var left = this.model.getParent(this.selection[0])
-        if (!left) return
+        if (undefined === left) return
         this.setSelection([left])
       },
-      l: function () {
+      'right, l': function () {
         var selection = this.selection
         if (!selection.length) {
           return this.setSelection([this.root])
         }
         var right = this.model.getChild(this.selection[0])
         if (this.collapsed[this.selection[0]]) return
-        if (!right) return
+        if (undefined === right) return
         this.setSelection([right])
       },
-      'alt h': function () {
+      'alt h, alt left': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
         var id = this.model.findCollapser(this.selection[0], this.collapsed)
         this.toggleCollapse(id, true)
       },
-      'alt l': function () {
+      'alt l, alt right': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
         this.toggleCollapse(this.selection[0], false)
       },
-      'ctrl z': function () {
-        this.undo();
+      'alt j, alt down': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var sib = this.model.nextSibling(this.selection[0])
+        if (undefined === sib) return
+        this.setSelection([sib])
+      },
+      'alt k, alt up': function () {
+        if (!this.selection.length) {
+          return this.setSelection([this.root])
+        }
+        var sib = this.model.prevSibling(this.selection[0])
+        if (undefined === sib) return
+        this.setSelection([sib])
+      },
+      'ctrl z, u': function () {
+        this.ctrl.undo();
       },
       'ctrl shift z': function () {
-        this.redo();
+        this.ctrl.redo();
       }
     })
     window.addEventListener('keydown', function (e) {
@@ -109,6 +153,7 @@ View.prototype = {
   // operations
   add: function (node, before, dontfocus) {
     var p = this.dom[node.parent]
+      , ed = this.editing
       , dom = this.makeNode(node.id, node.data, this.bindActions(node.id))
     if (before === false) {
       p.ul.appendChild(dom)
@@ -117,7 +162,11 @@ View.prototype = {
       p.ul.insertBefore(dom, bef.main)
     }
     if (!dontfocus) {
-      this.dom[node.id].body.startEditing()
+      if (ed) {
+        this.dom[node.id].body.startEditing()
+      } else {
+        this.setSelection([node.id])
+      }
     }
   },
   remove: function (id) {
@@ -131,7 +180,9 @@ View.prototype = {
   },
   setData: function (id, data) {
     this.dom[id].body.setData(data)
-    this.dom[id].body.startEditing()
+    if (this.editing) {
+      this.dom[id].body.startEditing()
+    }
   },
   appendText: function (id, text) {
     this.dom[id].body.addEditText(text)

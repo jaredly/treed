@@ -85,13 +85,44 @@ Model.prototype = {
     return this.ids[id].parent
   },
   getChild: function (id) {
-    return this.ids[id].children && this.ids[id].children[0]
+    if (this.ids[id].children && this.ids[id].children.length) {
+      return this.ids[id].children[0]
+    }
+    return this.nextSibling(id)
+  },
+  prevSibling: function (id) {
+    var pid = this.ids[id].parent
+    if (!pid) return
+    var ix = this.ids[pid].children.indexOf(id)
+    if (ix > 0) return this.ids[pid].children[ix-1]
+    return pid
+  },
+  nextSibling: function (id) {
+    var pid = this.ids[id].parent
+    if (!pid) return this.ids[id].children[0]
+    var ix = this.ids[pid].children.indexOf(id)
+    if (ix < this.ids[pid].children.length - 1) return this.ids[pid].children[ix + 1]
+    return this.ids[id].children[0]
+  },
+  lastSibling: function (id) {
+    var pid = this.ids[id].parent
+    if (!pid) return this.ids[id].children[0]
+    var ix = this.ids[pid].children.indexOf(id)
+    if (ix === this.ids[pid].children.length - 1) return this.ids[id].children[0]
+    return this.ids[pid].children[this.ids[pid].children.length - 1]
+  },
+  firstSibling: function (id) {
+    var pid = this.ids[id].parent
+    if (!pid) return // this.ids[id].children[0]
+    var ix = this.ids[pid].children.indexOf(id)
+    if (ix === 0) return pid
+    return this.ids[pid].children[0]
   },
   idAbove: function (id, collapsed) {
     var pid = this.ids[id].parent
       , parent = this.ids[pid]
     collapsed = collapsed || {}
-    if (!parent) return false
+    if (!parent) return
     var ix = parent.children.indexOf(id)
     if (ix == 0) {
       return pid
@@ -116,7 +147,7 @@ Model.prototype = {
     var ix = parent.children.indexOf(id)
     while (ix == parent.children.length - 1) {
       parent = this.ids[parent.parent]
-      if (!parent) return false
+      if (!parent) return
       ix = parent.children.indexOf(pid)
       pid = parent.id
     }

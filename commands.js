@@ -14,13 +14,19 @@ var commands = {
       var cr = model.create(this.pid, this.index, this.text)
       this.id = cr.node.id
       view.add(cr.node, cr.before)
+      view.startEditing(cr.node.id)
     },
     undo: function (view, model) {
+      var ed = view.editing
       view.remove(this.id)
       this.saved = model.remove(this.id)
       var nid = model.ids[this.pid].children[this.index-1]
       if (nid === undefined) nid = this.pid
-      view.startEditing(nid)
+      if (ed) {
+        view.startEditing(nid)
+      } else {
+        view.setSelection([nid])
+      }
     },
     redo: function (view, model) {
       var before = model.readd(this.saved)

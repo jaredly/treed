@@ -12,8 +12,7 @@ function Controller(root, ids) {
   this.model = new Model(root, ids, null)
   this.view = new View(this.bindActions.bind(this),
                        this.model,
-                       this.undo.bind(this),
-                       this.redo.bind(this))
+                       this)
   this.node = this.view.initialize(root, ids)
   this.commands = []
   this.histpos = 0
@@ -44,6 +43,7 @@ Controller.prototype = {
     }
   },
   undo: function () {
+    document.activeElement.blur()
     var pos = this.histpos ? this.histpos + 1 : 1
       , ix = this.commands.length - pos
     if (ix < 0) {
@@ -155,5 +155,9 @@ Controller.prototype = {
     setEditing: 'view',
     doneEditing: 'view'
   },
+  addAfter: function (id, text) {
+    var nw = this.model.idNew(id, this.view.collapsed)
+    this.executeCommands('newNode', [nw.pid, nw.index, text])
+  }
 }
 
