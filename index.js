@@ -1,5 +1,13 @@
 
 function Listed(id, ids, node, options) {
+  this.o = extend({
+    node: DefaultNode
+  }, options)
+  this.ctrl = new Controller(id, ids)
+  node.appendChild(this.ctrl.node)
+}
+
+function Listed_(id, ids, node, options) {
   this.id = id
   this.ids = ids
   this.dom = {}
@@ -14,7 +22,8 @@ function Listed(id, ids, node, options) {
   this.attachListeners()
 }
 
-Listed.prototype = {
+Listed_.prototype = {
+  //X
   nodeChanged: function (id, attr, value) {
     this.ids[id].data[attr] = value
     console.log('change', id, attr, value);
@@ -38,42 +47,7 @@ Listed.prototype = {
     // TODO: event listeners?
   },
 
-  // movement
-  idAbove: function (id) {
-    var pid = this.ids[id].parent
-      , parent = this.ids[pid]
-    if (!parent) return false
-    var ix = parent.children.indexOf(id)
-    if (ix == 0) {
-      return pid
-    }
-    var previd = parent.children[ix - 1]
-    while (this.ids[previd].children &&
-           this.ids[previd].children.length &&
-          !this.dom[previd].collapsed) {
-      previd = this.ids[previd].children[this.ids[previd].children.length - 1]
-    }
-    return previd
-  },
-  idBelow: function (id) {
-    if (this.ids[id].children &&
-        this.ids[id].children.length &&
-        !this.dom[id].collapsed) {
-      return this.ids[id].children[0]
-    }
-    var pid = this.ids[id].parent
-      , parent = this.ids[pid]
-    if (!parent) return
-    var ix = parent.children.indexOf(id)
-    while (ix == parent.children.length - 1) {
-      parent = this.ids[parent.parent]
-      if (!parent) return false
-      ix = parent.children.indexOf(pid)
-      pid = parent.id
-    }
-    return parent.children[ix + 1]
-  },
-
+  //X
   idNew: function (id, text) {
     var pid = this.ids[id].parent
       , node = this.dom[id]
@@ -174,6 +148,7 @@ Listed.prototype = {
     }
     this.dom[nid].body.startEditing(true)
   },
+  //X
   remove: function (id, addText) {
     var pid = this.ids[id].parent
     if (!pid) return
@@ -196,6 +171,7 @@ Listed.prototype = {
       this.dom[prev].body.startEditing()
     }
   },
+  //X
   newNode: function (text) {
     while (this.ids[this.nextid]) {
       this.nextid += 1
@@ -212,6 +188,7 @@ Listed.prototype = {
   },
 
   /** returns a dom node... **/
+  //X
   construct: function (id) {
     var node = this.ids[id]
     if (id >= this.nextid) {
@@ -264,6 +241,7 @@ Listed.prototype = {
   },
 
   /** returns a dom node **/
+  //X
   bodyFor: function (id) {
     var node = this.ids[id]
     var dom = new this.o.node(node.data, {

@@ -12,7 +12,8 @@ var KEYS = {
   72: 'h',
   74: 'j',
   75: 'k',
-  76: 'l'
+  76: 'l',
+  90: 'z'
 }
 
 function keys(keys) {
@@ -21,12 +22,13 @@ function keys(keys) {
       return
     }
     var name = KEYS[e.keyCode]
-    if (e.ctrlKey) name = 'ctrl ' + name
-    if (e.shiftKey) name = 'shift ' + name
     if (e.altKey) name = 'alt ' + name
+    if (e.shiftKey) name = 'shift ' + name
+    if (e.ctrlKey) name = 'ctrl ' + name
     if (!keys[name]) return
     if (keys[name].call(this, e) !== true) {
       e.preventDefault()
+      e.stopPropagation()
       return false
     }
   }
@@ -56,8 +58,15 @@ DefaultNode.prototype = {
     this.input.value = this.name;
     this.text.innerText = this.name;
     this.node.replaceChild(this.input, this.text)
-    this.input.focus();
+    // this.input.focus();
+    this.o.setEditing();
     this.input.selectionStart = this.input.selectionEnd = pl;
+  },
+  setData: function (data) {
+    if (data.name === this.name) return
+    this.name = data.name
+    this.input.value = data.name
+    this.text.innerText = data.name
   },
   setupNode: function () {
     this.node = document.createElement('div')
@@ -84,12 +93,12 @@ DefaultNode.prototype = {
   },
   stopEditing: function () {
     if (!this.editing) return
-    this.editing = false
     if (this.name != this.input.value) {
       this.text.innerText = this.input.value
       this.name = this.input.value
       this.o.changed('name', this.name)
     }
+    this.editing = false
     this.node.replaceChild(this.text, this.input)
     this.o.doneEditing();
   },
@@ -107,6 +116,12 @@ DefaultNode.prototype = {
     }.bind(this));
 
     var keyHandler = keys({
+      'ctrl z': function () {
+        this.o.undo()
+      },
+      'ctrl shift z': function () {
+        this.o.redo()
+      },
       'alt left': function () {
         this.o.toggleCollapse(true)
       },
@@ -147,6 +162,7 @@ DefaultNode.prototype = {
           this.input.value = this.name
           this.text.innerText = this.name
         }
+        this.blur()
         this.o.addAfter(rest)
       },
       backspace: function () {
@@ -164,7 +180,7 @@ DefaultNode.prototype = {
     }).bind(this)
 
     this.input.addEventListener('keydown', function (e) {
-      console.log(e.keyCode);
+      // console.log(e.keyCode);
       return keyHandler(e)
     }.bind(this))
 
