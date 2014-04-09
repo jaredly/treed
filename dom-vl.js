@@ -62,7 +62,7 @@ DomViewLayer.prototype = {
   },
   showSelection: function (selection) {
     if (!selection.length) return
-    ensureInView(this.dom[selection[0]].main)
+    ensureInView(this.dom[selection[0]].body.node)
     for (var i=0; i<selection.length; i++) {
       this.dom[selection[i]].main.classList.add('selected')
     }

@@ -9,7 +9,7 @@
 }
 
 .listless__item.collapsed .listless__default-node {
-  background-color: #eef;
+  /*background-color: #eef;*/
 }
 
 .listless__item.selected > .listless__body {

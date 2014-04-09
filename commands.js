@@ -71,12 +71,67 @@ var commands = {
   remove: {
     args: ['id'],
     apply: function (view, model) {
+      var below = model.nextSibling(this.id)
+      if (undefined === below) below = model.idAbove(this.id)
       this.saved = model.remove(this.id)
       view.remove(this.id)
+      view.startEditing(below)
     },
     undo: function (view, model) {
       var before = model.readd(this.saved)
       view.add(this.saved.node, before)
+    }
+  },
+  copy: {
+    args: ['id'],
+    apply: function (view, model) {
+      model.clipboard = model.dumpData(this.id, true)
+    },
+    undo: function (view, model) {
+    }
+  },
+  cut: {
+    args: ['id'],
+    apply: function (view, model) {
+      var below = model.nextSibling(this.id)
+      if (undefined === below) below = model.idAbove(this.id)
+      model.clipboard = model.dumpData(this.id, true)
+      this.saved = model.remove(this.id)
+      view.remove(this.id)
+      if (view.editing) {
+        view.startEditing(below)
+      } else {
+        view.setSelection([below])
+      }
+    },
+    undo: function (view, model) {
+      var before = model.readd(this.saved)
+      view.addTree(this.saved, before)
+    }
+  },
+  paste: {
+    args: ['id'],
+    apply: function (view, model) {
+      var cr = model.importData(this.id, model.clipboard)
+        , ed = view.editing
+      this.newid = cr.node.id
+      view.addTree(cr.node, cr.before)
+      view.setCollapsed(cr.node.parent, false)
+      model.setCollapsed(cr.node.parent, false)
+      if (ed) {
+        view.startEditing(this.newid)
+      } else {
+        view.setSelection([this.newid])
+      }
+    },
+    undo: function (view, model) {
+      this.saved = model.remove(this.newid)
+      model.clipboard = this.saved
+      view.remove(this.newid)
+    },
+    redo: function (view, model) {
+      var before = model.readd(this.saved)
+      view.addTree(this.saved.node, before)
     }
   },
   move: {

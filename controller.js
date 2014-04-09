@@ -14,6 +14,7 @@ function Controller(root, ids) {
                        this.model,
                        this)
   this.node = this.view.initialize(root, ids)
+  this.clipboard = null
   this.commands = []
   this.histpos = 0
   this.working = false
@@ -124,6 +125,16 @@ Controller.prototype = {
   actions: {
     undo: function () {this.undo()},
     redo: function () {this.redo()},
+    cut: function (id) {
+      this.executeCommands('cut', [id])
+    },
+    copy: function (id) {
+      this.executeCommands('copy', [id])
+    },
+    paste: function (id) {
+      if (!this.model.clipboard) return
+      this.executeCommands('paste', [id])
+    },
     changed: function (id, attr, value) {
       var data = {}
       data[attr] = value
@@ -194,7 +205,7 @@ Controller.prototype = {
     },
     toggleCollapse: function (id, yes) {
       if (arguments.length === 1) {
-        yes = !this.model.isCollapsed(id)
+        yes = !this.model.ids[id].children.length || !this.model.isCollapsed(id)
       }
       if (yes) {
         id = this.model.findCollapser(id)

@@ -31,6 +31,18 @@ View.prototype = {
 
   attachListeners: function () {
     var keydown = keys({
+      'ctrl x, delete': function () {
+        if (!this.selection.length) return
+        this.ctrl.actions.cut(this.selection[0])
+      },
+      'ctrl c': function () {
+        if (!this.selection.length) return
+        this.ctrl.actions.copy(this.selection[0])
+      },
+      'p, ctrl v': function () {
+        if (!this.selection.length) return
+        this.ctrl.actions.paste(this.selection[0])
+      },
       'return, a, shift a': function () {
         if (!this.selection.length) {
           this.selection = [this.root]
@@ -134,6 +146,9 @@ View.prototype = {
         this.setSelection([sib])
       },
       // movez!
+      'z': function () {
+        this.ctrl.actions.toggleCollapse(this.selection[0])
+      },
       'alt h, alt left': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
@@ -151,13 +166,13 @@ View.prototype = {
         // if (!this.model.hasChildren(this.selection[0]) || !this.model.isCollapsed(this.selection[0])) return
         // this.ctrl.executeCommands('collapse', [this.selection[0], false])
       },
-      'shift alt l, shift alt right': function () {
+      'tab, shift alt l, shift alt right': function () {
         if (!this.selection.length) {
           return this.setSelection([this.root])
         }
         this.ctrl.actions.moveRight(this.selection[0])
       },
-      'shift alt h, shift alt left': function () {
+      'shift tab, shift alt h, shift alt left': function () {
         this.shiftLeft()
       },
       'shift alt j, shift alt down': function () {
@@ -195,7 +210,13 @@ View.prototype = {
     this.ctrl.actions.moveLeft(this.selection[0])
   },
 
-
+  addTree: function (node, before) {
+    this.add(node, before)
+    if (!node.children.length) return
+    for (var i=0; i<node.children.length; i++) {
+      this.addTree(this.model.ids[node.children[i]], false)
+    }
+  },
 
   // operations
   add: function (node, before, dontfocus) {

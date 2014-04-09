@@ -10,6 +10,9 @@ var KEYS = {
   40: 'down',
   46: 'delete',
   65: 'a',
+  66: 'b',
+  67: 'c',
+  68: 'd',
   72: 'h',
   73: 'i',
   74: 'j',
@@ -154,10 +157,10 @@ DefaultNode.prototype = {
       'alt right': function () {
         this.o.toggleCollapse(false)
       },
-      'shift alt left': function () {
+      'shift tab, shift alt left': function () {
         this.o.moveLeft()
       },
-      'shift alt right': function () {
+      'tab, shift alt right': function () {
         this.o.moveRight()
       },
       'shift alt up': function () {
@@ -185,10 +188,6 @@ DefaultNode.prototype = {
           return this.o.goDown(true)
         }
         return true
-      },
-      'shift tab': function (e) {
-      },
-      tab: function (e) {
       },
       'return': function () {
         var ss = this.input.selectionStart

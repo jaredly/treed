@@ -4,7 +4,16 @@ function Model(root, ids, db) {
   this.root = root
   this.db = db
   this.nextid = 100
+  this.clipboard = false
 }
+
+/**
+ * A single node is
+ * - id:
+ * - parent: id
+ * - children: [id, id, id]
+ * - data: {}
+ */
 
 Model.prototype = {
   newid: function () {
@@ -16,7 +25,7 @@ Model.prototype = {
     return id
   },
 
-  dumpData: function (id) {
+  dumpData: function (id, noids) {
     if (arguments.length === 0) {
       id = this.root
     }
@@ -28,12 +37,50 @@ Model.prototype = {
     if (n.children.length) {
       res.children = []
       for (var i=0; i<n.children.length; i++) {
-        res.children.push(this.dumpData(n.children[i]))
+        res.children.push(this.dumpData(n.children[i], noids))
       }
     }
-    res.id = id
+    if (!noids) res.id = id
     res.collapsed = n.collapsed
     return res
+  },
+
+  importData: function (beforeId, data) {
+    var bnode = this.ids[beforeId]
+      , parent
+    if ((bnode.children.length && !bnode.collapsed) || !bnode.parent) {
+      pid = beforeId
+      parent = bnode
+      index = 0
+    } else {
+      pid = bnode.parent
+      parent = this.ids[pid]
+      index = parent.children.indexOf(beforeId) + 1
+    }
+
+    return this.createNodes(pid, index, data)
+    /*
+    var before = false
+    if (index < parent.children.length - 1) {
+      before = parent.children[index + 1]
+    }
+
+    return {
+      node: node,
+      before: beforeId
+    }
+    */
+  },
+
+  createNodes: function (pid, index, data) {
+    var cr = this.create(pid, index, data.name)
+    cr.node.collapsed = data.collapsed
+    if (data.children) {
+      for (var i=0; i<data.children.length; i++) {
+        this.createNodes(cr.node.id, i, data.children[i])
+      }
+    }
+    return cr
   },
 
   // operations
