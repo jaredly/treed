@@ -50,6 +50,8 @@ h1 {
 
 #example {
   display: flex;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 #d3view {
