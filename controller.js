@@ -221,6 +221,10 @@ Controller.prototype = {
       }
       this.executeCommands('collapse', [id, yes])
     },
+    addBefore: function (id, text) {
+      var nw = this.model.idNew(id, true)
+      this.executeCommands('newNode', [nw.pid, nw.index, text])
+    },
     addAfter: function (id, text) {
       var nw = this.model.idNew(id)
       this.executeCommands('newNode', [nw.pid, nw.index, text])
@@ -235,6 +239,10 @@ Controller.prototype = {
     },
     setEditing: 'view',
     doneEditing: 'view'
+  },
+  addBefore: function (id, text) {
+    var nw = this.model.idNew(id, true)
+    this.executeCommands('newNode', [nw.pid, nw.index, text])
   },
   addAfter: function (id, text) {
     var nw = this.model.idNew(id)

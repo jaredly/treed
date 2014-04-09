@@ -273,11 +273,14 @@ Model.prototype = {
     }
     return parent.children[ix + 1]
   },
-  idNew: function (id) {
+  idNew: function (id, before) {
     var pid = this.ids[id].parent
       , parent
       , nix
-    if (id === this.root ||
+    if (before) {
+      parent = this.ids[pid]
+      nix = parent.children.indexOf(id)
+    } else if (id === this.root ||
         (this.ids[id].children &&
         this.ids[id].children.length &&
         !this.ids[id].collapsed)) {

@@ -62,6 +62,7 @@ View.prototype = {
     'move to first sibling': 'shift alt [',
     'move to last sibling': 'shift alt ]',
     'new after': 'o',
+    'new before': 'shift o',
     'up': 'up, k',
     'down': 'down, j',
     'left': 'left, h',
@@ -76,7 +77,7 @@ View.prototype = {
     'move down': 'shift alt j, shift alt down',
     'move up': 'shift alt k, shift alt up',
     'undo': 'ctrl z, u',
-    'redo': 'ctrl shift z',
+    'redo': 'ctrl shift z, shift r',
   },
 
   actions: {
@@ -195,6 +196,11 @@ View.prototype = {
         return this.setSelection([this.root])
       }
       this.ctrl.actions.moveToBottom(this.selection[0])
+    },
+    'new before': function () {
+      if (!this.selection.length) return
+      this.ctrl.addBefore(this.selection[0])
+      this.startEditing()
     },
     'new after': function () {
       if (!this.selection.length) return

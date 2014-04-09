@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8">
     <style>
+      body {
+        font-family: sans-serif;
+      }
 
       .node {
         cursor: pointer;
@@ -33,6 +36,33 @@
     <link rel="stylesheet" href="index.css"/>
   </head>
   <body>
+    <h1>Treed</h1>
+    <h3>Generalized Tree Editing Component</h3>
+    <ul class="features">
+      <li>Unlimited Undo/Redo</li>
+      <li>VIM inspired keyboard shortcuts (normal &amp; insert modes)</li>
+      <li>Extensible and Configurable</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Action</th>
+          <th>Bindings</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Navigation</td><td class="binding">arrow keys, hjkl</td></tr>
+        <tr><td>Move Node</td><td class="binding">ctrl + alt + arrow, hjkl</td></tr>
+        <tr><td>Indent/Dedent</td><td class="binding">tab, shift tab</td></tr>
+        <tr><td>Collapse/Expand</td><td class="binding">alt + left/right, h/l, z (toggle)</td></tr>
+        <tr><td>Undo/Redo</td><td class="binding">ctrl + z, ctrl + shift + z, u, R</td></tr>
+        <tr><td>Edit mode</td><td class="binding">return, f2, a, A, i, I</td></tr>
+        <tr><td>Normal Mode</td><td class="binding">escape</td></tr>
+        <tr><td>Toggle Done</td><td class="binding">ctrl + return</td></tr>
+        <tr><td>New Node</td><td class="binding">o, O (before), return (in insert mode)</td></tr>
+      </tbody>
+    </table>
     <div id="editme"></div>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="default-node.js"></script>
