@@ -213,7 +213,6 @@ Controller.prototype = {
       } else {
         if (!this.model.hasChildren(id) || !this.model.isCollapsed(id)) return
       }
-      // this.view.toggleCollapse(tocollapse, yes)
       this.executeCommands('collapse', [id, yes])
     },
     addAfter: function (id, text) {
