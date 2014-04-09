@@ -44,7 +44,7 @@ You can also create your own "Node" class if you wanted to do more than just hav
 It works. Unlimited undo.
 
 ## Still under development
-I made this version in a weekend, so there's still some things to do :)
+I made this version in a weekend, so there are still some things to do :)
 
 - drag and drop
 - multi-line select
