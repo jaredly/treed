@@ -1,6 +1,6 @@
 {
   "name": "listless",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "The main component of an editor for hierarchical content. ",
   "main": "index.js",
   "scripts": {
