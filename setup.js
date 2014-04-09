@@ -23,6 +23,7 @@ function make_listed(data, nextid) {
     }
     delete data.children
   }
+  data.done = false
   ids[nextid] = {
     id: nextid,
     data: data,

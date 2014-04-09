@@ -31,6 +31,7 @@ View.prototype = {
       , rootNode = this.vl.makeNode(root, node.data, this.bindActions(root))
     this.populateChildren(root, ids)
     this.root = root
+    this.goTo(this.root)
     return rootNode
   },
   populateChildren: function (id, ids) {
@@ -41,11 +42,19 @@ View.prototype = {
       this.populateChildren(node.children[i], ids)
     }
   },
+  goTo: function (id) {
+    if (this.editing) {
+      this.startEditing(id)
+    } else {
+      this.setSelection([id])
+    }
+  },
 
   default_keys: {
     'cut': 'ctrl x, delete',
     'copy': 'ctrl c',
     'paste': 'p, ctrl v',
+    'toggle done': 'ctrl return',
     'edit': 'return, a, shift a, f2',
     'edit start': 'i, shift i',
     'first sibling': 'shift [',
@@ -83,6 +92,12 @@ View.prototype = {
       if (!this.selection.length) return
       this.ctrl.actions.paste(this.selection[0])
     },
+    'undo': function () {
+      this.ctrl.undo();
+    },
+    'redo': function () {
+      this.ctrl.redo();
+    },
     'edit': function () {
       if (!this.selection.length) {
         this.selection = [this.root]
@@ -95,6 +110,7 @@ View.prototype = {
       }
       this.vl.body(this.selection[0]).startEditing(true)
     },
+    // nav
     'first sibling': function () {
       if (!this.selection.length) {
         return this.setSelection([this.root])
@@ -110,23 +126,6 @@ View.prototype = {
       var last = this.model.lastSibling(this.selection[0])
       if (undefined === last) return
       this.setSelection([last])
-    },
-    'move to first sibling': function () {
-      if (!this.selection.length) {
-        return this.setSelection([this.root])
-      }
-      this.ctrl.actions.moveToTop(this.selection[0])
-    },
-    'move to last sibling': function () {
-      if (!this.selection.length) {
-        return this.setSelection([this.root])
-      }
-      this.ctrl.actions.moveToBottom(this.selection[0])
-    },
-    'new after': function () {
-      if (!this.selection.length) return
-      this.ctrl.addAfter(this.selection[0])
-      this.startEditing(this.selection[0])
     },
     'up': function () {
       var selection = this.selection
@@ -185,7 +184,33 @@ View.prototype = {
       if (undefined === sib) return
       this.setSelection([sib])
     },
+    'move to first sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveToTop(this.selection[0])
+    },
+    'move to last sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveToBottom(this.selection[0])
+    },
+    'new after': function () {
+      if (!this.selection.length) return
+      this.ctrl.addAfter(this.selection[0])
+      this.startEditing(this.selection[0])
+    },
     // movez!
+    'toggle done': function () {
+      if (!this.selection.length) return
+      var id = this.selection[0]
+        , done = !this.model.ids[id].data.done
+        , next = this.model.idBelow(id)
+      if (next === undefined) next = id
+      this.ctrl.actions.changed(this.selection[0], 'done', done)
+      this.goTo(next)
+    },
     'toggle collapse': function () {
       this.ctrl.actions.toggleCollapse(this.selection[0])
     },
@@ -224,13 +249,6 @@ View.prototype = {
         return this.setSelection([this.root])
       }
       this.ctrl.actions.moveUp(this.selection[0])
-    },
-    // changes
-    'undo': function () {
-      this.ctrl.undo();
-    },
-    'redo': function () {
-      this.ctrl.redo();
     }
   },
 

@@ -66,6 +66,12 @@
   cursor: pointer;
 }
 
+.listless__default-node--done,
+.listless__default-node--done input {
+  text-decoration: line-through;
+  color: #777;
+}
+
 .listless__default-node input {
   border: 1px dotted #ccc;
   padding: 2px 3px;

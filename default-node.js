@@ -2,6 +2,7 @@
 function DefaultNode(data, options) {
   this.name = data.name
   this.o = options
+  this.o.keybindings = merge(this.default_keys, options.keys)
 
   this.editing = false
   this.setupNode();
@@ -28,10 +29,19 @@ DefaultNode.prototype = {
     this.input.selectionStart = this.input.selectionEnd = pl;
   },
   setData: function (data) {
-    if (data.name === this.name) return
-    this.name = data.name
-    this.input.value = data.name
-    this.text.innerText = data.name
+    if (undefined !== data.name && data.name !== this.name) {
+      this.name = data.name
+      this.input.value = data.name
+      this.text.innerText = data.name
+    }
+    if (undefined !== data.done) {
+      this.done = data.done
+      if (data.done) {
+        this.node.classList.add('listless__default-node--done')
+      } else {
+        this.node.classList.remove('listless__default-node--done')
+      }
+    }
   },
   setupNode: function () {
     this.node = document.createElement('div')
@@ -67,6 +77,104 @@ DefaultNode.prototype = {
     this.node.replaceChild(this.text, this.input)
     this.o.doneEditing();
   },
+
+  default_keys: {
+    'undo': 'ctrl z',
+    'redo': 'ctrl shift z',
+    'collapse': 'alt left',
+    'uncollapse': 'alt right',
+    'dedent': 'shift tab, shift alt left',
+    'indent': 'tab, shift alt right',
+    'move up': 'shift alt up',
+    'move down': 'shift alt down',
+    'toggle done': 'ctrl return',
+    'up': 'up',
+    'down': 'down',
+    'left': 'left',
+    'right': 'right',
+    'add after': 'return',
+    'merge up': 'backspace',
+    'stop editing': 'escape',
+  },
+
+  actions: {
+    'toggle done': function () {
+      this.blur()
+      this.o.changed('done', !this.done)
+      this.focus()
+      this.o.goDown()
+    },
+    'undo': function () {
+      this.o.undo()
+    },
+    'redo': function () {
+      this.o.redo()
+    },
+    'collapse': function () {
+      this.o.toggleCollapse(true)
+    },
+    'uncollapse': function () {
+      this.o.toggleCollapse(false)
+    },
+    'dedent': function () {
+      this.o.moveLeft()
+    },
+    'indent': function () {
+      this.o.moveRight()
+    },
+    'move up': function () {
+      this.o.moveUp()
+    },
+    'move down': function () {
+      this.o.moveDown()
+    },
+    'up': function () {
+      this.o.goUp();
+    },
+    'down': function () {
+      this.o.goDown()
+    },
+    'left': function () {
+      var ss = this.input.selectionStart
+      if (ss === 0) {
+        return this.o.goUp()
+      }
+      return true
+    },
+    'right': function () {
+      var ss = this.input.selectionStart
+      if (ss === this.input.value.length) {
+        return this.o.goDown(true)
+      }
+      return true
+    },
+    'add after': function () {
+      var ss = this.input.selectionStart
+        , name = this.input.value
+        , rest = null
+      if (ss < name.length) {
+        rest = name.slice(ss)
+        this.name = name.slice(0, ss)
+        this.input.value = this.name
+        this.text.innerText = this.name
+      }
+      this.blur()
+      this.o.addAfter(rest)
+    },
+    'merge up': function () {
+      if (!this.input.value) {
+        return this.o.remove()
+      }
+      if (this.input.selectionStart == this.input.selectionEnd && this.input.selectionStart === 0) {
+        return this.o.remove(this.input.value)
+      }
+      return true
+    },
+    'stop editing': function () {
+      this.stopEditing();
+    }
+  },
+
   registerListeners: function () {
     this.text.addEventListener('mousedown', function (e) {
       this.startEditing();
@@ -79,83 +187,18 @@ DefaultNode.prototype = {
       e.preventDefault()
       return false
     }.bind(this));
+    
+    var actions = {}
+    for (var name in this.o.keybindings) {
+      actions[this.o.keybindings[name]] = this.actions[name]
+    }
 
-    var keyHandler = keys({
-      'ctrl z': function () {
-        this.o.undo()
-      },
-      'ctrl shift z': function () {
-        this.o.redo()
-      },
-      'alt left': function () {
-        this.o.toggleCollapse(true)
-      },
-      'alt right': function () {
-        this.o.toggleCollapse(false)
-      },
-      'shift tab, shift alt left': function () {
-        this.o.moveLeft()
-      },
-      'tab, shift alt right': function () {
-        this.o.moveRight()
-      },
-      'shift alt up': function () {
-        this.o.moveUp()
-      },
-      'shift alt down': function () {
-        this.o.moveDown()
-      },
-      up: function () {
-        this.o.goUp();
-      },
-      down: function () {
-        this.o.goDown()
-      },
-      left: function () {
-        var ss = this.input.selectionStart
-        if (ss === 0) {
-          return this.o.goUp()
-        }
-        return true
-      },
-      right: function () {
-        var ss = this.input.selectionStart
-        if (ss === this.input.value.length) {
-          return this.o.goDown(true)
-        }
-        return true
-      },
-      'return': function () {
-        var ss = this.input.selectionStart
-          , name = this.input.value
-          , rest = null
-        if (ss < name.length) {
-          rest = name.slice(ss)
-          this.name = name.slice(0, ss)
-          this.input.value = this.name
-          this.text.innerText = this.name
-        }
-        this.blur()
-        this.o.addAfter(rest)
-      },
-      backspace: function () {
-        if (!this.input.value) {
-          return this.o.remove()
-        }
-        if (this.input.selectionStart == this.input.selectionEnd && this.input.selectionStart === 0) {
-          return this.o.remove(this.input.value)
-        }
-        return true
-      },
-      escape: function () {
-        this.stopEditing();
-      }
-    }).bind(this)
+    var keyHandler = keys(actions).bind(this)
 
     this.input.addEventListener('keydown', function (e) {
       // console.log(e.keyCode);
       return keyHandler(e)
-    }.bind(this))
+    })
 
   }
 }

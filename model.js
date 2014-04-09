@@ -87,7 +87,7 @@ Model.prototype = {
   create: function (pid, index, text) {
     var node = {
       id: this.newid(),
-      data: {name: text || ''},
+      data: {name: text || '', done: false},
       parent: pid,
       children: []
     }

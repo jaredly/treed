@@ -13,10 +13,12 @@ var commands = {
     apply: function (view, model) {
       model.setCollapsed(this.id, this.doCollapse)
       view.setCollapsed(this.id, this.doCollapse)
+      view.goTo(this.id)
     },
     undo: function (view, model) {
       model.setCollapsed(this.id, !this.doCollapse)
       view.setCollapsed(this.id, !this.doCollapse)
+      view.goTo(this.id)
     },
   },
   newNode: {
@@ -62,10 +64,12 @@ var commands = {
       this.olddata = copy(model.ids[this.id].data)
       model.setData(this.id, this.newdata)
       view.setData(this.id, this.newdata)
+      view.goTo(this.id)
     },
     undo: function (view, model) {
       model.setData(this.id, this.olddata)
       view.setData(this.id, this.olddata)
+      view.goTo(this.id)
     }
   },
   remove: {
@@ -143,11 +147,13 @@ var commands = {
       var parent = model.ids[this.opid]
         , lastchild = parent.children.length === 0
       view.move(this.id, this.pid, before, this.opid, lastchild)
+      view.goTo(this.id)
     },
     undo: function (view, model) {
       var before = model.move(this.id, this.opid, this.oindex)
         , lastchild = model.ids[this.pid].children.length === 0
       view.move(this.id, this.opid, before, this.pid, lastchild)
+      view.goTo(this.id)
     }
   }
 }
