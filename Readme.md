@@ -5,7 +5,7 @@ Treed wants to be for tree editing what ace is for text editing. Extensible, cus
 
 [Play with a demo](http://jaredly.github.io/treed/)
 
-[![screenshot](screenshot.png)](http://jaredly.github.io/treed/)
+[![screenshot](docs/screenshot.png)](http://jaredly.github.io/treed/)
 
 ## Features
 
