@@ -46,8 +46,11 @@ Controller.prototype = {
     for (var i=0; i<cmds.length; i++) {
       this.doCommand(cmds[i])
     }
-    for (var item in this.listeners.change) {
-      this.listeners.change[item]()
+    this.trigger('change')
+  },
+  trigger: function (what) {
+    for (var item in this.listeners[what]) {
+      this.listeners[what][item]()
     }
   },
   on: function (what, cb) {
@@ -68,6 +71,7 @@ Controller.prototype = {
       this.undoCommand(cmds[i])
     }
     this.histpos += 1
+    this.trigger('change')
     return true
   },
   redo: function () {
@@ -81,6 +85,7 @@ Controller.prototype = {
       this.redoCommand(cmds[i])
     }
     this.histpos -= 1
+    this.trigger('change')
     return true
   },
   doCommand: function (cmd) {

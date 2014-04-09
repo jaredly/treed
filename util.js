@@ -28,6 +28,7 @@ function make_listed(data, nextid, collapse) {
     if (name === 'children') continue
     ndata[name] = data[name]
   }
+  ndata.done = false
   ids[nextid] = {
     id: nextid,
     data: ndata,
