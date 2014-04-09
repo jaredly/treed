@@ -55,6 +55,11 @@ function start(flare) {
 
 d3.select(self.frameElement).style("height", "800px");
 
+var COLORS = {
+  done: '#0f0',
+  parent: 'lightsteelblue'
+}
+
 function update(source, setCollapsed) {
 
   // Compute the new tree layout.
@@ -81,8 +86,12 @@ function update(source, setCollapsed) {
 
   nodeEnter.append("circle")
       .attr("r", 1e-6)
+      .style('stroke', function (d) {
+        return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
+      })
       .style("fill", function(d) {
-        return d.hidesChildren ? "lightsteelblue" : "#fff";
+        if (d.done) return COLORS.done
+        return d.hidesChildren ? COLORS.parent: "#fff";
       });
 
   nodeEnter.append("text")
@@ -101,8 +110,12 @@ function update(source, setCollapsed) {
 
   nodeUpdate.select("circle")
       .attr("r", 4.5)
+      .style('stroke', function (d) {
+        return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
+      })
       .style("fill", function(d) {
-        return d.hidesChildren ? "lightsteelblue" : "#fff";
+        if (d.done) return COLORS.done
+        return d.hidesChildren ? COLORS.parent: "#fff";
       });
 
   nodeUpdate.select("text")
