@@ -1,0 +1,69 @@
+
+body {
+  text-align: center;
+}
+
+h1 {
+  font-family: monospace;
+  font-size: 60px;
+  margin-bottom: 10px;
+}
+
+.features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.features li {
+  padding: 4px 0;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+#bindings td.binding {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+#bindings {
+  text-align: left;
+  width: 400px;
+  margin: 0 auto;
+  border: 1px solid #ccc;
+  border-collapse: collapse;
+  margin-top: 15px;
+  margin-bottom: 20px;
+}
+
+#bindings th {
+  text-align: center;
+
+}
+#bindings td {
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-family: "arial";
+  font-size: 16px;
+}
+
+#example {
+  display: flex;
+}
+
+#d3view {
+  overflow-x: auto;
+}
+
+#editme {
+  text-align: left;
+  width: 600px;
+  border-right: 1px solid #ccc;
+  padding-right: 10px;
+}
+
+.explanation {
+  width: 500px;
+  margin: 20px auto;
+}
