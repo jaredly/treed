@@ -6,6 +6,7 @@ docs:
 	cp -r demo d
 	cp -r lib l
 	git co gh-pages
+	rm d/lib
 	mv d/* ./
 	mv l lib
 	rm -rf d
