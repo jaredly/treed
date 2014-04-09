@@ -79,7 +79,7 @@ var commands = {
     },
     undo: function (view, model) {
       var before = model.readd(this.saved)
-      view.add(this.saved.node, before)
+      view.addTree(this.saved.node, before)
     }
   },
   copy: {
@@ -106,7 +106,7 @@ var commands = {
     },
     undo: function (view, model) {
       var before = model.readd(this.saved)
-      view.addTree(this.saved, before)
+      view.addTree(this.saved.node, before)
     }
   },
   paste: {

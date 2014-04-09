@@ -1,10 +1,23 @@
 
+function merge(a, b) {
+  var c = {}
+  for (var name in a) {
+    c[name] = a[name]
+  }
+  for (var name in b) {
+    c[name] = b[name]
+  }
+  return c
+}
+
 function View(bindActions, model, ctrl, options) {
+  options = options || {}
   this.selection = {}
   this.editing = false
   this.o = extend({
-    node: DefaultNode
+    node: DefaultNode,
   }, options)
+  this.o.keybindings = merge(this.default_keys, options.keys)
   this.vl = new DomViewLayer(this.o)
   this.bindActions = bindActions
   this.model = model
@@ -29,185 +42,208 @@ View.prototype = {
     }
   },
 
-  attachListeners: function () {
-    var keydown = keys({
-      'ctrl x, delete': function () {
-        if (!this.selection.length) return
-        this.ctrl.actions.cut(this.selection[0])
-      },
-      'ctrl c': function () {
-        if (!this.selection.length) return
-        this.ctrl.actions.copy(this.selection[0])
-      },
-      'p, ctrl v': function () {
-        if (!this.selection.length) return
-        this.ctrl.actions.paste(this.selection[0])
-      },
-      'return, a, shift a': function () {
-        if (!this.selection.length) {
-          this.selection = [this.root]
-        }
-        this.vl.body(this.selection[0]).startEditing()
-      },
-      'i, shift i': function () {
-        if (!this.selection.length) {
-          this.selection = [this.root]
-        }
-        this.vl.body(this.selection[0]).startEditing(true)
-      },
-      'shift [': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        var first = this.model.firstSibling(this.selection[0])
-        if (undefined === first) return
-        this.setSelection([first])
-      },
-      'shift ]': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        var last = this.model.lastSibling(this.selection[0])
-        if (undefined === last) return
-        this.setSelection([last])
-      },
-      'shift alt [': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.moveToTop(this.selection[0])
-      },
-      'shift alt ]': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.moveToBottom(this.selection[0])
-      },
-      o: function () {
-        if (!this.selection.length) return
-        this.ctrl.addAfter(this.selection[0])
-        this.startEditing(this.selection[0])
-      },
-      'up, k': function () {
-        var selection = this.selection
-        if (!selection.length) {
-          this.setSelection([this.root])
-        } else {
-          var top = selection[0]
-            , above = this.model.idAbove(top)
-          if (above === undefined) above = top
-          this.setSelection([above])
-        }
-      },
-      'down, j': function () {
-        var selection = this.selection
-        if (!selection.length) {
-          this.setSelection([this.root])
-        } else {
-          var top = selection[0]
-            , above = this.model.idBelow(top)
-          if (above === undefined) above = top
-          this.setSelection([above])
-        }
-      },
-      'left, h': function () {
-        var selection = this.selection
-        if (!selection.length) {
-          return this.setSelection([this.root])
-        }
-        var left = this.model.getParent(this.selection[0])
-        if (undefined === left) return
-        this.setSelection([left])
-      },
-      'right, l': function () {
-        var selection = this.selection
-        if (!selection.length) {
-          return this.setSelection([this.root])
-        }
-        var right = this.model.getChild(this.selection[0])
-        if (this.model.isCollapsed(this.selection[0])) return
-        if (undefined === right) return
-        this.setSelection([right])
-      },
-      'alt j, alt down': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        var sib = this.model.nextSibling(this.selection[0])
-        if (undefined === sib) return
-        this.setSelection([sib])
-      },
-      'alt k, alt up': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        var sib = this.model.prevSibling(this.selection[0])
-        if (undefined === sib) return
-        this.setSelection([sib])
-      },
-      // movez!
-      'z': function () {
-        this.ctrl.actions.toggleCollapse(this.selection[0])
-      },
-      'alt h, alt left': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.toggleCollapse(this.selection[0], true)
-        // var id = this.model.findCollapser(this.selection[0])
-        // if (this.model.isCollapsed(id)) return
-        // this.ctrl.executeCommands('collapse', [id, true])
-      },
-      'alt l, alt right': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.toggleCollapse(this.selection[0], false)
-        // if (!this.model.hasChildren(this.selection[0]) || !this.model.isCollapsed(this.selection[0])) return
-        // this.ctrl.executeCommands('collapse', [this.selection[0], false])
-      },
-      'tab, shift alt l, shift alt right': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.moveRight(this.selection[0])
-      },
-      'shift tab, shift alt h, shift alt left': function () {
-        this.shiftLeft()
-      },
-      'shift alt j, shift alt down': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.moveDown(this.selection[0])
-      },
-      'shift alt k, shift alt up': function () {
-        if (!this.selection.length) {
-          return this.setSelection([this.root])
-        }
-        this.ctrl.actions.moveUp(this.selection[0])
-      },
-      'f2': function () {
-        this.startEditing()
-      },
-      // changes
-      'ctrl z, u': function () {
-        this.ctrl.undo();
-      },
-      'ctrl shift z': function () {
-        this.ctrl.redo();
+  default_keys: {
+    'cut': 'ctrl x, delete',
+    'copy': 'ctrl c',
+    'paste': 'p, ctrl v',
+    'edit': 'return, a, shift a, f2',
+    'edit start': 'i, shift i',
+    'first sibling': 'shift [',
+    'last sibling': 'shift ]',
+    'move to first sibling': 'shift alt [',
+    'move to last sibling': 'shift alt ]',
+    'new after': 'o',
+    'up': 'up, k',
+    'down': 'down, j',
+    'left': 'left, h',
+    'right': 'right, l',
+    'next sibling': 'alt j, alt down',
+    'prev sibling': 'alt k, alt up',
+    'toggle collapse': 'z',
+    'collapse': 'alt h, alt left',
+    'uncollapse': 'alt l, alt right',
+    'indent': 'tab, shift alt l, shift alt right',
+    'dedent': 'shift tab, shift alt h, shift alt left',
+    'move down': 'shift alt j, shift alt down',
+    'move up': 'shift alt k, shift alt up',
+    'undo': 'ctrl z, u',
+    'redo': 'ctrl shift z',
+  },
+
+  actions: {
+    'cut': function () {
+      if (!this.selection.length) return
+      this.ctrl.actions.cut(this.selection[0])
+    },
+    'copy': function () {
+      if (!this.selection.length) return
+      this.ctrl.actions.copy(this.selection[0])
+    },
+    'paste': function () {
+      if (!this.selection.length) return
+      this.ctrl.actions.paste(this.selection[0])
+    },
+    'edit': function () {
+      if (!this.selection.length) {
+        this.selection = [this.root]
       }
-    })
+      this.vl.body(this.selection[0]).startEditing()
+    },
+    'edit start': function () {
+      if (!this.selection.length) {
+        this.selection = [this.root]
+      }
+      this.vl.body(this.selection[0]).startEditing(true)
+    },
+    'first sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      var first = this.model.firstSibling(this.selection[0])
+      if (undefined === first) return
+      this.setSelection([first])
+    },
+    'last sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      var last = this.model.lastSibling(this.selection[0])
+      if (undefined === last) return
+      this.setSelection([last])
+    },
+    'move to first sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveToTop(this.selection[0])
+    },
+    'move to last sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveToBottom(this.selection[0])
+    },
+    'new after': function () {
+      if (!this.selection.length) return
+      this.ctrl.addAfter(this.selection[0])
+      this.startEditing(this.selection[0])
+    },
+    'up': function () {
+      var selection = this.selection
+      if (!selection.length) {
+        this.setSelection([this.root])
+      } else {
+        var top = selection[0]
+          , above = this.model.idAbove(top)
+        if (above === undefined) above = top
+        this.setSelection([above])
+      }
+    },
+    'down': function () {
+      var selection = this.selection
+      if (!selection.length) {
+        this.setSelection([this.root])
+      } else {
+        var top = selection[0]
+          , above = this.model.idBelow(top)
+        if (above === undefined) above = top
+        this.setSelection([above])
+      }
+    },
+    'left': function () {
+      var selection = this.selection
+      if (!selection.length) {
+        return this.setSelection([this.root])
+      }
+      var left = this.model.getParent(this.selection[0])
+      if (undefined === left) return
+      this.setSelection([left])
+    },
+    'right': function () {
+      var selection = this.selection
+      if (!selection.length) {
+        return this.setSelection([this.root])
+      }
+      var right = this.model.getChild(this.selection[0])
+      if (this.model.isCollapsed(this.selection[0])) return
+      if (undefined === right) return
+      this.setSelection([right])
+    },
+    'next sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      var sib = this.model.nextSibling(this.selection[0])
+      if (undefined === sib) return
+      this.setSelection([sib])
+    },
+    'prev sibling': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      var sib = this.model.prevSibling(this.selection[0])
+      if (undefined === sib) return
+      this.setSelection([sib])
+    },
+    // movez!
+    'toggle collapse': function () {
+      this.ctrl.actions.toggleCollapse(this.selection[0])
+    },
+    'collapse': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.toggleCollapse(this.selection[0], true)
+    },
+    'uncollapse': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.toggleCollapse(this.selection[0], false)
+    },
+    'indent': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveRight(this.selection[0])
+    },
+    'dedent': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveLeft(this.selection[0])
+    },
+    'move down': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveDown(this.selection[0])
+    },
+    'move up': function () {
+      if (!this.selection.length) {
+        return this.setSelection([this.root])
+      }
+      this.ctrl.actions.moveUp(this.selection[0])
+    },
+    // changes
+    'undo': function () {
+      this.ctrl.undo();
+    },
+    'redo': function () {
+      this.ctrl.redo();
+    }
+  },
+
+  attachListeners: function () {
+    var actions = {}
+    for (var name in this.o.keybindings) {
+      actions[this.o.keybindings[name]] = this.actions[name]
+    }
+    var keydown = keys(actions)
     window.addEventListener('keydown', function (e) {
-      if (this.editing) return // do I really want to skip this?
+      if (this.editing) return
       keydown.call(this, e)
     }.bind(this))
-  },
-  shiftLeft: function () {
-    if (!this.selection.length) {
-      return this.setSelection([this.root])
-    }
-    this.ctrl.actions.moveLeft(this.selection[0])
   },
 
   addTree: function (node, before) {
@@ -237,6 +273,11 @@ View.prototype = {
     var ix = this.selection.indexOf(id)
     if (ix !== -1) {
       this.selection.splice(ix, 1)
+      if (this.selection.length == 0) {
+        this.setSelection([this.root])
+      } else {
+        this.setSelection(this.selection)
+      }
     }
   },
   setData: function (id, data) {

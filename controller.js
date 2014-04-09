@@ -126,6 +126,7 @@ Controller.prototype = {
     undo: function () {this.undo()},
     redo: function () {this.redo()},
     cut: function (id) {
+      if (id === this.view.root) return
       this.executeCommands('cut', [id])
     },
     copy: function (id) {
@@ -220,6 +221,7 @@ Controller.prototype = {
       this.executeCommands('newNode', [nw.pid, nw.index, text])
     },
     remove: function (id, addText) {
+      if (id === this.view.root) return
       var before = this.model.idAbove(id)
       this.executeCommands(
         'remove', [id],
