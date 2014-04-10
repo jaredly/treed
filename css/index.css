@@ -120,6 +120,11 @@
   opacity: .2;
 }
 
+.listless__item.dropping,
+.listless__item.dropping-child > .listless__head {
+  outline: 2px solid #afc;
+}
+
 .listless__item.moving {
   background-color: #eee;
   opacity: .5;
