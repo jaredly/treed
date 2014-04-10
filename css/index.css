@@ -115,7 +115,7 @@
 }
 
 .listless__drop-shadow {
-  position: absolute;
+  position: fixed;
   background-color: black;
   opacity: .2;
 }
