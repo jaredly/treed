@@ -5,13 +5,15 @@ test:
 docs:
 	cp -r demo d
 	cp -r lib l
+	cp -r css c
 	git co gh-pages
 	rm d/lib
 	mv d/* ./
 	mv l lib
+	mv c css
 	rm -rf d
 	git add .
-	git add lib
+	git add lib css
 	git commit -a
 
 .PHONY: docs test
