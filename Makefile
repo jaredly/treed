@@ -7,7 +7,7 @@ docs:
 	cp -r lib l
 	cp -r css c
 	git co gh-pages
-	rm d/lib
+	rm d/lib d/css
 	mv d/* ./
 	mv l lib
 	mv c css
