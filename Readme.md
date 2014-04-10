@@ -43,12 +43,27 @@ You can also create your own "Node" class if you wanted to do more than just hav
 ### Undo/Redo
 It works. Unlimited undo.
 
+## Drag and Drop
+I'm still tinkering with the interaction on this. Should I let you drop as children of nodes that have no children?
+
 ## Still under development
 I made this version in a weekend, so there are still some things to do :)
 
-- drag and drop
-- multi-line select
+- multi-line select (cut/copy/paste multiple, not necessarily contiguous)
 - api docs
 - testing (js + browser)
+
+## Future Awesomeness
+
+I want to implement a view layer similar to each of the following sevices:
+
+- workflowy
+- trello
+- a whiteboard
+- ginko
+- mindmap
+
+And hook them all to the same model, allowing you to switch between contexts. And then hook it all up to a database (firebase or hood.ie or pouchdb or leveldb?).
+I think it will be exactly what I've always wanted; we'll see.
 
 
