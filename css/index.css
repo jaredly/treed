@@ -1,0 +1,142 @@
+
+#main {
+  padding-left: 20px;
+}
+
+.listless__item {
+  list-style: none;
+  padding-left: 20px;
+  position: relative;
+}
+
+.listless__item.collapsed .listless__default-node {
+  /*background-color: #eef;*/
+}
+
+.listless__item.selected > .listless__head .listless__body {
+  background-color: #afc;
+}
+
+.listless__item.collapsed .listless__children {
+  display: none;
+}
+
+.listless__item--parent {
+  /*border-left: 1px solid black;*/
+}
+
+.listless__collapser {
+  position: relative;
+  display: none;
+  cursor: pointer;
+}
+
+.listless__item--parent > .listless__head .listless__collapser {
+  display: block;
+}
+
+.listless__collapser::before {
+  content: "-";
+  position: absolute;
+  left: 6px;
+  top: -1px;
+  font-weight: bold;
+  font-family: monospace;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.listless__item.collapsed .listless__collapser::before {
+  content: "+";
+}
+
+.listless__children {
+  padding: 0;
+  margin: 0;
+}
+
+.listless__default-node {
+  min-height: 20px;
+  display: flex;
+  padding-left: 20px;
+  flex-direction: column;
+}
+
+.listless__head:hover {
+  background-color: #eee;
+  cursor: pointer;
+}
+
+.listless__default-node--done,
+.listless__default-node--done input {
+  text-decoration: line-through;
+  color: #777;
+}
+
+.listless__default-node input {
+  border: 1px dotted #ccc;
+  padding: 2px 3px;
+  margin: 0;
+  display: block;
+  font-size: 16px;
+  font-family: sans-serif;
+  background-color: #7d9;
+}
+
+.listless__default-node input:focus {
+  outline: none
+}
+
+.listless__default-node div {
+  padding: 3px 4px;
+  font-size: 16px;
+  display: block;
+  font-family: sans-serif;
+}
+
+/** moving **/
+
+.listless__mover {
+  position: absolute;
+  padding: 3px 5px;
+  display: none;
+  cursor: move;
+  right: 0;
+  top: 0;
+}
+
+.listless__mover::before {
+  content: 'M';
+  font-weight: bold;
+}
+
+.listless__head:hover .listless__mover {
+  display: block;
+}
+
+.listless__drop-shadow {
+  position: fixed;
+  background-color: black;
+  opacity: .2;
+}
+
+.listless__item.dropping,
+.listless__item.dropping-child > .listless__head {
+  outline: 2px solid #afc;
+}
+
+.listless__item.moving {
+  background-color: #eee;
+  opacity: .5;
+}
+
+.listless.moving .listless__head:hover {
+  background-color: transparent;
+}
+
+.listless.moving .listless__head:hover .listless__mover {
+  display: none;
+}
+
+
+

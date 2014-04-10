@@ -33,7 +33,7 @@
       }
 
     </style>
-    <link rel="stylesheet" href="index.css"/>
+    <link rel="stylesheet" href="css/index.css"/>
     <link rel="stylesheet" href="d3.css"/>
   </head>
   <body>
@@ -44,7 +44,9 @@
       <li>VIM Inspired Keyboard Navigation</li>
       <li>Extensible and Configurable</li>
       <li>Unlimited Undo/Redo</li>
+      <li>Drag and Drop</li>
     </ul>
+
 
     <table id="bindings">
       <thead>
@@ -66,14 +68,14 @@
         <tr><td>Cut/Copy/Paste</td><td class="binding">ctrl + x / delete, ctrl + c, ctrl + v</td></tr>
       </tbody>
     </table>
-      <p class="explanation">
-          Here is an example of a treed instance hooked up to a d3 tree viewer. The d3 code is adapted from <a href="http://bl.ocks.org/mbostock/4339083" target="_blank">this example</a> by mbostock.
-      </p>
-      <div id="example">
-        <div id="editme"></div>
-          <div id="d3view"></div>
-      </div>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <p class="explanation">
+      Here is an example of a treed instance hooked up to a d3 tree viewer. The d3 code is adapted from <a href="http://bl.ocks.org/mbostock/4339083" target="_blank">this example</a> by mbostock.
+    </p>
+    <div id="example">
+      <div id="editme"></div>
+        <div id="d3view"></div>
+    </div>
+    <script src="d3.v3.min.js"></script>
     <script src="lib/default-node.js"></script>
 
     <script src="lib/commands.js"></script>
