@@ -62,7 +62,7 @@
   flex-direction: column;
 }
 
-.listless__default-node:hover {
+.listless__head:hover {
   background-color: #eee;
   cursor: pointer;
 }
@@ -101,6 +101,8 @@
   padding: 3px 5px;
   display: none;
   cursor: move;
+  right: 0;
+  top: 0;
 }
 
 .listless__mover::before {
@@ -115,7 +117,20 @@
 .listless__drop-shadow {
   position: absolute;
   background-color: black;
-  opactiy: .2;
+  opacity: .2;
+}
+
+.listless__item.moving {
+  background-color: #eee;
+  opacity: .5;
+}
+
+.listless.moving .listless__head:hover {
+  background-color: transparent;
+}
+
+.listless.moving .listless__head:hover .listless__mover {
+  display: none;
 }
 
 
