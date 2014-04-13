@@ -3,11 +3,13 @@ function WFController(root, ids, options) {
   options = merge({
     Model: WFModel,
     viewOptions: {
-      ViewLayer: WFVL
+      ViewLayer: WFVL,
+      noSelectRoot: true
     },
     onBullet: function () {}
   }, options)
   Controller.call(this, root, ids, options)
+  this.o.onBullet(this.model.getLineage(root))
 }
 
 WFController.prototype = Object.create(Controller.prototype)

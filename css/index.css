@@ -17,7 +17,7 @@
   background-color: #afc;
 }
 
-.listless__item.collapsed .listless__children {
+.listless__item.collapsed > .listless__children {
   display: none;
 }
 

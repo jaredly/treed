@@ -6,20 +6,21 @@ var base = document.getElementById('example')
   , ctrl = new WFController(data.id, data.tree, {onBullet: onBullet})
 base.appendChild(ctrl.node)
 
-ctrl.on('bullet', function (id) {
-  console.log('bulletme!', id)
-})
-
 
 function onBullet(lineage) {
   bread.innerHTML = ''
-  lineage.forEach(function (item) {
+  lineage.forEach(function (item, i) {
     var d = document.createElement('div')
+    d.classList.add('listless__bread')
     bread.appendChild(d)
-    d.innerText = item.name
-    d.addEventListener('mousedown', function () {
-      ctrl.actions.clickBullet(item.id)
-    })
+    d.textContent = item.name
+    if (i === lineage.length - 1) {
+      d.classList.add('listless__bread--last')
+    } else {
+      d.addEventListener('mousedown', function () {
+        ctrl.actions.clickBullet(item.id)
+      })
+    }
   })
 }
 
