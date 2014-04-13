@@ -84,16 +84,18 @@ body {
   display: inline-block;
   margin: 0 5px 0 0;
   padding: 5px 10px;
-  border-radius: 10px;
   cursor: default;
   position: relative;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
 }
 .listless__bread:not(:last-child):after {
+  position: absolute;
   content: '\00bb';
-  right: -5px;
+  right: -6px;
   top: 5px;
 }
 .listless__bread:not(:last-child):hover {
-  font-weight: bold;
-  cursor: pointer;
+  border-color: #ccc;
 }
