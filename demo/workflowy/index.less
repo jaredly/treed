@@ -30,7 +30,7 @@ body {
 .listless__bullet {
   position: absolute;
   padding: 3px;
-  left: 45px;
+  left: 24px;
   font-size: 25px;
   line-height: 18px;
   overflow: hidden;
@@ -49,7 +49,7 @@ body {
   font-size: 40px;
   line-height: 14px;
   margin-top: 2px;
-  left: 42px;
+  left: 22px;
   overflow: hidden;
   color: #777;
 }
@@ -109,11 +109,20 @@ body {
   padding: 5px 10px;
   border-radius: 10px;
   cursor: default;
-}
+  position: relative;
 
-.listless__bread:not(.listless__bread--last):hover {
-  background-color: #def;
-  cursor: pointer;
+  &:not(:last-child) {
+    &:after {
+      content: '\00bb';
+      right: -5px;
+      top: 5px;
+    }
+
+    &:hover {
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
 }
 
 

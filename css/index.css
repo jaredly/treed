@@ -9,7 +9,7 @@
   position: relative;
 }
 
-.listless__item.collapsed .listless__default-node {
+.listless__item.collapsed .listless__body {
   /*background-color: #eef;*/
 }
 
@@ -55,16 +55,20 @@
   margin: 0;
 }
 
-.listless__default-node {
+.listless__body {
   min-height: 20px;
   display: flex;
   padding-left: 20px;
   flex-direction: column;
 }
 
-.listless__head:hover {
-  background-color: #eee;
-  cursor: pointer;
+.listless__body:hover {
+  border-radius: 10px;
+  background-color: #ccc;
+}
+
+.listless__head {
+  position: relative;
 }
 
 .listless__default-node--done,
@@ -73,7 +77,7 @@
   color: #777;
 }
 
-.listless__default-node input {
+.listless__body input {
   border: none;
   margin: 0;
   display: block;
@@ -84,11 +88,11 @@
   border-radius: 10px;
 }
 
-.listless__default-node input:focus {
+.listless__body input:focus {
   outline: none
 }
 
-.listless__default-node div {
+.listless__body div {
   padding: 3px 7px;
   min-height: 18px;
   font-size: 16px;
@@ -103,8 +107,9 @@
   padding: 3px 5px;
   display: none;
   cursor: move;
-  right: 0;
-  top: 0;
+  right: 2px;
+  top: 50%;
+  margin-top: -12px;
 }
 
 .listless__mover::before {

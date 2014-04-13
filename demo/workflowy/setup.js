@@ -19,7 +19,8 @@ function onBullet(lineage) {
       d.classList.add('listless__bread--last')
     } else {
     */
-      d.addEventListener('mousedown', function () {
+      d.addEventListener('mousedown', function (e) {
+        if (e.button !== 0) return
         ctrl.actions.clickBullet(item.id)
       })
     /*
