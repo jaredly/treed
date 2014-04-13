@@ -92,6 +92,10 @@
   white-space: pre;
 }
 
+.listless__input:focus {
+  outline: none;
+}
+
 .listless__text > p {
   margin: 0;
 }

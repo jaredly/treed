@@ -91,12 +91,16 @@ body {
   border-bottom: 1px solid transparent;
   cursor: pointer;
 }
+.listless__bread p {
+  margin: 0;
+  padding: 0;
+}
+.listless__bread:hover {
+  border-color: #ccc;
+}
 .listless__bread:not(:last-child):after {
   position: absolute;
   content: '\00bb';
   right: -6px;
   top: 5px;
-}
-.listless__bread:not(:last-child):hover {
-  border-color: #ccc;
 }

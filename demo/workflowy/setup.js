@@ -13,7 +13,7 @@ function onBullet(lineage) {
     var d = document.createElement('div')
     d.classList.add('listless__bread')
     bread.appendChild(d)
-    d.textContent = item.name
+    d.innerHTML = marked(item.name)
     /*
     if (i === lineage.length - 1) {
       d.classList.add('listless__bread--last')

@@ -114,16 +114,22 @@ body {
   border-bottom: 1px solid transparent;
   cursor: pointer;
 
+  p {
+    margin: 0;
+    padding: 0;
+  }
+
+
+  &:hover {
+    border-color: #ccc;
+  }
+
   &:not(:last-child) {
     &:after {
       position: absolute;
       content: '\00bb';
       right: -6px;
       top: 5px;
-    }
-
-    &:hover {
-      border-color: #ccc;
     }
   }
 }
