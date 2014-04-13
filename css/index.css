@@ -88,6 +88,14 @@
   border-radius: 10px;
 }
 
+.listless__input {
+  white-space: pre;
+}
+
+.listless__text > p {
+  margin: 0;
+}
+
 .listless__body input:focus {
   outline: none
 }
@@ -108,8 +116,7 @@
   display: none;
   cursor: move;
   right: 2px;
-  top: 50%;
-  margin-top: -12px;
+  top: 0px;
 }
 
 .listless__mover::before {
