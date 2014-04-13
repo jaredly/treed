@@ -56,6 +56,21 @@
   display: block;
 }
 
+.listless > .listless__item {
+  padding-left: 0;
+}
+
+.listless > .listless__item > .listless__children > li {
+  padding-left: 0;
+}
+
+.listless > .listless__item > .listless__children > .listless__item--parent > .listless__head > .listless__bullet {
+  left: 25px;
+}
+.listless > .listless__item > .listless__children > .listless__item--parent.collapsed > .listless__head > .listless__bullet {
+  left: 23px;
+}
+
 #breadcrumb {
   list-style: none;
   padding: 0;
