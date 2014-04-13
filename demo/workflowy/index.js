@@ -4,7 +4,6 @@ function WFController(root, ids, options) {
     Model: WFModel,
     viewOptions: {
       ViewLayer: WFVL,
-      noSelectRoot: true
     },
     onBullet: function () {}
   }, options)

@@ -1,21 +1,29 @@
+
 body {
   font-family: sans-serif;
   margin: 10px auto;
   width: 700px;
 }
-.listless__item--parent > .listless__head .listless__collapser {
-  display: none;
+
+.listless__item--parent > .listless__head {
+    .listless__collapser {
+    display: none;
+  }
+
+  &:hover .listless__collapser {
+    display: block;
+  }
 }
-.listless__item--parent > .listless__head:hover .listless__collapser {
-  display: block;
-}
+
 .listless__bullet::before {
   content: "\2022";
   cursor: pointer;
 }
+
 .listless__bullet:hover {
   background-color: #eee;
 }
+
 .listless__bullet {
   position: absolute;
   padding: 3px;
@@ -24,13 +32,16 @@ body {
   line-height: 18px;
   overflow: hidden;
 }
+
 .listless__collapser:before {
   left: 4px;
   width: 20px;
 }
+
 .listless__body {
   margin-left: 20px;
 }
+
 .listless__item--parent.collapsed > .listless__head .listless__bullet {
   font-size: 40px;
   line-height: 18px;
@@ -38,37 +49,48 @@ body {
   overflow: hidden;
   color: #777;
 }
+
 .listless__item.selected > .listless__head .listless__body {
   border-radius: 10px;
 }
+
 .listless > .listless__item.collapsed > .listless__children {
   display: block;
 }
+
 .listless > .listless__item {
   padding-left: 0;
+
+  > .listless__children > li {
+    padding-left: 0;
+  }
+
+  > .listless__children > .listless__item > .listless__head > .listless__bullet {
+    left: 25px;
+  }
+  > .listless__children > .listless__item.collapsed > .listless__head > .listless__bullet {
+    left: 23px;
+  }
+
+  > .listless__head {
+    .listless__body {
+      padding-left :0;
+
+      input,
+      > div {
+        padding-left :5px;
+        font-size: 30px;
+        border-radius: 10px;
+      }
+    }
+    .listless__bullet,
+    .listless__collapser {
+      display: none;
+    }
+  }
+
 }
-.listless > .listless__item > .listless__children > li {
-  padding-left: 0;
-}
-.listless > .listless__item > .listless__children > .listless__item > .listless__head > .listless__bullet {
-  left: 25px;
-}
-.listless > .listless__item > .listless__children > .listless__item.collapsed > .listless__head > .listless__bullet {
-  left: 23px;
-}
-.listless > .listless__item > .listless__head .listless__body {
-  padding-left: 0;
-}
-.listless > .listless__item > .listless__head .listless__body input,
-.listless > .listless__item > .listless__head .listless__body > div {
-  padding-left: 5px;
-  font-size: 30px;
-  border-radius: 10px;
-}
-.listless > .listless__item > .listless__head .listless__bullet,
-.listless > .listless__item > .listless__head .listless__collapser {
-  display: none;
-}
+
 #breadcrumb {
   list-style: none;
   padding: 0 15px;
@@ -76,6 +98,7 @@ body {
   font-family: sans-serif;
   font-size: 14px;
 }
+
 .listless__bread {
   display: inline-block;
   margin: 0 5px 0 0;
@@ -83,7 +106,10 @@ body {
   border-radius: 10px;
   cursor: default;
 }
+
 .listless__bread:not(.listless__bread--last):hover {
   background-color: #def;
   cursor: pointer;
 }
+
+

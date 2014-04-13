@@ -9,18 +9,22 @@ base.appendChild(ctrl.node)
 
 function onBullet(lineage) {
   bread.innerHTML = ''
-  lineage.forEach(function (item, i) {
+  lineage.slice(0, -1).forEach(function (item, i) {
     var d = document.createElement('div')
     d.classList.add('listless__bread')
     bread.appendChild(d)
     d.textContent = item.name
+    /*
     if (i === lineage.length - 1) {
       d.classList.add('listless__bread--last')
     } else {
+    */
       d.addEventListener('mousedown', function () {
         ctrl.actions.clickBullet(item.id)
       })
+    /*
     }
+    */
   })
 }
 
