@@ -1,14 +1,13 @@
 
-function WFController(root, ids, options) {
+function WFController(model, options) {
   options = merge({
-    Model: WFModel,
     viewOptions: {
       ViewLayer: WFVL,
     },
     onBullet: function () {}
   }, options)
-  Controller.call(this, root, ids, options)
-  this.o.onBullet(this.model.getLineage(root))
+  Controller.call(this, model, options)
+  this.o.onBullet(this.model.getLineage(model.root))
 }
 
 WFController.prototype = Object.create(Controller.prototype)

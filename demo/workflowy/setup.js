@@ -30,7 +30,8 @@ var MainApp = React.createClass({
 
 var Workflowy = React.createClass({
   componentDidMount: function () {
-    this.wf = new WFController(this.props.id, this.props.tree, {onBullet: this.props.onBreadCrumb})
+    this.model = new WFModel(this.props.id, this.props.tree, null)
+    this.wf = new WFController(this.model, {onBullet: this.props.onBreadCrumb})
     this.getDOMNode().appendChild(this.wf.node)
   },
   render: function () {
