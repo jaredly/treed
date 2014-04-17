@@ -1,8 +1,69 @@
 
+function WFNode(data, options) {
+  DefaultNode.call(this, data, options)
+}
+
+WFNode.prototype = Object.create(DefaultNode.prototype)
+WFNode.prototype.constructor = WFNode
+// merge(WFNode, DefaultNode)
+
+WFNode.prototype.setAttr = function (attr, value) {
+  if (attr !== 'done') {
+    this.constructor.prototype.setAttr.call(this, attr, value)
+    return
+  }
+  this.done = value
+  if (value) {
+    this.node.classList.add('listless__default-node--done')
+  } else {
+    this.node.classList.remove('listless__default-node--done')
+  }
+}
+
+WFNode.prototype.extra_actions = {
+  'toggle done': {
+    binding: 'ctrl return',
+    action: function () {
+      this.blur()
+      this.o.changed('done', !this.done)
+      this.focus()
+      if (this.done) {
+        this.o.goDown()
+      }
+    }
+  }
+}
+
+function WFView() {
+  View.apply(this, arguments)
+}
+
+WFView.prototype = Object.create(View.prototype)
+
+WFView.prototype.extra_actions = {
+  'toggle done': {
+    binding: 'ctrl return',
+    action: function () {
+      if (!this.selection.length) return
+      var id = this.selection[0]
+        , done = !this.model.ids[id].data.done
+        , next = this.model.idBelow(id, this.root)
+      if (next === undefined) next = id
+      this.ctrl.actions.changed(this.selection[0], 'done', done)
+      if (done) {
+        this.goTo(next)
+      }
+    }
+  }
+}
+
+
 function WFController(model, options) {
   options = merge({
+    View: WFView,
     viewOptions: {
       ViewLayer: WFVL,
+      node: WFNode
     },
     onBullet: function () {}
   }, options)
