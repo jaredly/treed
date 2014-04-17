@@ -5,7 +5,6 @@ function WFNode(data, options) {
 
 WFNode.prototype = Object.create(DefaultNode.prototype)
 WFNode.prototype.constructor = WFNode
-// merge(WFNode, DefaultNode)
 
 WFNode.prototype.setAttr = function (attr, value) {
   if (attr !== 'done') {
