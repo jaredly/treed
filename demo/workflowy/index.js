@@ -20,6 +20,18 @@ WFNode.prototype.setAttr = function (attr, value) {
 }
 
 WFNode.prototype.extra_actions = {
+  'rebase': {
+    binding: 'alt+return',
+    action: function () {
+      this.o.clickBullet()
+    }
+  },
+  'back a level': {
+    binding: 'shift+alt+return',
+    action: function () {
+      this.o.backALevel()
+    }
+  },
   'toggle done': {
     binding: 'ctrl+return',
     action: function () {
@@ -40,6 +52,18 @@ function WFView() {
 WFView.prototype = Object.create(View.prototype)
 
 WFView.prototype.extra_actions = {
+  'rebase': {
+    binding: 'alt+return',
+    action: function () {
+      this.ctrl.actions.clickBullet(this.selection[0])
+    }
+  },
+  'back a level': {
+    binding: 'shift+alt+return',
+    action: function () {
+      this.ctrl.actions.backALevel()
+    }
+  },
   'toggle done': {
     binding: 'ctrl+return',
     action: function () {
@@ -76,6 +100,12 @@ WFController.prototype.actions = extend({
   clickBullet: function (id) {
     this.view.rebase(id)
     this.o.onBullet(this.model.getLineage(id))
+  },
+  backALevel: function () {
+    var root = this.view.root
+      , pid = this.model.ids[root].parent
+    if (!this.model.ids[pid]) return
+    this.actions.clickBullet(pid)
   }
 }, Controller.prototype.actions)
 
