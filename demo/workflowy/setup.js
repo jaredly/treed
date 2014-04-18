@@ -28,24 +28,24 @@ var MainApp = React.createClass({
   componentDidMount: function () {
     var db = this.props.db
       , that = this
-    db.findAll('root', function (roots) {
+    db.findAll('root').then(function (roots) {
       if (!roots.length) {
         // load default
-        db.save('root', {id: 0})
+        db.save('root', 50, {id: 50})
         var tree = {
-          0: {
-            id: 0,
+          50: {
+            id: 50,
             children: [],
             collapsed: false,
             data: {name: 'Home'},
             depth: 0
           }
         }
-        db.save('node', tree[0])
-        var model = new lib.Model(0, tree, db)
+        db.save('node', 50, tree[50])
+        var model = new lib.Model(50, tree, db)
         return that.setState({loading: false, model: model})
       }
-      db.findAll('node', function (nodes) {
+      db.findAll('node').then(function (nodes) {
         var tree = {}
           , id = roots[0].id
         for (var i=0; i<nodes.length; i++) {
@@ -118,7 +118,7 @@ var base = document.getElementById('example')
   // , data = util.make_listed(flare_data, undefined, true)
 
 React.renderComponent(MainApp({
-  db: new PL(),
+  db: new Hoodie('http://127.0.0.1:6001').store,
   // id: data.id,
   // tree: data.tree
 }), base)
