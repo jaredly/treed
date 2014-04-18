@@ -1,4 +1,16 @@
 
+var DefaultNode = require('./lib/default-node')
+  , DomViewLayer = require('./lib/dom-vl')
+  , View = require('./lib/view')
+  , Controller = require('./lib/controller')
+  , Model = require('./lib/model')
+  , util = require('./lib/util')
+
+module.exports = {
+  Model: WFModel,
+  Controller: WFController
+}
+
 function WFNode(data, options, isNew) {
   DefaultNode.call(this, data, options, isNew)
 }
@@ -82,7 +94,7 @@ WFView.prototype.extra_actions = {
 
 
 function WFController(model, options) {
-  options = merge({
+  options = util.merge({
     View: WFView,
     viewOptions: {
       ViewLayer: WFVL,
@@ -96,7 +108,7 @@ function WFController(model, options) {
 
 WFController.prototype = Object.create(Controller.prototype)
 
-WFController.prototype.actions = extend({
+WFController.prototype.actions = util.extend({
   clickBullet: function (id) {
     if (id === 'new') return
     this.view.rebase(id)

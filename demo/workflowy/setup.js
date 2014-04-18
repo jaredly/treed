@@ -1,6 +1,8 @@
 
 
 var d = React.DOM
+  , lib = require('./index')
+  , util = require('./lib/util')
 
 var MainApp = React.createClass({
   getInitialState: function () {
@@ -30,8 +32,8 @@ var MainApp = React.createClass({
 
 var Workflowy = React.createClass({
   componentDidMount: function () {
-    this.model = new WFModel(this.props.id, this.props.tree, null)
-    this.wf = new WFController(this.model, {onBullet: this.props.onBreadCrumb})
+    this.model = new lib.Model(this.props.id, this.props.tree, null)
+    this.wf = new lib.Controller(this.model, {onBullet: this.props.onBreadCrumb})
     this.getDOMNode().appendChild(this.wf.node)
   },
   render: function () {
@@ -69,7 +71,7 @@ var History = React.createClass({
 })
 
 var base = document.getElementById('example')
-  , data = make_listed(flare_data, undefined, true)
+  , data = util.make_listed(flare_data, undefined, true)
 
 React.renderComponent(MainApp({
   id: data.id,
