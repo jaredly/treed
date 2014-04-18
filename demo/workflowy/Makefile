@@ -12,6 +12,6 @@ build: bundle.js
 
 
 bundle.js: ${jss} index.js setup.js
-	browserify setup.js --debug > bundle.js
+	browserify setup.js --debug > bundle.js && echo "Done"
 
 

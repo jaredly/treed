@@ -115,10 +115,12 @@ var History = React.createClass({
 })
 
 var base = document.getElementById('example')
+  , db = new Hoodie()
   // , data = util.make_listed(flare_data, undefined, true)
+window.db = db
 
 React.renderComponent(MainApp({
-  db: new Hoodie('http://127.0.0.1:6001').store,
+  db: db.store,
   // id: data.id,
   // tree: data.tree
 }), base)
