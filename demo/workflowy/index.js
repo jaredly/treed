@@ -1,6 +1,6 @@
 
-function WFNode(data, options) {
-  DefaultNode.call(this, data, options)
+function WFNode(data, options, isNew) {
+  DefaultNode.call(this, data, options, isNew)
 }
 
 WFNode.prototype = Object.create(DefaultNode.prototype)
