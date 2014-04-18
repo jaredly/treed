@@ -8,7 +8,7 @@ WFNode.prototype.constructor = WFNode
 
 WFNode.prototype.setAttr = function (attr, value) {
   if (attr !== 'done') {
-    this.constructor.prototype.setAttr.call(this, attr, value)
+    DefaultNode.prototype.setAttr.call(this, attr, value)
     return
   }
   this.done = value
@@ -21,7 +21,7 @@ WFNode.prototype.setAttr = function (attr, value) {
 
 WFNode.prototype.extra_actions = {
   'toggle done': {
-    binding: 'ctrl return',
+    binding: 'ctrl+return',
     action: function () {
       this.blur()
       this.o.changed('done', !this.done)
@@ -41,7 +41,7 @@ WFView.prototype = Object.create(View.prototype)
 
 WFView.prototype.extra_actions = {
   'toggle done': {
-    binding: 'ctrl return',
+    binding: 'ctrl+return',
     action: function () {
       if (!this.selection.length) return
       var id = this.selection[0]
