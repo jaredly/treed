@@ -75,6 +75,9 @@ var MainApp = React.createClass({
 var Workflowy = React.createClass({
   componentDidMount: function () {
     this.wf = new lib.Controller(this.props.model, {onBullet: this.props.onBreadCrumb})
+    this.wf.on('rebase', function (root) {
+      this.props.onBreadCrumb(this.props.model.getLineage(root))
+    }.bind(this))
     this.getDOMNode().appendChild(this.wf.node)
   },
   render: function () {
