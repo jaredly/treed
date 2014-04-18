@@ -3,11 +3,20 @@
 var d = React.DOM
   , lib = require('./index')
   , util = require('./lib/util')
+  , MemPL = require('./lib/mem-pl')
+  , PL = require('./lib/local-pl')
 
 var MainApp = React.createClass({
+  getDefaultProps: function () {
+    return {
+      db: null
+    }
+  },
   getInitialState: function () {
     return {
       lineage: [],
+      model: null,
+      loading: true
     }
   },
   changeBread: function (id) {
@@ -16,14 +25,47 @@ var MainApp = React.createClass({
   updateBread: function (lineage) {
     this.setState({lineage: lineage})
   },
+  componentDidMount: function () {
+    var db = this.props.db
+      , that = this
+    db.findAll('root', function (roots) {
+      if (!roots.length) {
+        // load default
+        db.save('root', {id: 0})
+        var tree = {
+          0: {
+            id: 0,
+            children: [],
+            collapsed: false,
+            data: {name: 'Home'},
+            depth: 0
+          }
+        }
+        db.save('node', tree[0])
+        var model = new lib.Model(0, tree, db)
+        return that.setState({loading: false, model: model})
+      }
+      db.findAll('node', function (nodes) {
+        var tree = {}
+          , id = roots[0].id
+        for (var i=0; i<nodes.length; i++) {
+          tree[nodes[i].id] = nodes[i]
+        }
+        var model = new lib.Model(id, tree, db)
+        return that.setState({loading: false, model: model})
+      })
+    })
+  },
   render: function () {
+    if (this.state.loading) {
+      return d.div({className: 'workflowme'}, 'Loading...')
+    }
     return d.div({
       className: 'workflowme'
     }, History({items: this.state.lineage, onClick: this.changeBread}),
        Workflowy({
          ref: 'wf',
-         id: this.props.id,
-         tree: this.props.tree,
+         model: this.state.model,
          onBreadCrumb: this.updateBread
       })
     )
@@ -32,8 +74,7 @@ var MainApp = React.createClass({
 
 var Workflowy = React.createClass({
   componentDidMount: function () {
-    this.model = new lib.Model(this.props.id, this.props.tree, null)
-    this.wf = new lib.Controller(this.model, {onBullet: this.props.onBreadCrumb})
+    this.wf = new lib.Controller(this.props.model, {onBullet: this.props.onBreadCrumb})
     this.getDOMNode().appendChild(this.wf.node)
   },
   render: function () {
@@ -71,10 +112,11 @@ var History = React.createClass({
 })
 
 var base = document.getElementById('example')
-  , data = util.make_listed(flare_data, undefined, true)
+  // , data = util.make_listed(flare_data, undefined, true)
 
 React.renderComponent(MainApp({
-  id: data.id,
-  tree: data.tree
+  db: new PL(),
+  // id: data.id,
+  // tree: data.tree
 }), base)
 

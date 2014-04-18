@@ -8,9 +8,9 @@ index.css: index.less
 build: bundle.js
 	@echo -n
 
-jss := $(wildcard "lib/*.js")
+jss := $(wildcard "./lib/*.js")
 
 bundle.js: ${jss} index.js setup.js
-	browserify setup.js > bundle.js
+	browserify setup.js --debug > bundle.js
 
 
