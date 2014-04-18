@@ -98,6 +98,7 @@ WFController.prototype = Object.create(Controller.prototype)
 
 WFController.prototype.actions = extend({
   clickBullet: function (id) {
+    if (id === 'new') return
     this.view.rebase(id)
     this.o.onBullet(this.model.getLineage(id))
   },
