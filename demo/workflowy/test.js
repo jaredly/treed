@@ -113,6 +113,7 @@ describe('Something', function () {
         eq(wf.view.selection[0], 2)
       })
       it('should redo', function () {
+        wf.ctrl.actions.undo()
         wf.ctrl.actions.redo()
         eq(wf.view.vl.body(2), undefined)
       })
@@ -127,7 +128,6 @@ describe('Something', function () {
         })
         it('should undo', function () {
           wf.ctrl.actions.undo()
-          // eq(wf.model.ids[10].children, [1,3,4,100,5])
         })
       })
     })
