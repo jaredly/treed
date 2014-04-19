@@ -21,5 +21,8 @@
   "license": "Apache v2",
   "bugs": {
     "url": "https://github.com/jaredly/listless/issues"
+  },
+  "dependencies": {
+    "bluebird": "~1.2.3"
   }
 }

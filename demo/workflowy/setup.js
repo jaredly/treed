@@ -4,7 +4,12 @@ var d = React.DOM
   , lib = require('./index')
   , util = require('./lib/util')
   , MemPL = require('./lib/mem-pl')
-  , PL = require('./lib/local-pl')
+
+var PLs = {
+  'Local': require('./lib/local-pl'),
+  'Mem': require('./lib/mem-pl'),
+  'Dumb': require('./lib/dumb-pl')
+}
 
 var MainApp = React.createClass({
   getDefaultProps: function () {
@@ -114,14 +119,16 @@ var History = React.createClass({
   }
 })
 
+if ('string' === typeof window.PL) {
+  window.PL = new PLs[window.PL]()
+}
+
 var base = document.getElementById('example')
-  , db = new Hoodie()
-  // , data = util.make_listed(flare_data, undefined, true)
-window.db = db
 
 React.renderComponent(MainApp({
-  db: db.store,
+  db: window.PL,
   // id: data.id,
   // tree: data.tree
 }), base)
+
 

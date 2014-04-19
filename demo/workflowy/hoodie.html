@@ -14,10 +14,15 @@
     <script src="d3.v3.min.js"></script>
     <script src="marked.js"></script>
     <script src="jquery-2.1.0.js"></script>
+    <script src="hoodie.js"></script>
+
     <script src="../flare-data.js"></script>
 
     <script src="react.js"></script>
-    <script>window.PL = 'Local'</script>
+    <script>
+      window.hoodie = new Hooodie()
+      window.PL = window.hoodie.store
+    </script>
     <script src="bundle.js"></script>
 
   <!--
