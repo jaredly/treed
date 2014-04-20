@@ -85,13 +85,13 @@ describe('Something', function () {
       it('should go down from root', function () {
         wf.view.goTo(10)
         wf.ctrl.actions.goDown(10)
-        eq(wf.view.selection[0], 1)
+        eq(wf.view.active, 1)
       })
 
       it('should go to next sibling', function () {
         wf.view.goTo(2)
         wf.ctrl.actions.goDown(2)
-        eq(wf.view.selection[0], 3)
+        eq(wf.view.active, 3)
       })
     })
 
@@ -101,16 +101,16 @@ describe('Something', function () {
         wf.ctrl.actions.cut(2)
       })
       it('should select below', function () {
-        eq(wf.view.selection[0], 3)
+        eq(wf.view.active, 3)
       })
       it('goUp should not touch the deleted one', function () {
         wf.ctrl.actions.goUp(3)
-        eq(wf.view.selection[0], 1)
+        eq(wf.view.active, 1)
       })
       it('should undo', function () {
         wf.ctrl.actions.undo()
         wf.view.goTo(2)
-        eq(wf.view.selection[0], 2)
+        eq(wf.view.active, 2)
       })
       it('should redo', function () {
         wf.ctrl.actions.undo()

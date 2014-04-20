@@ -7,14 +7,24 @@
   list-style: none;
   padding-left: 20px;
   position: relative;
+  border-radius: 10px;
+}
+
+.listless__body {
+  border: 1px solid transparent;
+  border-radius: 10px;
 }
 
 .listless__item.collapsed .listless__body {
   /*background-color: #eef;*/
 }
 
-.listless__item.selected > .listless__head .listless__body {
+.listless__item.active > .listless__head .listless__body {
   background-color: #afc;
+}
+
+.listless__item.selected > .listless__head .listless__body {
+  border-color: #000;
 }
 
 .listless__item.collapsed > .listless__children {
@@ -148,6 +158,7 @@
 .listless__item.dropping,
 .listless__item.dropping-child > .listless__head {
   outline: 2px solid #afc;
+  border-radius: 10px;
 }
 
 .listless__item.moving {
