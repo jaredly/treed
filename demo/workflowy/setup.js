@@ -47,7 +47,7 @@ var MainApp = React.createClass({
           }
         }
         db.save('node', 50, tree[50])
-        var model = new lib.Model(50, tree, db)
+        var model = window.model = new lib.Model(50, tree, db)
         return that.setState({loading: false, model: model})
       }
       db.findAll('node').then(function (nodes) {
@@ -56,7 +56,7 @@ var MainApp = React.createClass({
         for (var i=0; i<nodes.length; i++) {
           tree[nodes[i].id] = nodes[i]
         }
-        var model = new lib.Model(id, tree, db)
+        var model = window.model = new lib.Model(id, tree, db)
         return that.setState({loading: false, model: model})
       })
     })

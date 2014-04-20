@@ -19,12 +19,12 @@
   /*background-color: #eef;*/
 }
 
-.listless__item.active > .listless__head .listless__body {
-  background-color: #afc;
+.listless__item.selected .listless__head .listless__body {
+  background-color: #d2f6ff;
 }
 
-.listless__item.selected > .listless__head .listless__body {
-  border-color: #000;
+.listless__item.active > .listless__head .listless__body {
+  background-color: #afc;
 }
 
 .listless__item.collapsed > .listless__children {

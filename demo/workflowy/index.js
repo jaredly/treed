@@ -67,7 +67,7 @@ WFView.prototype.extra_actions = {
   'rebase': {
     binding: 'alt+return',
     action: function () {
-      this.ctrl.actions.clickBullet(this.selection[0])
+      this.ctrl.actions.clickBullet(this.active)
     }
   },
   'back a level': {
@@ -79,12 +79,12 @@ WFView.prototype.extra_actions = {
   'toggle done': {
     binding: 'ctrl+return',
     action: function () {
-      if (!this.selection.length) return
-      var id = this.selection[0]
+      if (this.active === null) return
+      var id = this.active
         , done = !this.model.ids[id].data.done
         , next = this.model.idBelow(id, this.root)
       if (next === undefined) next = id
-      this.ctrl.actions.changed(this.selection[0], 'done', done)
+      this.ctrl.actions.changed(this.active, 'done', done)
       if (done) {
         this.goTo(next)
       }
