@@ -7,6 +7,7 @@ var d = React.DOM
 
 var PLs = {
   'Local': require('./lib/local-pl'),
+  'Rest': require('./lib/rest-pl'),
   'Mem': require('./lib/mem-pl'),
   'Dumb': require('./lib/dumb-pl')
 }
@@ -33,8 +34,8 @@ var MainApp = React.createClass({
   componentDidMount: function () {
     var db = this.props.db
       , that = this
-    db.findAll('root').then(function (roots) {
-      if (!roots.length) {
+    db.findAll('root', function (err, roots) {
+      if (err || !roots.length) {
         // load default
         db.save('root', 50, {id: 50})
         var tree = {
@@ -46,11 +47,14 @@ var MainApp = React.createClass({
             depth: 0
           }
         }
-        db.save('node', 50, tree[50])
-        var model = window.model = new lib.Model(50, tree, db)
-        return that.setState({loading: false, model: model})
+        db.save('node', 50, tree[50], function () {
+          var model = window.model = new lib.Model(50, tree, db)
+          that.setState({loading: false, model: model})
+        })
+        return
       }
-      db.findAll('node').then(function (nodes) {
+      db.findAll('node', function (err, nodes) {
+        if (err) return that.setState({error: 'Failed to load items'})
         var tree = {}
           , id = roots[0].id
         for (var i=0; i<nodes.length; i++) {

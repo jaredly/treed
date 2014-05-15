@@ -23,6 +23,7 @@
     "url": "https://github.com/jaredly/listless/issues"
   },
   "dependencies": {
-    "bluebird": "~1.2.3"
+    "bluebird": "~1.2.3",
+    "superagent-browserify": "0.0.2"
   }
 }
