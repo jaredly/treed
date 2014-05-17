@@ -4,6 +4,14 @@ var BackPicker = require('./backend-picker.jsx')
 
 var Hello = module.exports = React.createClass({
   displayName: 'Hello',
+  getDefaultProps: function () {
+    return {
+      backs: {},
+      onReady: function (back, type) {
+        console.log('back ready', back, type)
+      }
+    }
+  },
   render: function () {
     return (
       <div className='hello'>

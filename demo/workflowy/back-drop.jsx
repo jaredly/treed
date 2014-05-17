@@ -35,7 +35,7 @@ var BackDrop = module.exports = React.createClass({
       cls += ' back-drop--showing'
     }
     var backs = Object.keys(this.props.backs)
-      , cur = this.props.backs[this.props.currentType]
+      , cur = this.props.backs[this.props.currentType] || {}
     return (
       <div className={cls} onMouseDown={this.cancelDown}>
         <div className='back-drop_current' onClick={this.onShow}>
@@ -47,6 +47,7 @@ var BackDrop = module.exports = React.createClass({
         <ul className='back-drop_list'>
           {
             backs.map(function (type) {
+              if (type === this.props.currentType) return
               var back = this.props.backs[type]
               return (
                 <li className='back-drop_choice'

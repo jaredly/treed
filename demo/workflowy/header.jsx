@@ -32,13 +32,13 @@ var Header = module.exports = React.createClass({
   render: function () {
     return (
       <div className='header'>
-        <h1 className='header-title'>Notablemind</h1>
-        <ul className='header-links'>
+        <h1 className='header_title'>Notablemind</h1>
+        <ul className='header_links'>
           {
-            this.props.links.map(function (link) {
+            this.props.links.map(function (link, i) {
               return (
-                <li>
-                  <a href={link.url} target='_blank' title={link.title}>
+                <li key={i}>
+                  <a className='header_link' href={link.url} target='_blank' title={link.title}>
                     {link.icon && d.i({className: 'fa fa-' + link.icon})}
                     {link.title}
                   </a>
@@ -47,6 +47,7 @@ var Header = module.exports = React.createClass({
             })
           }
         </ul>
+        <div className='header_spacer'/>
         <BackendPicker currentBack={this.props.back}
           dropdown={true}
           backs={this.props.backs}
