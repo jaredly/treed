@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 var d = React.DOM
-  , BackendDropdown = require('./backend-dropdown.jsx')
+  , BackendPicker = require('./backend-picker.jsx')
 
 var Header = module.exports = React.createClass({
   displayName: 'Header',
@@ -47,9 +47,10 @@ var Header = module.exports = React.createClass({
             })
           }
         </ul>
-        <BackendDropdown current={this.props.backType}
+        <BackendPicker currentBack={this.props.back}
+          dropdown={true}
           backs={this.props.backs}
-          onChange={this.props.onChangeBackType}/>
+          onChange={this.props.onChangeBack}/>
       </div>
     )
   }

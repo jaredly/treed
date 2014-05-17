@@ -8,6 +8,7 @@ var History = require('./wf-history')
 // manage lineage, create and initialize model instance. It owns the state for
 // the model.
 var MainApp = module.exports = React.createClass({
+  displayName: 'MainPage',
   getDefaultProps: function () {
     return {
       db: null // lib/pl-*
@@ -26,9 +27,8 @@ var MainApp = module.exports = React.createClass({
   updateBread: function (lineage) {
     this.setState({lineage: lineage})
   },
-  componentDidMount: function () {
-    var db = this.props.db
-      , that = this
+  loadModel: function (db) {
+    var that = this
     db.findAll('root', function (err, roots) {
       if (err || !roots.length) {
         if (err) {
@@ -62,6 +62,14 @@ var MainApp = module.exports = React.createClass({
         return that.setState({loading: false, model: model})
       })
     })
+  },
+  componentDidMount: function () {
+    this.loadModel(this.props.db)
+  },
+  componentWillReceiveProps: function (props) {
+    if (props.db !== this.props.db) {
+      this.loadModel(props.db)
+    }
   },
   render: function () {
     if (this.state.loading) {

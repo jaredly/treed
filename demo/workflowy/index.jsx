@@ -17,7 +17,7 @@ var NotableMind = module.exports = React.createClass({
       backType: null
     }
   },
-  onReady: function (back, backType) {
+  onChangeBack: function (back, backType) {
     this.setState({back: back, backType: backType})
   },
   render: function () {
@@ -33,7 +33,7 @@ var NotableMind = module.exports = React.createClass({
         <Header back={this.state.back}
           backType={this.state.backType}
           backs={this.props.backs}
-          onChangeBack={this.onReady}/>
+          onChangeBack={this.onChangeBack}/>
         <MainApp db={this.state.back}/>
       </div>
     )

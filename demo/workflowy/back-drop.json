@@ -4,10 +4,12 @@
     "backs": {
       "local": {
         "shortname": "Local",
+        "description": "Something descriptive",
         "icon": "computer"
       },
       "dropbox": {
         "shortname": "Dropbox",
+        "description": "Something descriptive about db",
         "icon": "dropbox"
       }
     }
