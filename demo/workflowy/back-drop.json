@@ -1,0 +1,23 @@
+{
+  "simple": {
+    "currentType": "local",
+    "backs": {
+      "local": {
+        "shortname": "Local",
+        "icon": "computer"
+      },
+      "dropbox": {
+        "shortname": "Dropbox",
+        "icon": "dropbox"
+      }
+    }
+  },
+  "_wrapState": {
+    "prop": "currentType",
+    "callback": "onSelect"
+  },
+  "_style": {
+    "display": "block"
+  }
+}
+

@@ -25,5 +25,8 @@
   "dependencies": {
     "bluebird": "~1.2.3",
     "superagent-browserify": "0.0.2"
+  },
+  "devDependencies": {
+    "reactify": "~0.13.1"
   }
 }
