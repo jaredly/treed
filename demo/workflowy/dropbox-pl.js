@@ -1,30 +1,33 @@
 
 module.exports = DropboxPL
 
-function DropboxPL() {
+function DropboxPL(options) {
+  this.options = options
+  if (!options.APP_KEY) {
+    throw new Error('Cannot use a dropbox backend without an app key')
+  }
 }
 
 DropboxPL.prototype = {
   init: function (done) {
-    this.client = new Dropbox.Client({key: APP_KEY});
+    this.client = new Dropbox.Client({key: this.options.APP_KEY});
 
     // Try to finish OAuth authorization.
     this.client.authenticate({interactive: false}, function (error) {
-        if (error) {
-            return done(new Error('Authentication error: ' + error))
-        }
-        this.client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
-          if (error) {
-            return done(new Error('Error opening default datastore: ' + error))
-          }
-          // Now you have a datastore. The next few examples can be included here.
-          this.store = datastore
-          done()
-        }.bind(this));
+      if (error) {
+        return done(new Error('Authentication error: ' + error))
+      }
     }.bind(this));
 
     if (this.client.isAuthenticated()) {
-      done()
+      this.client.getDatastoreManager().openDefaultDatastore(function (error, datastore) {
+        if (error) {
+          return done(new Error('Error opening default datastore: ' + error))
+        }
+        // Now you have a datastore. The next few examples can be included here.
+        this.store = datastore
+        done()
+      }.bind(this));
     }
   },
   _get: function (type, id) {

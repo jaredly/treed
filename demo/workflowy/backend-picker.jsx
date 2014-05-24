@@ -46,7 +46,7 @@ var BackPicker = module.exports = React.createClass({
       return this.setState({type: null, error: 'Invalid storage type: ' + type})
     }
     this.setState({loading: type, error: null})
-    var back = new opt.cls()
+    var back = new opt.cls(opt.options || {})
     back.init(function (err) {
       if (err) {
         return this.setState({

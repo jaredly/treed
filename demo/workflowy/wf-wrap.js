@@ -4,11 +4,16 @@ var d = React.DOM
 
 var Workflowy = module.exports = React.createClass({
   componentDidMount: function () {
-    this._init();
+    setTimeout(function () {
+      this._init(this.props);
+    }.bind(this), 0)
   },
   componentWillReceiveProps: function (props) {
+    if (props.model === this.props.model) return
     this._destroy()
-    this._init(props)
+    setTimeout(function () {
+      this._init(props)
+    }.bind(this), 0)
   },
   _destroy: function () {
     if (!this.wf) return

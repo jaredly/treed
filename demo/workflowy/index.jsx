@@ -24,7 +24,7 @@ var NotableMind = module.exports = React.createClass({
     if (!this.state.back) {
       return (
         <div className='notablemind'>
-          <HelloPage onReady={this.onReady} backs={this.props.backs}/>
+          <HelloPage onReady={this.onChangeBack} backs={this.props.backs}/>
         </div>
       )
     }
