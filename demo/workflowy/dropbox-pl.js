@@ -1,6 +1,24 @@
 
 module.exports = DropboxPL
 
+function serialize(data, prev) {
+    var full = {}
+    if (prev) {
+        prev = JSON.parse(prev._data)
+        for (var name in prev) {
+            full[name] = prev[name]
+        }
+    }
+    for (var name in data) {
+        full[name] = data[name]
+    }
+    return {_data: JSON.stringify(full)}
+}
+
+function deserialize(data) {
+    return JSON.parse(data._data)
+}
+
 function DropboxPL(options) {
   this.options = options
   if (!options.APP_KEY) {
@@ -28,6 +46,8 @@ DropboxPL.prototype = {
         this.store = datastore
         done()
       }.bind(this));
+    } else {
+        this.client.authenticate();
     }
   },
   _get: function (type, id) {
@@ -44,20 +64,20 @@ DropboxPL.prototype = {
   save: function (type, id, data, done) {
     var record = this._get(type, id)
     if (!record) {
-      record = this._create(type, id, data)
+      record = this._create(type, id, serialize(data))
     } else {
-      record.update(data)
+      record.update(serialize(data, record.getFields()))
     }
     done && done()
   },
   find: function (type, id, done) {
     var record = this._get(type, id)
     if (!record) return done && done(new Error('item not found'))
-    done && done(null, record.getFields())
+    done && done(null, deserialize(record.getFields()))
   },
   findAll: function (type, done) {
     return done(null, this._getAll(type).map(function (record) {
-      return record.getFields()
+      return deserialize(record.getFields())
     }))
   },
   remove: function (type, id, done) {
@@ -69,7 +89,7 @@ DropboxPL.prototype = {
   update: function (type, id, update, done) {
     var record = this._get(type, id)
     if (!record) return done && done(new Error('item not found'))
-    record.update(update)
+    record.update(serialize(update, record.getFields()))
     done && done()
   },
 }

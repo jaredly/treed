@@ -51,7 +51,7 @@ var Header = module.exports = React.createClass({
         <BackendPicker currentBack={this.props.back}
           dropdown={true}
           backs={this.props.backs}
-          onChange={this.props.onChangeBack}/>
+          onReady={this.props.onChangeBack}/>
       </div>
     )
   }

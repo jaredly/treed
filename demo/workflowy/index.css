@@ -1,7 +1,10 @@
 body {
   font-family: sans-serif;
-  margin: 10px auto;
+  margin: 5px auto;
   max-width: 700px;
+}
+#example {
+  margin: 0 5px;
 }
 .listless__item--parent > .listless__head .listless__collapser {
   display: none;

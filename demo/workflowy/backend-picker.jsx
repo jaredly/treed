@@ -34,6 +34,7 @@ var BackPicker = module.exports = React.createClass({
     if (this.props.currentBack) return
     var type = this.props.getType()
     if (!type) return
+    // TODO do I reset this?
     this.initBack(type)
   },
   setBackType: function (type) {

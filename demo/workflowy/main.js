@@ -66,9 +66,9 @@ var MainApp = module.exports = React.createClass({
   componentDidMount: function () {
     this.loadModel(this.props.db)
   },
-  componentWillReceiveProps: function (props) {
-    if (props.db !== this.props.db) {
-      this.loadModel(props.db)
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.db !== this.props.db) {
+      this.loadModel(nextProps.db)
     }
   },
   render: function () {

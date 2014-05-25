@@ -8,11 +8,11 @@ var Workflowy = module.exports = React.createClass({
       this._init(this.props);
     }.bind(this), 0)
   },
-  componentWillReceiveProps: function (props) {
-    if (props.model === this.props.model) return
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.model === this.props.model) return
     this._destroy()
     setTimeout(function () {
-      this._init(props)
+      this._init(nextProps)
     }.bind(this), 0)
   },
   _destroy: function () {
