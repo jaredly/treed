@@ -1,2 +1,3 @@
 *.swp
 demo/workflowy/bundle.js
+node_modules
