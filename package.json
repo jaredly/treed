@@ -28,5 +28,16 @@
   },
   "devDependencies": {
     "reactify": "~0.13.1"
+  },
+  "atomify": {
+    "js": {
+      "entry": "index.js",
+      "output": "demo/bundle.js",
+      "_transforms": ["reactify"]
+    },
+    "css": {
+      "entry": "index.less",
+      "output": "demo/css/bundle.css"
+    }
   }
 }

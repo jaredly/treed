@@ -21,7 +21,7 @@ var History = module.exports = React.createClass({
       this.props.items.slice(0, -1).map(function (item, i) {
         return d.li({
           key: item.id,
-          className: 'listless__bread',
+          className: 'treed__bread',
           onMouseDown: that.mouseDown.bind(null, item.id),
           dangerouslySetInnerHTML: {
             __html: marked(item.name)

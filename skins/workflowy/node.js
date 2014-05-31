@@ -1,5 +1,5 @@
 
-var DefaultNode = require('./lib/default-node')
+var DefaultNode = require('../../lib/default-node')
 
 module.exports = WFNode
 

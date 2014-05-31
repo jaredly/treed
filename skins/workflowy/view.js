@@ -1,5 +1,5 @@
 
-var View = require('./lib/view')
+var View = require('../../lib/view')
 
 module.exports = WFView
 

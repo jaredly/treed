@@ -1,8 +1,12 @@
 
 var d = React.DOM
-  , Controller = require('./wf-controller')
+  , Controller = require('./controller')
 
 var Workflowy = module.exports = React.createClass({
+  propTypes: {
+    model: React.PropTypes.object,
+    onBullet: React.PropTypes.func
+  },
   componentDidMount: function () {
     setTimeout(function () {
       this._init(this.props);

@@ -1,10 +1,10 @@
 
-var Controller = require('./lib/controller')
-  , util = require('./lib/util')
+var Controller = require('../../lib/controller')
+  , util = require('../../lib/util')
 
-  , WFNode = require('./wf-node')
-  , WFView = require('./wf-view')
-  , WFVL = require('./wf-vl')
+  , WFNode = require('./node')
+  , WFView = require('./view')
+  , WFVL = require('./vl')
 
 module.exports = WFController
 
