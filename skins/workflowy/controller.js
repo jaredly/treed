@@ -15,19 +15,24 @@ function WFController(model, options) {
       ViewLayer: WFVL,
       node: WFNode
     },
-    onBullet: function () {}
   }, options)
   Controller.call(this, model, options)
-  this.o.onBullet(this.model.getLineage(model.root))
+  this.on('rebase', function (id) {
+      this.trigger('bullet', this.model.getLineage(id))
+  }.bind(this))
 }
 
-WFController.prototype = Object.create(Controller.prototype)
+WFController.prototype = util.extend(Object.create(Controller.prototype), {
+  refreshBullet: function () {
+    this.trigger('bullet', this.model.getLineage(this.model.root))
+  }
+})
 
 WFController.prototype.actions = util.extend({
   clickBullet: function (id) {
     if (id === 'new') return
     this.view.rebase(id)
-    this.o.onBullet(this.model.getLineage(id))
+    this.trigger('bullet', this.model.getLineage(id))
   },
   backALevel: function () {
     var root = this.view.root

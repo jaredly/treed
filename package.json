@@ -29,11 +29,14 @@
   "devDependencies": {
     "reactify": "~0.13.1"
   },
+  "browserify": {
+    "transform": ["reactify"]
+  },
   "atomify": {
     "js": {
       "entry": "index.js",
       "output": "demo/bundle.js",
-      "_transforms": ["reactify"]
+      "transforms": ["reactify"]
     },
     "css": {
       "entry": "index.less",
