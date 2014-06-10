@@ -3,8 +3,9 @@ var DefaultNode = require('../../lib/default-node')
 
 module.exports = WFNode
 
-function WFNode(data, options, isNew) {
-  DefaultNode.call(this, data, options, isNew)
+function WFNode(content, meta, options, isNew) {
+  DefaultNode.call(this, content, meta, options, isNew)
+  this.done = meta.done
 }
 
 WFNode.prototype = Object.create(DefaultNode.prototype)
@@ -15,6 +16,10 @@ WFNode.prototype.setAttr = function (attr, value) {
     DefaultNode.prototype.setAttr.call(this, attr, value)
     return
   }
+  this.setDone(value)
+}
+
+WFNode.prototype.setDone = function (isDone) {
   this.done = value
   if (value) {
     this.node.classList.add('listless__default-node--done')

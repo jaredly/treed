@@ -13,7 +13,7 @@ WFModel.prototype.getLineage = function (id) {
   var lineage = []
   while (this.ids[id]) {
     lineage.unshift({
-      name: this.ids[id].data.name,
+      content: this.ids[id].content,
       id: id
     })
     id = this.ids[id].parent

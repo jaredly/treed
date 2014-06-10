@@ -24,7 +24,7 @@ var History = module.exports = React.createClass({
           className: 'treed__bread',
           onMouseDown: that.mouseDown.bind(null, item.id),
           dangerouslySetInnerHTML: {
-            __html: marked(item.name)
+            __html: marked(item.content)
           }
         })
       })
