@@ -21,4 +21,23 @@ WFModel.prototype.getLineage = function (id) {
   return lineage
 }
 
+WFModel.prototype.search = function (text) {
+  var items = []
+    , frontier = [this.root]
+  text = text.toLowerCase()
+  while (frontier.length) {
+      var next = []
+      for (var i=0; i<frontier.length; i++) {
+          if (this.ids[frontier[i]].content.toLowerCase().indexOf(text) !== -1) {
+            items.push({id: frontier[i], text: this.ids[frontier[i]].content})
+          }
+          var children = this.ids[frontier[i]].children
+          if (children) {
+            next = next.concat(children)
+          }
+      }
+      frontier = next
+  }
+  return items
+}
 

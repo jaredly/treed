@@ -3,32 +3,40 @@ var d = React.DOM
 
 var Wrapper = module.exports = React.createClass({
   propTypes: {
-    controller: React.PropTypes.object,
-    onBullet: React.PropTypes.func,
-    onBreadCrumb: React.PropTypes.func
+    node: React.PropTypes.object.isRequired,
   },
 
   componentDidMount: function () {
-    setTimeout(function () {
-      this._init(this.props);
-    }.bind(this), 0)
+    this._init(this.props.node);
   },
   componentWillReceiveProps: function (nextProps) {
-    if (nextProps.controller === this.props.controller) return
+    if (nextProps.node === this.props.node) return
 
+    if (this.props.node) {
+      this._replace(nextProps.node)
+    } else {
+      this._init(nextProps.node)
+    }
+  },
+  componentWillUnmount: function () {
     this._destroy()
-    setTimeout(function () {
-      this._init(nextProps)
-    }.bind(this), 0)
   },
 
-  _init: function (props) {
-    this.getDOMNode().appendChild(props.controller.node)
+  _replace: function (node) {
+    var n = this.getDOMNode()
+    if (n === this.props.node.parentNode) {
+      n.replaceChild(node, this.props.node)
+    }
+  },
+  _init: function (node) {
+    this.getDOMNode().appendChild(node)
   },
   _destroy: function () {
-    if (!this.props.controller) return
-    this.props.controller.node.parentNode.removeChild(this.props.controller.node)
-    delete this.ctrl
+    if (!this.props.node) return
+    var n = this.getDOMNode()
+    if (n === this.props.node.parentNode) {
+      n.removeChild(this.props.node)
+    }
   },
 
   render: function () {

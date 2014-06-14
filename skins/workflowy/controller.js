@@ -9,13 +9,6 @@ var Controller = require('../../lib/controller')
 module.exports = WFController
 
 function WFController(model, options) {
-  options = util.merge({
-    View: WFView,
-    viewOptions: {
-      ViewLayer: WFVL,
-      node: WFNode
-    },
-  }, options)
   Controller.call(this, model, options)
   this.on('rebase', function (id) {
       this.trigger('bullet', this.model.getLineage(id))
