@@ -1,6 +1,6 @@
 {
   "name": "treed",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The main component of an editor for hierarchical content. ",
   "main": "index.js",
   "scripts": {
