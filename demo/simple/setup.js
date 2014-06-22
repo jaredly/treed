@@ -1,5 +1,5 @@
 
-var db = new nm.pl.Local({});
+var db = new nm.pl.Mem({});
 
 db.init(function (err) {
   if (err) {
@@ -17,6 +17,7 @@ db.init(function (err) {
         Node: nm.Node
       }
     );
+    ctrl.importData(demoData);
     document.getElementById('example').appendChild(view.getNode());
 
   });
