@@ -6,16 +6,18 @@ module.exports = View
 function View(bindActions, model, ctrl, options) {
   this.mode = 'normal'
   this.active = null
+  /*
   this.o = util.extend({
     Node: DefaultNode,
     ViewLayer: ViewLayer,
   }, options || {});
+  */
   // this.i.keybindingds = util.merge(this.default_keys, options.keys)
   // this.vl = new this.o.ViewLayer(this.o)
   this.bindActions = bindActions
   this.model = model
   this.ctrl = ctrl
-  this.dnd = new DungeonsAndDragons(this.vl, ctrl.actions.move.bind(ctrl))
+  // this.dnd = new DungeonsAndDragons(this.vl, ctrl.actions.move.bind(ctrl))
 
   this.attachListeners()
 }
