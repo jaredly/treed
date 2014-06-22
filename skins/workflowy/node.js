@@ -20,11 +20,11 @@ WFNode.prototype.setAttr = function (attr, value) {
 }
 
 WFNode.prototype.setDone = function (isDone) {
-  this.done = value
-  if (value) {
-    this.node.classList.add('listless__default-node--done')
+  this.done = isDone
+  if (isDone) {
+    this.node.classList.add('treed__default-node--done')
   } else {
-    this.node.classList.remove('listless__default-node--done')
+    this.node.classList.remove('treed__default-node--done')
   }
 }
 

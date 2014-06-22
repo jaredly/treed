@@ -27,7 +27,7 @@ WFView.prototype.extra_actions = {
     action: function () {
       if (this.active === null) return
       var id = this.active
-        , done = !this.model.ids[id].data.done
+        , done = !this.model.ids[id].meta.done
         , next = this.model.idBelow(id, this.root)
       if (next === undefined) next = id
       this.ctrl.actions.changed(this.active, 'done', done)

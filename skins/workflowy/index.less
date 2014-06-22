@@ -1,0 +1,92 @@
+
+.treed__item--parent > .treed__head {
+  .treed__collapser {
+    display: none;
+  }
+
+  &:hover .treed__collapser {
+    display: block;
+  }
+}
+
+.treed__bullet::before {
+  content: "\2022";
+  cursor: pointer;
+}
+
+.treed__bullet:hover {
+  background-color: #aaa;
+  border-radius: 10px;
+  line-height: 10px;
+  margin-top: 4px;
+}
+
+.treed__bullet {
+  position: absolute;
+  padding: 3px;
+  left: 24px;
+  font-size: 25px;
+  line-height: 18px;
+  overflow: hidden;
+}
+
+.treed__collapser:before {
+  left: 4px;
+  width: 20px;
+}
+
+.treed__body {
+  margin-left: 20px;
+}
+
+.treed__item--parent.collapsed > .treed__head .treed__bullet {
+  font-size: 40px;
+  line-height: 14px;
+  margin-top: 2px;
+  left: 22px;
+  overflow: hidden;
+  color: #777;
+}
+
+.treed__item.selected > .treed__head .treed__body {
+  border-radius: 10px;
+}
+
+.treed > .treed__item.collapsed > .treed__children {
+  display: block;
+}
+
+.treed > .treed__item {
+  padding-left: 0;
+
+  > .treed__children > li {
+    padding-left: 0;
+  }
+
+  > .treed__children > .treed__item > .treed__head > .treed__bullet {
+    left: 25px;
+  }
+  > .treed__children > .treed__item.collapsed > .treed__head > .treed__bullet {
+    left: 23px;
+  }
+
+  > .treed__head {
+    .treed__body {
+      padding-left :0;
+
+      input,
+      > div {
+        padding-left :10px;
+        font-size: 30px;
+        border-radius: 10px;
+      }
+    }
+    .treed__bullet,
+    .treed__mover,
+    .treed__collapser {
+      display: none;
+    }
+  }
+
+}
+
