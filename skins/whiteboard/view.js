@@ -31,6 +31,7 @@ View.prototype = {
     rootNode.className='whiteboard'
     rootNode.addEventListener('dblclick', this._onDoubleClick.bind(this))
     rootNode.addEventListener('mousedown', this._onMouseDown.bind(this))
+    rootNode.addEventListener('wheel', this._onWheel.bind(this))
     this.container = document.createElement('div')
     this.container.className = 'whiteboard-container'
     rootNode.appendChild(this.container)
@@ -72,6 +73,7 @@ View.prototype = {
   rebase: function (newroot, trigger) {
     this.clear()
     this.makeBlocks(newroot)
+    this.ctrl.trigger('rebase', newroot)
   },
 
   makeBlocks: function (root) {
@@ -85,8 +87,8 @@ View.prototype = {
       , config = node.meta.whiteboard
     if (!config) {
       config = {
-        width: 200,
-        height: 200,
+        // width: 200,
+        // height: 200,
         top: 10,
         left: i * 210
       }
@@ -103,6 +105,9 @@ View.prototype = {
       }.bind(this),
       startMoving: function (x, y) {
         this._onStartMoving(node.id, x, y)
+      }.bind(this),
+      onZoom: function () {
+        this.rebase(node.id)
       }.bind(this),
     })
     this.ids[id] = block
@@ -153,12 +158,20 @@ View.prototype = {
       , idx = this.model.ids[this.root].children.length
     this.ctrl.executeCommands('newNode', [this.root, idx, '', {
       whiteboard: {
-        width: 200,
-        height: 200,
+        // width: 200,
+        // height: 200,
         top: y,
         left: x
       }
     }]);
+  },
+
+  _onWheel: function (e) {
+    e.preventDefault()
+    var x = parseInt(this.container.style.left)
+    var y = parseInt(this.container.style.top)
+    this.container.style.left = (x + e.wheelDeltaX) + 'px'
+    this.container.style.top = (y + e.wheelDeltaY) + 'px'
   },
 
   _onMouseDown: function (e) {

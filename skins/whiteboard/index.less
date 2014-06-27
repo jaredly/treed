@@ -12,6 +12,8 @@
 
 .whiteboard-container {
   position: absolute;
+  top: 0;
+  left: 0;
 }
 
 .whiteboard-item {
@@ -20,6 +22,10 @@
   font-family: sans-serif;
   position: absolute;
   background-color: white;
+  width: 200px;
+
+  display: flex;
+  flex-direction: column;
 }
 
 .whiteboard-item--editing {
@@ -28,6 +34,7 @@
 
 .whiteboard-item_input {
   white-space: pre-wrap;
+  min-height: 20px;
 
   &:focus {
     outline: none;
@@ -45,5 +52,15 @@
   }
   p:last-child {
     margin-bottom: 0;
+  }
+}
+
+.whiteboard-item_body {
+  flex: 1;
+}
+
+.whiteboard-item_footer {
+  .zoom {
+    cursor: pointer;
   }
 }

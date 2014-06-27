@@ -14,7 +14,7 @@ function Block(data, config, options) {
   this.editing = false
   this.setupNode(data)
   this.reposition(config.left, config.top, true)
-  this.resize(config.width, config.height, true)
+  // this.resize(config.width, config.height, true)
 }
 
 Block.prototype = {
@@ -37,8 +37,17 @@ Block.prototype = {
     this.body = document.createElement('div')
     this.body.className='whiteboard-item_body'
 
+    this.footer = document.createElement('div')
+    this.footer.className = 'whiteboard-item_footer'
+    var zoom = document.createElement('i')
+    zoom.className = 'fa fa-expand zoom'
+    zoom.addEventListener('click', this.o.onZoom)
+    this.footer.appendChild(zoom)
+
+
     this.node.appendChild(this.title)
     this.node.appendChild(this.body)
+    this.node.appendChild(this.footer)
 
     this.setTextContent(data.content)
     this.content = data.content
@@ -47,7 +56,7 @@ Block.prototype = {
 
   updateConfig: function (config) {
     this.reposition(config.left, config.top, true)
-    this.resize(config.width, config.height, true)
+    // this.resize(config.width, config.height, true)
   },
 
   setContent: function (content) {
