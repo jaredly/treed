@@ -28,7 +28,8 @@ WFModel.prototype.search = function (text) {
   while (frontier.length) {
       var next = []
       for (var i=0; i<frontier.length; i++) {
-          if (this.ids[frontier[i]].content.toLowerCase().indexOf(text) !== -1) {
+          var content = this.ids[frontier[i]].content
+          if (content && content.toLowerCase().indexOf(text) !== -1) {
             items.push({id: frontier[i], text: this.ids[frontier[i]].content})
           }
           var children = this.ids[frontier[i]].children
