@@ -12,18 +12,29 @@ function View(bindActions, model, ctrl, options) {
   this.bindActions = bindActions
   this.model = model
   this.ctrl = ctrl
+
+  this._boundMove = this._onMouseMove.bind(this)
+  this._boundUp = this._onMouseUp.bind(this)
 }
 
 View.prototype = {
   initialize: function (root) {
     var node = this.model.ids[root]
-      , rootNode = document.createElement('div')
+    this.setupRoot()
+    this.root = root
+    this.makeBlocks(root)
+    return this.rootNode
+  },
+
+  setupRoot: function () {
+    var rootNode = document.createElement('div')
     rootNode.className='whiteboard'
     rootNode.addEventListener('dblclick', this._onDoubleClick.bind(this))
-    this.root = root
+    rootNode.addEventListener('mousedown', this._onMouseDown.bind(this))
+    this.container = document.createElement('div')
+    this.container.className = 'whiteboard-container'
+    rootNode.appendChild(this.container)
     this.rootNode = rootNode
-    this.makeBlocks(root)
-    return rootNode
   },
 
   getActive: function () {
@@ -45,7 +56,7 @@ View.prototype = {
   },
   remove: function (id) {
     console.warn("FIX??")
-    this.rootNode.removeChild(this.ids[id].node)
+    this.container.removeChild(this.ids[id].node)
     delete this.ids[id]
   },
   goTo: function () {
@@ -53,7 +64,7 @@ View.prototype = {
   },
   clear: function () {
     for (var id in this.ids) {
-      this.rootNode.removeChild(this.ids[id].node)
+      this.container.removeChild(this.ids[id].node)
     }
     this.ids = {}
   },
@@ -95,7 +106,7 @@ View.prototype = {
       }.bind(this),
     })
     this.ids[id] = block
-    this.rootNode.appendChild(block.node)
+    this.container.appendChild(block.node)
     return block
   },
 
@@ -130,11 +141,13 @@ View.prototype = {
     this.ids[top].node.style.zIndex = items.length
   },
 
+  // event handlers
+
   _onDoubleClick: function (e) {
     if (e.target !== this.rootNode) {
       return
     }
-    var box = this.rootNode.getBoundingClientRect()
+    var box = this.container.getBoundingClientRect()
     var x = e.clientX - 50 - box.left
       , y = e.clientY - 10 - box.top
       , idx = this.model.ids[this.root].children.length
@@ -147,6 +160,24 @@ View.prototype = {
       }
     }]);
   },
+
+  _onMouseDown: function (e) {
+    if (e.target !== this.rootNode) {
+      return
+    }
+    var box = this.container.getBoundingClientRect()
+    var x = e.clientX - box.left
+      , y = e.clientY - box.top
+    this.moving = {
+      x: x,
+      y: y
+    }
+    e.preventDefault()
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
+  },
+
+  // other stuff
 
   add: function (node, before, dontfocus) {
     var block = this.makeBlock(node.id, 0)
@@ -163,8 +194,6 @@ View.prototype = {
       y: y
     }
     console.log(this.moving)
-    this._boundMove = this._onMouseMove.bind(this)
-    this._boundUp = this._onMouseUp.bind(this)
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
     this.shuffleZIndices(id)
@@ -175,21 +204,29 @@ View.prototype = {
       return this._onMouseUp(e)
     }
     e.preventDefault()
-    var box = this.rootNode.getBoundingClientRect()
-    var x = e.clientX - this.moving.x - box.left
-      , y = e.clientY - this.moving.y - box.top
-    this.ids[this.moving.id].reposition(x, y, true)
+    if (this.moving.id) {
+      var box = this.container.getBoundingClientRect()
+      var x = e.clientX - this.moving.x - box.left
+        , y = e.clientY - this.moving.y - box.top
+      this.ids[this.moving.id].reposition(x, y, true)
+    } else {
+      var box = this.rootNode.getBoundingClientRect()
+      var x = e.clientX - this.moving.x - box.left
+        , y = e.clientY - this.moving.y - box.top
+      this.container.style.top = y + 'px'
+      this.container.style.left = x + 'px'
+    }
     return false
   },
 
   _onMouseUp: function (e) {
-    if (this.moving) {
-      var box = this.rootNode.getBoundingClientRect()
+    if (this.moving && this.moving.id) {
+      var box = this.container.getBoundingClientRect()
       var x = e.clientX - this.moving.x - box.left
         , y = e.clientY - this.moving.y - box.top
       this.ids[this.moving.id].reposition(x, y)
-      this.moving = null
     }
+    this.moving = null
     e.preventDefault()
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)

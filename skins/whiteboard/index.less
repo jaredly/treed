@@ -3,10 +3,15 @@
   position: relative;
   flex: 1;
   cursor: pointer;
+  overflow: hidden;
 
   &:empty:after {
     content: 'Double click to create a new node';
   }
+}
+
+.whiteboard-container {
+  position: absolute;
 }
 
 .whiteboard-item {
