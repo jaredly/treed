@@ -1,0 +1,44 @@
+
+.whiteboard {
+  position: relative;
+  flex: 1;
+  cursor: pointer;
+
+  &:empty:after {
+    content: 'Double click to create a new node';
+  }
+}
+
+.whiteboard-item {
+  border-radius: 5px;
+  box-shadow: 0 0 5px black;
+  font-family: sans-serif;
+  position: absolute;
+  background-color: white;
+}
+
+.whiteboard-item--editing {
+  box-shadow: 0 0 5px green;
+}
+
+.whiteboard-item_input {
+  white-space: pre-wrap;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.whiteboard-item_input,
+.whiteboard-item_title {
+  padding: 10px 5px;
+  font-size: 14px;
+  cursor: pointer;
+
+  p:first-child {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}

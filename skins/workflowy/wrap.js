@@ -40,7 +40,7 @@ var Wrapper = module.exports = React.createClass({
   },
 
   render: function () {
-    return d.div()
+    return this.transferPropsTo(d.div({className: 'wrapper'}))
   }
 })
 

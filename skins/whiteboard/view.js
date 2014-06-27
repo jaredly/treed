@@ -1,43 +1,66 @@
 
 var DungeonsAndDragons = require('../../lib/dnd.js')
+var Block = require('./block')
 
 module.exports = View
 
 function View(bindActions, model, ctrl, options) {
   this.mode = 'normal'
   this.active = null
-  /*
-  this.o = util.extend({
-    Node: DefaultNode,
-    ViewLayer: ViewLayer,
-  }, options || {});
-  */
-  // this.i.keybindingds = util.merge(this.default_keys, options.keys)
-  // this.vl = new this.o.ViewLayer(this.o)
+  this.ids = {}
+
   this.bindActions = bindActions
   this.model = model
   this.ctrl = ctrl
-  // this.dnd = new DungeonsAndDragons(this.vl, ctrl.actions.move.bind(ctrl))
-
-  this.attachListeners()
 }
 
 View.prototype = {
   initialize: function (root) {
     var node = this.model.ids[root]
-      , rootNode = this.vl.makeRoot()
+      , rootNode = document.createElement('div')
+    rootNode.className='whiteboard'
+    rootNode.addEventListener('dblclick', this._onDoubleClick.bind(this))
     this.root = root
-    this.populateChildren(root)
-    this.selectSomething()
+    this.rootNode = rootNode
+    this.makeBlocks(root)
     return rootNode
   },
 
+  getActive: function () {
+    return this.root
+  },
+
+  addTree: function (node, before) {
+    if (node.parent !== this.root) return;
+    this.makeBlock(node.id, 0)
+  },
+
+  setCollapsed: function () {
+  },
+  startEditing: function () {
+  },
+  setActive: function () {
+  },
+  setSelection: function () {
+  },
+  remove: function (id) {
+    console.warn("FIX??")
+    this.rootNode.removeChild(this.ids[id].node)
+    delete this.ids[id]
+  },
+  goTo: function () {
+    console.warn('FIX!');
+  },
+  clear: function () {
+    for (var id in this.ids) {
+      this.rootNode.removeChild(this.ids[id].node)
+    }
+    this.ids = {}
+  },
+
   rebase: function (newroot, trigger) {
-    this.vl.clear()
-    var root = this.vl.root
-    this.initialize(newroot)
-    this.vl.rebase(root)
-    this.ctrl.trigger('rebase', newroot)
+    this.clear()
+    this.makeBlocks(newroot)
   },
 
   makeBlocks: function (root) {
@@ -57,24 +80,124 @@ View.prototype = {
         left: i * 210
       }
     }
+    var block = new Block(node, config, {
+      saveConfig: function (config) {
+        this.ctrl.executeCommands('changeNodeAttr', [node.id, 'whiteboard', config]);
+      }.bind(this),
+      saveContent: function (content) {
+        this.ctrl.executeCommands('changeContent', [node.id, content]);
+      }.bind(this),
+      changeContent: function (content) {
+        this.ctrl.executeCommands('changeContent', [node.id, content]);
+      }.bind(this),
+      startMoving: function (x, y) {
+        this._onStartMoving(node.id, x, y)
+      }.bind(this),
+    })
+    this.ids[id] = block
+    this.rootNode.appendChild(block.node)
+    return block
   },
 
-  populateChildren: function (id) {
-    var node = this.model.ids[id]
-    if (node.collapsed && id !== this.root) {
-      this.lazy_children[id] = true
+  setAttr: function (id, attr, value) {
+    if (!this.ids[id]) {
       return
     }
-    this.lazy_children[id] = false
-    if (!node.children || !node.children.length) return
-    for (var i=0; i<node.children.length; i++) {
-      this.add(this.model.ids[node.children[i]], false, true)
-      this.populateChildren(node.children[i])
+    if (attr === 'whiteboard') {
+      this.ids[id].updateConfig(value)
     }
+    // TODO something with done-ness?
+  },
+
+  setContent: function (id, content) {
+    if (!this.ids[id]) {
+      return
+    }
+    this.ids[id].setContent(content)
+  },
+
+  shuffleZIndices: function (top) {
+    var items = [];
+    for (var id in this.ids) {
+      items.push([+this.ids[id].node.style.zIndex, id])
+    }
+    items.sort(function (a, b) {
+      return a[0] - b[0]
+    })
+    for (var i=0; i<items.length; i++) {
+      this.ids[items[i][1]].node.style.zIndex = i
+    }
+    this.ids[top].node.style.zIndex = items.length
+  },
+
+  _onDoubleClick: function (e) {
+    if (e.target !== this.rootNode) {
+      return
+    }
+    var box = this.rootNode.getBoundingClientRect()
+    var x = e.clientX - 50 - box.left
+      , y = e.clientY - 10 - box.top
+      , idx = this.model.ids[this.root].children.length
+    this.ctrl.executeCommands('newNode', [this.root, idx, '', {
+      whiteboard: {
+        width: 200,
+        height: 200,
+        top: y,
+        left: x
+      }
+    }]);
+  },
+
+  add: function (node, before, dontfocus) {
+    var block = this.makeBlock(node.id, 0)
+    block.node.style.zIndex = Object.keys(this.ids).length
+    if (!dontfocus) {
+      block.focus()
+    }
+  },
+
+  _onStartMoving: function (id, x, y) {
+    this.moving = {
+      id: id,
+      x: x,
+      y: y
+    }
+    console.log(this.moving)
+    this._boundMove = this._onMouseMove.bind(this)
+    this._boundUp = this._onMouseUp.bind(this)
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
+    this.shuffleZIndices(id)
+  },
+
+  _onMouseMove: function (e) {
+    if (!this.moving) {
+      return this._onMouseUp(e)
+    }
+    e.preventDefault()
+    var box = this.rootNode.getBoundingClientRect()
+    var x = e.clientX - this.moving.x - box.left
+      , y = e.clientY - this.moving.y - box.top
+    this.ids[this.moving.id].reposition(x, y, true)
+    return false
+  },
+
+  _onMouseUp: function (e) {
+    if (this.moving) {
+      var box = this.rootNode.getBoundingClientRect()
+      var x = e.clientX - this.moving.x - box.left
+        , y = e.clientY - this.moving.y - box.top
+      this.ids[this.moving.id].reposition(x, y)
+      this.moving = null
+    }
+    e.preventDefault()
+    document.removeEventListener('mousemove', this._boundMove)
+    document.removeEventListener('mouseup', this._boundUp)
+    return false
   },
 
   getNode: function () {
-    return this.vl.root
+    return this.rootNode
   }
 }
 
