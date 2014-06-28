@@ -72,7 +72,7 @@ View.prototype = {
     }
     this.ids = {}
     this.setContainerPos(0, 0)
-    this.setContainerZoom(.5);
+    this.setContainerZoom(1);
   },
 
   rebase: function (newroot, trigger) {
@@ -186,14 +186,14 @@ View.prototype = {
     if (e.shiftKey) {
       // console.log(x, y, e.clientX, e.clientY, box.left, box.top)
       var root = this.rootNode.getBoundingClientRect()
-        , x = e.clientX/this._zoom - root.left
-        , y = e.clientY/this._zoom - root.top
+        , x = e.clientX/this._zoom - root.left/this._zoom
+        , y = e.clientY/this._zoom - root.top/this._zoom
       this.zoomMove((e.wheelDeltaY / 500), x, y)
       return
     }
-    var x = parseInt(this.container.style.left || 0)
-    var y = parseInt(this.container.style.top || 0)
-    this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
+    var x = this.x
+    var y = this.y
+    this.setContainerPos(x + e.wheelDeltaX/this._zoom, y + e.wheelDeltaY/this._zoom)
   },
 
   zoomMove: function (delta, x, y) {
@@ -208,7 +208,7 @@ View.prototype = {
 
   setContainerZoom: function (num) {
     this._zoom = num
-    this.rootNode.style.zoom = num
+    this.container.style.zoom = num
   },
 
   setContainerPos: function (x, y) {
@@ -224,7 +224,7 @@ View.prototype = {
     }
     var box = this.container.getBoundingClientRect()
     var x = e.clientX/this._zoom - box.left
-      , y = e.clientY /this._zoom- box.top
+      , y = e.clientY/this._zoom - box.top
     this.moving = {
       x: x,
       y: y,
@@ -271,8 +271,8 @@ View.prototype = {
       this.ids[this.moving.id].reposition(x, y, true)
     } else {
       var box = this.rootNode.getBoundingClientRect()
-      var x = (e.clientX)/this._zoom - box.left - this.moving.x
-        , y = (e.clientY)/this._zoom - box.top - this.moving.y
+      var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
+        , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
       this.setContainerPos(x, y)
     }
     return false
