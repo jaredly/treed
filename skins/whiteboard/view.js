@@ -184,10 +184,10 @@ View.prototype = {
   _onWheel: function (e) {
     e.preventDefault()
     if (e.shiftKey) {
-      var box = this.rootNode.getBoundingClientRect()
-        , x = e.clientX - box.left * this._zoom
-        , y = e.clientY - box.top * this._zoom
-      console.log(x, y, e.clientX, e.clientY, box.left, box.top)
+      // console.log(x, y, e.clientX, e.clientY, box.left, box.top)
+      var root = this.rootNode.getBoundingClientRect()
+        , x = e.clientX/this._zoom - root.left
+        , y = e.clientY/this._zoom - root.top
       this.zoomMove((e.wheelDeltaY / 500), x, y)
       return
     }
@@ -197,18 +197,13 @@ View.prototype = {
   },
 
   zoomMove: function (delta, x, y) {
-    // x = 200
-    // y = 200
     var next = this._zoom * delta
-      , d = 1/(this._zoom + next) - 1/this._zoom
-      , dx = (this.x*this._zoom - x)*d
-      , dy = (this.y*this._zoom - y)*d
-
-    // ynow = (x - box.top)/this._zoom
-    // ynext = (y - box.top)/(this.zoom + next)
-    // var dx = x / this._zoom
-    this.setContainerPos(this.x - dx / this._zoom, this.y - dy / this._zoom)
-    this.setContainerZoom(this._zoom + next)
+      , nz = this._zoom + next
+      , scale = this._zoom / nz
+      , nx = x - x * scale
+      , ny = y - y * scale
+    this.setContainerPos(this.x - nx, this.y - ny)
+    this.setContainerZoom(nz)
   },
 
   setContainerZoom: function (num) {
