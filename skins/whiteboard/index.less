@@ -22,7 +22,7 @@
   font-family: sans-serif;
   position: absolute;
   background-color: white;
-  width: 200px;
+  width: 300px;
 
   display: flex;
   flex-direction: column;
@@ -34,16 +34,21 @@
 
 .whiteboard-item_input {
   white-space: pre-wrap;
-  min-height: 20px;
+  // min-height: 20px;
 
   &:focus {
     outline: none;
   }
 }
 
+.whiteboard-item_title {
+  font-size: 16px;
+  min-height: 18px;
+}
+
 .whiteboard-item_input,
 .whiteboard-item_title {
-  padding: 10px 5px;
+  padding: 10px 10px;
   font-size: 14px;
   cursor: pointer;
 

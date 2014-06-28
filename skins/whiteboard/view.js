@@ -30,12 +30,14 @@ View.prototype = {
     var rootNode = document.createElement('div')
     rootNode.className='whiteboard'
     rootNode.addEventListener('dblclick', this._onDoubleClick.bind(this))
+    rootNode.addEventListener('click', this._onClick.bind(this))
     rootNode.addEventListener('mousedown', this._onMouseDown.bind(this))
     rootNode.addEventListener('wheel', this._onWheel.bind(this))
     this.container = document.createElement('div')
     this.container.className = 'whiteboard-container'
     rootNode.appendChild(this.container)
     this.rootNode = rootNode
+    this._zoom = 1
   },
 
   getActive: function () {
@@ -68,6 +70,8 @@ View.prototype = {
       this.container.removeChild(this.ids[id].node)
     }
     this.ids = {}
+    this.setContainerPos(0, 0)
+    this.setContainerZoom(.5);
   },
 
   rebase: function (newroot, trigger) {
@@ -85,12 +89,16 @@ View.prototype = {
   makeBlock: function (id, i) {
     var node = this.model.ids[id]
       , config = node.meta.whiteboard
+      // TODO: magic numbers?
+      , defaultWidth = 300
+      , defaultHeight = 100
+      , margin = 10
     if (!config) {
       config = {
         // width: 200,
         // height: 200,
-        top: 10,
-        left: i * 210
+        top: 10 + parseInt(i / 4) * (defaultHeight + margin),
+        left: 10 + (i % 4) * (defaultWidth + margin)
       }
     }
     var block = new Block(node, config, {
@@ -103,8 +111,8 @@ View.prototype = {
       changeContent: function (content) {
         this.ctrl.executeCommands('changeContent', [node.id, content]);
       }.bind(this),
-      startMoving: function (x, y) {
-        this._onStartMoving(node.id, x, y)
+      startMoving: function (e, rect) {
+        this._onStartMoving(node.id, e, rect)
       }.bind(this),
       onZoom: function () {
         this.rebase(node.id)
@@ -148,6 +156,12 @@ View.prototype = {
 
   // event handlers
 
+  _onClick: function (e) {
+    if (e.target === this.rootNode) {
+      document.activeElement.blur()
+    }
+  },
+
   _onDoubleClick: function (e) {
     if (e.target !== this.rootNode) {
       return
@@ -168,10 +182,23 @@ View.prototype = {
 
   _onWheel: function (e) {
     e.preventDefault()
-    var x = parseInt(this.container.style.left)
-    var y = parseInt(this.container.style.top)
-    this.container.style.left = (x + e.wheelDeltaX) + 'px'
-    this.container.style.top = (y + e.wheelDeltaY) + 'px'
+    if (e.shiftKey) {
+      this.setContainerZoom(this._zoom + this._zoom * (e.wheelDeltaY / 500))
+      return
+    }
+    var x = parseInt(this.container.style.left || 0)
+    var y = parseInt(this.container.style.top || 0)
+    this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
+  },
+
+  setContainerZoom: function (num) {
+    this._zoom = num
+    this.rootNode.style.zoom = num
+  },
+
+  setContainerPos: function (x, y) {
+    this.container.style.left = x + 'px'
+    this.container.style.top = y + 'px'
   },
 
   _onMouseDown: function (e) {
@@ -179,12 +206,13 @@ View.prototype = {
       return
     }
     var box = this.container.getBoundingClientRect()
-    var x = e.clientX - box.left
-      , y = e.clientY - box.top
+    var x = e.clientX/this._zoom - box.left
+      , y = e.clientY /this._zoom- box.top
     this.moving = {
       x: x,
-      y: y
+      y: y,
     }
+    console.log(this.moving)
     e.preventDefault()
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
@@ -200,7 +228,9 @@ View.prototype = {
     }
   },
 
-  _onStartMoving: function (id, x, y) {
+  _onStartMoving: function (id, e, rect) {
+    var y = e.clientY / this._zoom - rect.top
+      , x = e.clientX / this._zoom - rect.left
     this.moving = {
       id: id,
       x: x,
@@ -219,26 +249,19 @@ View.prototype = {
     e.preventDefault()
     if (this.moving.id) {
       var box = this.container.getBoundingClientRect()
-      var x = e.clientX - this.moving.x - box.left
-        , y = e.clientY - this.moving.y - box.top
+      var x = e.clientX/this._zoom - box.left- this.moving.x
+        , y = e.clientY/this._zoom - box.top - this.moving.y
       this.ids[this.moving.id].reposition(x, y, true)
     } else {
       var box = this.rootNode.getBoundingClientRect()
-      var x = e.clientX - this.moving.x - box.left
-        , y = e.clientY - this.moving.y - box.top
-      this.container.style.top = y + 'px'
-      this.container.style.left = x + 'px'
+      var x = (e.clientX)/this._zoom - box.left - this.moving.x
+        , y = (e.clientY)/this._zoom - box.top - this.moving.y
+      this.setContainerPos(x, y)
     }
     return false
   },
 
   _onMouseUp: function (e) {
-    if (this.moving && this.moving.id) {
-      var box = this.container.getBoundingClientRect()
-      var x = e.clientX - this.moving.x - box.left
-        , y = e.clientY - this.moving.y - box.top
-      this.ids[this.moving.id].reposition(x, y)
-    }
     this.moving = null
     e.preventDefault()
     document.removeEventListener('mousemove', this._boundMove)

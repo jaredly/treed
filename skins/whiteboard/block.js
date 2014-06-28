@@ -12,6 +12,7 @@ function unEscapeHtml(str) {
 function Block(data, config, options) {
   this.o = options
   this.editing = false
+  this._moved = false
   this.setupNode(data)
   this.reposition(config.left, config.top, true)
   // this.resize(config.width, config.height, true)
@@ -22,11 +23,12 @@ Block.prototype = {
     this.node = document.createElement('div')
     this.node.className = 'whiteboard-item'
     this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
-    this.node.addEventListener('click', this.startEditing.bind(this, false))
+    this.node.addEventListener('mouseup', this._onMouseUp.bind(this))
+    this.node.addEventListener('click', this._onClick.bind(this))
 
     this.title = document.createElement('div')
     this.title.className='whiteboard-item_title'
-    this.title.addEventListener('click', this._onClick.bind(this))
+    // this.title.addEventListener('click', this._onClick.bind(this))
     this.title.addEventListener('mousedown', this._onMouseDown.bind(this))
 
     this.input = document.createElement('div')
@@ -71,22 +73,31 @@ Block.prototype = {
     return false
   },
 
+  _onMouseUp: function (e) {
+  },
+
   _onClick: function (e) {
+    if (this._moved) {
+      this._moved = false
+      return
+    }
     this.startEditing()
     e.preventDefault()
     return false
   },
 
   _onMouseDown: function (e) {
+    this._moved = false
     if (e.target !== this.input) {
       e.preventDefault()
       document.activeElement.blur()
     }
     var rect = this.node.getBoundingClientRect()
-      , top = e.clientY - rect.top
-      , left = e.clientX - rect.left
+    this.o.startMoving(e, rect)
+      //, top = e.clientY - rect.top
+      //, left = e.clientX - rect.left
     /**
-     * TODO: resizability
+     * TODO: resizability ?
     if (left > rect.width - 10) {
       return this.startResizing('x')
     }
@@ -94,7 +105,7 @@ Block.prototype = {
       return this.startResizing('y')
     }
      */
-    this.o.startMoving(left, top)
+    //this.o.startMoving(left, top)
     return false
   },
 
@@ -150,6 +161,9 @@ Block.prototype = {
   },
 
   reposition: function (x, y, silent) {
+    if (x !== this.x || y !== this.y) {
+      this._moved = true
+    }
     this.x = x
     this.y = y
     this.node.style.top = y + 'px'
