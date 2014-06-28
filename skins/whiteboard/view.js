@@ -37,7 +37,8 @@ View.prototype = {
     this.container.className = 'whiteboard-container'
     rootNode.appendChild(this.container)
     this.rootNode = rootNode
-    this._zoom = 1
+    this.setContainerZoom(1)
+    this.setContainerPos(0, 0)
   },
 
   getActive: function () {
@@ -183,12 +184,31 @@ View.prototype = {
   _onWheel: function (e) {
     e.preventDefault()
     if (e.shiftKey) {
-      this.setContainerZoom(this._zoom + this._zoom * (e.wheelDeltaY / 500))
+      var box = this.rootNode.getBoundingClientRect()
+        , x = e.clientX - box.left * this._zoom
+        , y = e.clientY - box.top * this._zoom
+      console.log(x, y, e.clientX, e.clientY, box.left, box.top)
+      this.zoomMove((e.wheelDeltaY / 500), x, y)
       return
     }
     var x = parseInt(this.container.style.left || 0)
     var y = parseInt(this.container.style.top || 0)
     this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
+  },
+
+  zoomMove: function (delta, x, y) {
+    // x = 200
+    // y = 200
+    var next = this._zoom * delta
+      , d = 1/(this._zoom + next) - 1/this._zoom
+      , dx = (this.x*this._zoom - x)*d
+      , dy = (this.y*this._zoom - y)*d
+
+    // ynow = (x - box.top)/this._zoom
+    // ynext = (y - box.top)/(this.zoom + next)
+    // var dx = x / this._zoom
+    this.setContainerPos(this.x - dx / this._zoom, this.y - dy / this._zoom)
+    this.setContainerZoom(this._zoom + next)
   },
 
   setContainerZoom: function (num) {
@@ -197,6 +217,8 @@ View.prototype = {
   },
 
   setContainerPos: function (x, y) {
+    this.x = x
+    this.y = y
     this.container.style.left = x + 'px'
     this.container.style.top = y + 'px'
   },
