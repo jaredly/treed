@@ -71,6 +71,8 @@ View.prototype = {
   },
   setSelection: function () {
   },
+  move: function (id, pid, before, opid, lastchild) {
+  },
   remove: function (id) {
     console.warn("FIX??")
     this.container.removeChild(this.ids[id].node)
@@ -116,7 +118,10 @@ View.prototype = {
         left: 10 + (i % 4) * (defaultWidth + margin)
       }
     }
-    var block = new Block(node, config, {
+    var children = (node.children || []).map(function (id) {
+      return this.model.ids[id]
+    }.bind(this));
+    var block = new Block(node, children, config, {
       saveConfig: function (config) {
         this.ctrl.executeCommands('changeNodeAttr', [node.id, 'whiteboard', config]);
       }.bind(this),
@@ -277,11 +282,18 @@ View.prototype = {
   // other stuff
 
   add: function (node, before, dontfocus) {
-    var block = this.makeBlock(node.id, 0)
-    block.node.style.zIndex = Object.keys(this.ids).length
-    if (!dontfocus) {
-      block.focus()
+    if (node.parent === this.root) {
+      var block = this.makeBlock(node.id, 0)
+      block.node.style.zIndex = Object.keys(this.ids).length
+      if (!dontfocus) {
+        block.focus()
+      }
+      return
     }
+    if (!this.ids[node.parent]) {
+      return
+    }
+    this.ids[node.parent].addChild(node, this.model)
   },
 
   _onStartMoving: function (id, e, rect) {

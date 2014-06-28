@@ -43,8 +43,8 @@
   background-color: white;
   width: 300px;
 
-  display: flex;
-  flex-direction: column;
+  // display: flex;
+  // flex-direction: column;
 }
 
 .whiteboard-item--editing {
@@ -63,13 +63,6 @@
 .whiteboard-item_title {
   font-size: 16px;
   min-height: 18px;
-}
-
-.whiteboard-item_input,
-.whiteboard-item_title {
-  padding: 10px 10px;
-  font-size: 14px;
-  cursor: pointer;
 
   p:first-child {
     margin-top: 0;
@@ -79,8 +72,41 @@
   }
 }
 
+.whiteboard-item_child {
+  font-size: 80%;
+  list-style-position: inside;
+  padding: 5px;
+  border-radius: 5px;
+
+  &:hover {
+    background-color: #ddd;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.whiteboard-item_input,
+.whiteboard-item_title {
+  padding: 10px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .whiteboard-item_body {
-  flex: 1;
+  // flex: 1;
+  margin: 0;
+  padding: 0 5px 5px;
+  margin-top: -5px;
+
+  &:empty {
+    display: none;
+  }
 }
 
 .whiteboard-item_footer {

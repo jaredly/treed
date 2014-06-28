@@ -9,17 +9,17 @@ function unEscapeHtml(str) {
     .replace(/\u200b/g, '')
 }
 
-function Block(data, config, options) {
+function Block(data, children, config, options) {
   this.o = options
   this.editing = false
   this._moved = false
-  this.setupNode(data)
+  this.setupNode(data, children)
   this.reposition(config.left, config.top, true)
   // this.resize(config.width, config.height, true)
 }
 
 Block.prototype = {
-  setupNode: function (data) {
+  setupNode: function (data, children) {
     this.node = document.createElement('div')
     this.node.className = 'whiteboard-item'
     this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
@@ -37,8 +37,15 @@ Block.prototype = {
     this.input.className = 'whiteboard-item_input'
     this.input.addEventListener('blur', this._onBlur.bind(this))
 
-    this.body = document.createElement('div')
+    this.body = document.createElement('ul')
     this.body.className='whiteboard-item_body'
+
+    children.forEach(function (child) {
+      var node = document.createElement('li')
+      node.className='whiteboard-item_child'
+      node.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
+      this.body.appendChild(node)
+    }.bind(this))
 
     /*
     this.footer = document.createElement('div')
@@ -58,6 +65,15 @@ Block.prototype = {
     this.content = data.content
     return this.node
   },
+
+  // Children!!
+  addChild: function () {
+    console.log('faile')
+  },
+
+
+
+  // Not children!!
 
   updateConfig: function (config) {
     this.reposition(config.left, config.top, true)
