@@ -25,6 +25,7 @@ Block.prototype = {
     this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
     this.node.addEventListener('mouseup', this._onMouseUp.bind(this))
     this.node.addEventListener('click', this._onClick.bind(this))
+    this.node.addEventListener('dblclick', this.o.onZoom)
 
     this.title = document.createElement('div')
     this.title.className='whiteboard-item_title'

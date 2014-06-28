@@ -35,7 +35,20 @@ View.prototype = {
     rootNode.addEventListener('wheel', this._onWheel.bind(this))
     this.container = document.createElement('div')
     this.container.className = 'whiteboard-container'
+
+    this.controls = document.createElement('div')
+    this.controls.className = 'whiteboard-controls'
+    var b1 = document.createElement('button')
+    b1.innerHTML = '1:1'
+    b1.addEventListener('click', this.resetContainer.bind(this))
+    var b2 = document.createElement('button')
+    b2.innerHTML = '<i class="fa fa-th-large"/>'
+    b2.addEventListener('click', this.resetPositions.bind(this))
+    this.controls.appendChild(b1)
+    this.controls.appendChild(b2)
+
     rootNode.appendChild(this.container)
+    rootNode.appendChild(this.controls)
     this.rootNode = rootNode
     this.setContainerZoom(1)
     this.setContainerPos(0, 0)
@@ -77,6 +90,7 @@ View.prototype = {
 
   rebase: function (newroot, trigger) {
     this.clear()
+    this.root = newroot
     this.makeBlocks(newroot)
     this.ctrl.trigger('rebase', newroot)
   },
@@ -129,6 +143,17 @@ View.prototype = {
       return
     }
     if (attr === 'whiteboard') {
+      if (!value || !value.top) {
+        var ch = this.model.ids[this.root].children
+          , i = ch.indexOf(id)
+          , defaultWidth = 300
+          , defaultHeight = 100
+          , margin = 10
+        value = {
+          top: 10 + parseInt(i / 4) * (defaultHeight + margin),
+          left: 10 + (i % 4) * (defaultWidth + margin)
+        }
+      }
       this.ids[id].updateConfig(value)
     }
     // TODO something with done-ness?
@@ -194,6 +219,20 @@ View.prototype = {
     var x = this.x
     var y = this.y
     this.setContainerPos(x + e.wheelDeltaX/this._zoom, y + e.wheelDeltaY/this._zoom)
+  },
+
+  resetContainer: function () {
+    this.setContainerPos(0, 0)
+    this.setContainerZoom(1)
+  },
+
+  resetPositions: function () {
+    var cmds = []
+    this.model.ids[this.root].children.forEach(function (id) {
+      cmds.push('changeNodeAttr')
+      cmds.push([id, 'whiteboard', {}])
+    });
+    this.ctrl.executeCommands(cmds)
   },
 
   zoomMove: function (delta, x, y) {
