@@ -73,7 +73,6 @@ View.prototype = {
   setSelection: function () {
   },
   move: function (id, pid, before, opid, lastchild) {
-    console.log('yeah', id, pid, before, opid, lastchild)
     if (this.ids[opid]) {
       this.ids[opid].removeChild(id)
     }
@@ -228,7 +227,6 @@ View.prototype = {
       return
     }
     if (e.shiftKey) {
-      // console.log(x, y, e.clientX, e.clientY, box.left, box.top)
       var root = this.rootNode.getBoundingClientRect()
         , x = e.clientX - root.left
         , y = e.clientY - root.top
@@ -260,7 +258,6 @@ View.prototype = {
       , scale = this._zoom / nz
       , nx = x - x / scale
       , ny = y - y / scale
-    console.log(x, y, x/scale, y/scale)
     this.setContainerPos(this.x/scale + nx, this.y/scale + ny)
     this.setContainerZoom(nz)
   },
@@ -288,7 +285,6 @@ View.prototype = {
       x: x,
       y: y,
     }
-    console.log(this.moving)
     e.preventDefault()
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
