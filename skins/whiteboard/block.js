@@ -84,10 +84,55 @@ Block.prototype = {
     return this.node
   },
 
-  // Children!!
-  addChild: function () {
-    console.log('faile')
+  getDropTargets: function (cid) {
+    var targets = []
+    for (var id in this.children) {
+      /*
+      if (arguments.length && cid === id) {
+        continue
+      }
+      */
+      targets.push(this.childTarget(id))
+    }
+    targets.push(this.wholeTarget())
+    return targets
   },
+
+  childTarget: function (id) {
+    var box = this.children[id].getBoundingClientRect()
+      , magic = 10
+    return {
+      hit: {
+        left: box.left,
+        right: box.right,
+        top: box.top - magic,
+        bottom: box.bottom - magic
+      },
+      draw: {
+        left: box.left,
+        width: box.width,
+        top: box.top - magic/2,
+        height: magic
+      }
+    }
+  },
+
+  wholeTarget: function () {
+    var box = this.node.getBoundingClientRect()
+      , magic = 10
+    return {
+      hit: box,
+      draw: {
+        top: box.bottom - magic,
+        left: box.left + magic/2,
+        height: magic,
+        width: box.width - magic
+      }
+    }
+  },
+
+
+  // Children!!
 
 
   // Not children!!

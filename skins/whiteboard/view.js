@@ -48,12 +48,18 @@ View.prototype = {
     this.controls.appendChild(b1)
     this.controls.appendChild(b2)
 
+    this.dropShadow = document.createElement('div')
+    this.dropShadow.className = 'whiteboard-dropshadow'
+
     rootNode.appendChild(this.container)
     rootNode.appendChild(this.controls)
+    rootNode.appendChild(this.dropShadow)
     this.rootNode = rootNode
     this.setContainerZoom(1)
     this.setContainerPos(0, 0)
   },
+
+  // Controller / Commands API stuff
 
   getActive: function () {
     return this.root
@@ -62,6 +68,21 @@ View.prototype = {
   addTree: function (node, before) {
     if (node.parent !== this.root) return;
     this.makeBlock(node.id, 0)
+  },
+
+  add: function (node, before, dontfocus) {
+    if (node.parent === this.root) {
+      var block = this.makeBlock(node.id, 0)
+      block.node.style.zIndex = Object.keys(this.ids).length
+      if (!dontfocus) {
+        block.focus()
+      }
+      return
+    }
+    if (!this.ids[node.parent]) {
+      return
+    }
+    this.ids[node.parent].addChild(node, this.model)
   },
 
   setCollapsed: function () {
@@ -106,6 +127,34 @@ View.prototype = {
     this.root = newroot
     this.makeBlocks(newroot)
     this.ctrl.trigger('rebase', newroot)
+  },
+
+  setAttr: function (id, attr, value) {
+    if (!this.ids[id]) {
+      return
+    }
+    if (attr === 'whiteboard') {
+      if (!value || !value.top) {
+        var ch = this.model.ids[this.root].children
+          , i = ch.indexOf(id)
+          , defaultWidth = 300
+          , defaultHeight = 100
+          , margin = 10
+        value = {
+          top: 10 + parseInt(i / 4) * (defaultHeight + margin),
+          left: 10 + (i % 4) * (defaultWidth + margin)
+        }
+      }
+      this.ids[id].updateConfig(value)
+    }
+    // TODO something with done-ness?
+  },
+
+  setContent: function (id, content) {
+    if (!this.ids[id]) {
+      return
+    }
+    this.ids[id].setContent(content)
   },
 
   makeBlocks: function (root) {
@@ -153,35 +202,47 @@ View.prototype = {
     return block
   },
 
-  setAttr: function (id, attr, value) {
-    if (!this.ids[id]) {
-      return
-    }
-    if (attr === 'whiteboard') {
-      if (!value || !value.top) {
-        var ch = this.model.ids[this.root].children
-          , i = ch.indexOf(id)
-          , defaultWidth = 300
-          , defaultHeight = 100
-          , margin = 10
-        value = {
-          top: 10 + parseInt(i / 4) * (defaultHeight + margin),
-          left: 10 + (i % 4) * (defaultWidth + margin)
-        }
+  /**
+   * If the current is over a target, show the drop shadow.
+   */
+  updateDropTarget: function (x, y) {
+    var t
+    /*
+    if (this.moving.currentTarget) {
+      t = this.moving.currentTarget
+      if (x >= t.hit.left && x <= t.hit.right &&
+          y >= t.hit.top && y <= t.hit.bottom) {
+        // just keep the current one
+        return
       }
-      this.ids[id].updateConfig(value)
     }
-    // TODO something with done-ness?
+    */
+    for (var i=0; i<this.moving.targets.length; i++) {
+      t = this.moving.targets[i]
+      if (x >= t.hit.left && x <= t.hit.right &&
+          y >= t.hit.top && y <= t.hit.bottom) {
+        this.moving.currentTarget = t
+        this.showDropShadow(t.draw)
+        return
+      }
+    }
+    this.moving.currentTarget = null
+    this.hideDropShadow()
   },
 
-  setContent: function (id, content) {
-    if (!this.ids[id]) {
-      return
+  /**
+   * Collect a list of targets 
+   */
+  findTargets: function (children, id, isChild) {
+    var targets = []
+    for (var i = children.length - 1; i >= 0; i--) {
+      if (id == children[i]) continue;
+      targets = targets.concat(this.ids[children[i]].getDropTargets())
     }
-    this.ids[id].setContent(content)
+    return targets
   },
 
-  shuffleZIndices: function (top) {
+  getByZIndex: function () {
     var items = [];
     for (var id in this.ids) {
       items.push([+this.ids[id].node.style.zIndex, id])
@@ -189,10 +250,16 @@ View.prototype = {
     items.sort(function (a, b) {
       return a[0] - b[0]
     })
+    return items.map(function (item) {return item[1]})
+  },
+
+  shuffleZIndices: function (top) {
+    var items = this.getByZIndex()
     for (var i=0; i<items.length; i++) {
-      this.ids[items[i][1]].node.style.zIndex = i
+      this.ids[items[i]].node.style.zIndex = i
     }
     this.ids[top].node.style.zIndex = items.length
+    return items
   },
 
   // event handlers
@@ -226,16 +293,122 @@ View.prototype = {
     if (this.moving) {
       return
     }
+    var x, y
     if (e.shiftKey) {
       var root = this.rootNode.getBoundingClientRect()
-        , x = e.clientX - root.left
-        , y = e.clientY - root.top
+      x = e.clientX - root.left
+      y = e.clientY - root.top
       this.zoomMove((e.wheelDeltaY / 500), x, y)
       return
     }
-    var x = this.x
-    var y = this.y
+    x = this.x
+    y = this.y
     this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
+  },
+
+  _onMouseDown: function (e) {
+    if (e.target !== this.rootNode) {
+      return
+    }
+    var box = this.container.getBoundingClientRect()
+    var x = e.clientX/this._zoom - box.left/this._zoom
+      , y = e.clientY/this._zoom - box.top/this._zoom
+    this.moving = {
+      x: x,
+      y: y,
+    }
+    e.preventDefault()
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
+  },
+
+  _onStartMoving: function (id, e, rect, shiftMove) {
+    if (this.moving) return false;
+    var y = e.clientY / this._zoom - rect.top/this._zoom
+      , x = e.clientX / this._zoom - rect.left/this._zoom
+    var children = this.getByZIndex()
+    var targets = this.findTargets(children, id)
+    this.moving = {
+      shift: shiftMove,
+      targets: targets,
+      id: id,
+      x: x,
+      y: y,
+    }
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
+    return true
+  },
+
+  _onStartMovingChild: function (id, e, cid, handle, shiftMove) {
+    if (this.moving) return false;
+    var box = this.container.getBoundingClientRect()
+    var x = e.clientX/this._zoom - box.left/this._zoom
+      , y = e.clientY/this._zoom - box.top/this._zoom
+    var children = this.shuffleZIndices(id)
+    var targets = this.findTargets(children, cid, true)
+    this.moving = {
+      shift: shiftMove,
+      targets: targets,
+      handle: handle,
+      child: cid,
+      parent_id: id,
+      x: x,
+      y: y
+    }
+    this.container.appendChild(handle)
+    handle.className = 'whiteboard_child-handle'
+    handle.style.top = y + 'px'
+    handle.style.left = x + 'px'
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
+    return true
+  },
+
+  _onKeyUp: function (e) {
+    if (e.keyCode === 16 && this.moving && this.moving.shift) {
+      this.stopMoving()
+    }
+  },
+
+  _onMouseMove: function (e) {
+    if (!this.moving) {
+      return this._onMouseUp(e)
+    }
+    e.preventDefault()
+    if (this.moving.child) {
+      var box = this.container.getBoundingClientRect()
+      var x = e.clientX/this._zoom - box.left/this._zoom
+        , y = e.clientY/this._zoom - box.top/this._zoom
+      this.moving.handle.style.top = y + 'px'
+      this.moving.handle.style.left = x + 'px'
+      this.moving.x = x
+      this.moving.y = y
+      this.updateDropTarget(e.clientX, e.clientY)
+      return false
+    }
+
+    if (this.moving.id) {
+      var box = this.container.getBoundingClientRect()
+      var x = e.clientX/this._zoom - box.left/this._zoom - this.moving.x
+        , y = e.clientY/this._zoom - box.top/this._zoom - this.moving.y
+      this.ids[this.moving.id].reposition(x, y, true)
+      this.updateDropTarget(e.clientX, e.clientY)
+      return false
+    } 
+
+    // dragging the canvas
+    var box = this.rootNode.getBoundingClientRect()
+    var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
+      , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
+    this.setContainerPos(x, y)
+    return false
+  },
+
+  _onMouseUp: function (e) {
+    e.preventDefault()
+    this.stopMoving()
+    return false
   },
 
   resetContainer: function () {
@@ -274,120 +447,7 @@ View.prototype = {
     this.container.style.top = y + 'px'
   },
 
-  _onMouseDown: function (e) {
-    if (e.target !== this.rootNode) {
-      return
-    }
-    var box = this.container.getBoundingClientRect()
-    var x = e.clientX/this._zoom - box.left/this._zoom
-      , y = e.clientY/this._zoom - box.top/this._zoom
-    this.moving = {
-      x: x,
-      y: y,
-    }
-    e.preventDefault()
-    document.addEventListener('mousemove', this._boundMove)
-    document.addEventListener('mouseup', this._boundUp)
-  },
-
   // other stuff
-
-  add: function (node, before, dontfocus) {
-    if (node.parent === this.root) {
-      var block = this.makeBlock(node.id, 0)
-      block.node.style.zIndex = Object.keys(this.ids).length
-      if (!dontfocus) {
-        block.focus()
-      }
-      return
-    }
-    if (!this.ids[node.parent]) {
-      return
-    }
-    this.ids[node.parent].addChild(node, this.model)
-  },
-
-  _onStartMoving: function (id, e, rect, shiftMove) {
-    if (this.moving) return false;
-    var y = e.clientY / this._zoom - rect.top/this._zoom
-      , x = e.clientX / this._zoom - rect.left/this._zoom
-    this.moving = {
-      shift: shiftMove,
-      id: id,
-      x: x,
-      y: y,
-    }
-    document.addEventListener('mousemove', this._boundMove)
-    document.addEventListener('mouseup', this._boundUp)
-    this.shuffleZIndices(id)
-    return true
-  },
-
-  _onStartMovingChild: function (id, e, cid, handle, shiftMove) {
-    if (this.moving) return false;
-    var box = this.container.getBoundingClientRect()
-    var x = e.clientX/this._zoom - box.left/this._zoom
-      , y = e.clientY/this._zoom - box.top/this._zoom
-    this.moving = {
-      shift: shiftMove,
-      handle: handle,
-      child: cid,
-      parent_id: id,
-      x: x,
-      y: y
-    }
-    this.container.appendChild(handle)
-    handle.className = 'whiteboard_child-handle'
-    handle.style.top = y + 'px'
-    handle.style.left = x + 'px'
-    document.addEventListener('mousemove', this._boundMove)
-    document.addEventListener('mouseup', this._boundUp)
-    return true
-  },
-
-  _onKeyUp: function (e) {
-    if (e.keyCode === 16 && this.moving && this.moving.shift) {
-      this.stopMoving()
-    }
-  },
-
-  _onMouseMove: function (e) {
-    if (!this.moving) {
-      return this._onMouseUp(e)
-    }
-    e.preventDefault()
-    if (this.moving.child) {
-      var box = this.container.getBoundingClientRect()
-      var x = e.clientX/this._zoom - box.left/this._zoom
-        , y = e.clientY/this._zoom - box.top/this._zoom
-      this.moving.handle.style.top = y + 'px'
-      this.moving.handle.style.left = x + 'px'
-      this.moving.x = x
-      this.moving.y = y
-      return false
-    }
-
-    if (this.moving.id) {
-      var box = this.container.getBoundingClientRect()
-      var x = e.clientX/this._zoom - box.left/this._zoom- this.moving.x
-        , y = e.clientY/this._zoom - box.top/this._zoom - this.moving.y
-      this.ids[this.moving.id].reposition(x, y, true)
-      return false
-    } 
-
-    // dragging the canvas
-    var box = this.rootNode.getBoundingClientRect()
-    var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
-      , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
-    this.setContainerPos(x, y)
-    return false
-  },
-
-  _onMouseUp: function (e) {
-    e.preventDefault()
-    this.stopMoving()
-    return false
-  },
 
   stopMovingChild: function () {
     // TODO move into
@@ -408,11 +468,27 @@ View.prototype = {
     this.ids[this.moving.parent_id].doneMoving()
   },
 
+  showDropShadow: function (rect) {
+    var box = this.rootNode.getBoundingClientRect()
+    this.dropShadow.style.top = rect.top - box.top + 'px'
+    this.dropShadow.style.left = rect.left - box.left + 'px'
+    this.dropShadow.style.width = rect.width + 'px'
+    this.dropShadow.style.height = rect.height + 'px'
+    this.dropShadow.style.display = 'block'
+  },
+
+  hideDropShadow: function () {
+    this.dropShadow.style.display = 'none'
+  },
+
   stopMoving: function () {
     if (this.moving.child) {
       this.stopMovingChild()
     } else if (this.moving.id) {
       this.ids[this.moving.id].doneMoving()
+    }
+    if (this.moving.currentTarget) {
+      this.hideDropShadow()
     }
     this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
