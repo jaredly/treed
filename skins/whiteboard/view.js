@@ -93,6 +93,7 @@ View.prototype = {
   },
   setSelection: function () {
   },
+
   move: function (id, pid, before, opid, lastchild) {
     if (this.ids[opid]) {
       this.ids[opid].removeChild(id)
@@ -108,6 +109,7 @@ View.prototype = {
     }
     this.add(this.model.ids[id], before)
   },
+
   remove: function (id) {
     console.warn("FIX??")
     this.container.removeChild(this.ids[id].node)
@@ -226,11 +228,12 @@ View.prototype = {
           y >= t.hit.top && y <= t.hit.bottom) {
         this.moving.currentTarget = t
         this.showDropShadow(t.draw)
-        return
+        return true
       }
     }
     this.moving.currentTarget = null
     this.hideDropShadow()
+    return false
   },
 
   /**
@@ -238,11 +241,93 @@ View.prototype = {
    */
   findTargets: function (children, id, isChild) {
     var targets = []
+      , snaps = []
+      , root = this.rootNode.getBoundingClientRect()
     for (var i = children.length - 1; i >= 0; i--) {
       if (id == children[i]) continue;
-      targets = targets.concat(this.ids[children[i]].getDropTargets(id, children[i], this.model.ids[children[i]].children))
+      var childids = this.model.ids[children[i]].children
+        , child = this.ids[children[i]]
+        , whole = child.wholeTarget(id, childids.length)
+      targets = targets.concat(child.getDropTargets(id, children[i], childids))
+      targets.push(whole)
+      if (!isChild) {
+        snaps.push({
+          top: whole.hit.top - root.top,
+          left: whole.hit.left - root.left,
+          right: whole.hit.right - root.left,
+          bottom: whole.hit.bottom - root.top
+        })
+      }
     }
-    return targets
+    return {
+      targets: targets,
+      snaps: snaps
+    }
+  },
+
+  trySnap: function (x, y) {
+    // convert to screen coords
+    x = x * this._zoom + this.x
+    y = y * this._zoom + this.y
+    var h = this.moving.height
+      , w = this.moving.width
+      , b = y + h
+      , r = x + w
+      , allowance = 20 * this._zoom
+      , space = 10 * this._zoom
+
+    if (allowance < 2) {
+      return false
+    }
+
+    // TODO: show guiding lines
+    var lines = []
+      , dx = false
+      , dy = false
+
+    this.moving.snaps.forEach(function (snap) {
+      if (!dy) {
+        // top
+        if (Math.abs(snap.top - space - b) < allowance) {
+          y = snap.top - space - h
+          dy = true
+        } else if (Math.abs(snap.top - y) < allowance) {
+          y = snap.top
+          dy = true
+        } else if (Math.abs(snap.bottom + space - y) < allowance) { // bottom
+          y = snap.bottom + space
+          dy = true
+        } else if (Math.abs(snap.bottom - b) < allowance) {
+          y = snap.bottom - h
+          dy = true
+        }
+      }
+
+      if (!dx) {
+        // left
+        if (Math.abs(snap.left - space - r) < allowance) {
+          x = snap.left - space - w
+          dx = true
+        } else if (Math.abs(snap.left - x) < allowance) {
+          x = snap.left
+          dx = true
+        } else if (Math.abs(snap.right + space - x) < allowance) { // right
+          x = snap.right + space
+          dx = true
+        } else if (Math.abs(snap.right - r) < allowance) {
+          x = snap.right - w
+          dx = true
+        }
+      }
+    })
+
+    if (dx || dy) {
+      return {
+        x: (x - this.x)/this._zoom,
+        y: (y - this.y)/this._zoom
+      }
+    }
+    return false
   },
 
   getByZIndex: function () {
@@ -330,16 +415,20 @@ View.prototype = {
     var y = e.clientY / this._zoom - rect.top/this._zoom
       , x = e.clientX / this._zoom - rect.left/this._zoom
     var children = this.shuffleZIndices(id)
-    var targets = this.findTargets(children, id)
+    var boxes = this.findTargets(children, id)
     this.moving = {
       shift: shiftMove,
-      targets: targets,
+      targets: boxes.targets,
+      snaps: boxes.snaps,
+      width: rect.width,
+      height: rect.height,
       id: id,
       x: x,
       y: y,
     }
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
+    this.rootNode.classList.add('whiteboard--moving')
     return true
   },
 
@@ -349,10 +438,11 @@ View.prototype = {
     var x = e.clientX/this._zoom - box.left/this._zoom
       , y = e.clientY/this._zoom - box.top/this._zoom
     var children = this.getByZIndex()
-    var targets = this.findTargets(children, cid, true)
+    var boxes = this.findTargets(children, cid, true)
     this.moving = {
       shift: shiftMove,
-      targets: targets,
+      targets: boxes.targets,
+      snaps: boxes.snaps,
       handle: handle,
       child: cid,
       parent_id: id,
@@ -365,6 +455,7 @@ View.prototype = {
     handle.style.left = x + 'px'
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
+    this.rootNode.classList.add('whiteboard--moving')
     return true
   },
 
@@ -396,8 +487,15 @@ View.prototype = {
       var box = this.container.getBoundingClientRect()
       var x = e.clientX/this._zoom - box.left/this._zoom - this.moving.x
         , y = e.clientY/this._zoom - box.top/this._zoom - this.moving.y
+      if (!this.updateDropTarget(e.clientX, e.clientY)) {
+        // no drop place was found, let's snap!
+        var pos = this.trySnap(x, y)
+        if (pos) {
+          x = pos.x
+          y = pos.y
+        }
+      }
       this.ids[this.moving.id].reposition(x, y, true)
-      this.updateDropTarget(e.clientX, e.clientY)
       return false
     } 
 
@@ -525,6 +623,7 @@ View.prototype = {
     this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)
+    this.rootNode.classList.remove('whiteboard--moving')
   },
 
   getNode: function () {

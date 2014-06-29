@@ -12,7 +12,9 @@
 
 .whiteboard-dropshadow {
   position: absolute;
-  background-color: red;
+  background-color: #afc;
+  border-radius: 3px;
+  opacity: .7;
   z-index: 100;
   pointer-events: none;
 }
@@ -111,10 +113,8 @@
   position: relative;
 
   &:hover {
-    background-color: #f5f5f5;
-
-    .whiteboard-item--moving & {
-      background-color: transparent;
+    .whiteboard:not(.whiteboard--moving) & {
+      background-color: #f5f5f5;
     }
   }
 
@@ -128,10 +128,8 @@
     line-height: 12px;
 
     &:hover {
-      background-color: #aaa;
-
-      .whiteboard-item--moving & {
-        background-color: transparent;
+      .whiteboard:not(.whiteboard--moving) & {
+        background-color: #aaa;
       }
     }
   }
