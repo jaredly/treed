@@ -13,7 +13,8 @@
 .whiteboard-dropshadow {
   position: absolute;
   background-color: red;
-  z-index: 100
+  z-index: 100;
+  pointer-events: none;
 }
 
 .whiteboard-container {
@@ -123,6 +124,8 @@
     top: 0;
     padding: 5px 6px;
     border-radius: 5px;
+    font-size: 10px;
+    line-height: 12px;
 
     &:hover {
       background-color: #aaa;
@@ -133,8 +136,10 @@
     }
   }
 
-  i {
-    font-size: 10px;
+  &.whiteboard-item_child--parent .handle {
+    padding: 5px 3px 4px;
+    font-size: 16px;
+    color: #777;
   }
 
   p:first-child {

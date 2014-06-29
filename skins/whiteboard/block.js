@@ -84,21 +84,23 @@ Block.prototype = {
     return this.node
   },
 
-  getDropTargets: function (cid) {
-    var targets = []
-    for (var id in this.children) {
-      /*
-      if (arguments.length && cid === id) {
-        continue
-      }
-      */
-      targets.push(this.childTarget(id))
-    }
-    targets.push(this.wholeTarget())
+  remove: function () {
+    this.node.parentNode.removeChild(this.node)
+    return true
+  },
+
+  /**
+   * pid: the id of this block
+   * cid: the child that is being moved
+   * children: list of child ids
+   */
+  getDropTargets: function (cid, bid, children) {
+    var targets = children ? children.map(this.childTarget.bind(this, bid)) : []
+    targets.push(this.wholeTarget(bid, children.length))
     return targets
   },
 
-  childTarget: function (id) {
+  childTarget: function (pid, id, i) {
     var box = this.children[id].getBoundingClientRect()
       , magic = 10
     return {
@@ -108,6 +110,8 @@ Block.prototype = {
         top: box.top - magic,
         bottom: box.bottom - magic
       },
+      pos: i,
+      pid: pid,
       draw: {
         left: box.left,
         width: box.width,
@@ -117,11 +121,17 @@ Block.prototype = {
     }
   },
 
-  wholeTarget: function () {
+  /**
+   * id: the box id
+   * last: the last index in the child list
+   */
+  wholeTarget: function (id, last) {
     var box = this.node.getBoundingClientRect()
       , magic = 10
     return {
       hit: box,
+      pid: id,
+      pos: last,
       draw: {
         top: box.bottom - magic,
         left: box.left + magic/2,
@@ -155,6 +165,9 @@ Block.prototype = {
   },
 
   _onMouseMove: function (e) {
+    if (e.target.classList.contains('handle')) {
+      return
+    }
     if (!e.shiftKey) return
     var rect = this.node.getBoundingClientRect()
     if (this.o.startMoving(e, rect, true)) {
@@ -177,7 +190,6 @@ Block.prototype = {
 
   _onMouseMoveChild: function (id, e) {
     if (!e.shiftKey) return
-    e.stopPropagation()
     e.preventDefault()
     var clone = this.children[id].lastChild.cloneNode(true)
     if (this.o.startMovingChild(e, id, clone, true)) {
@@ -238,6 +250,9 @@ Block.prototype = {
   createChild: function (child) {
     var node = document.createElement('li')
     node.className='whiteboard-item_child'
+    if (child.children && child.children.length) {
+      node.classList.add('whiteboard-item_child--parent')
+    }
     var body = document.createElement('div')
     body.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
     var handle = document.createElement('div')

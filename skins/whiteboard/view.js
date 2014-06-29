@@ -96,6 +96,9 @@ View.prototype = {
   move: function (id, pid, before, opid, lastchild) {
     if (this.ids[opid]) {
       this.ids[opid].removeChild(id)
+    } else if (opid == this.root) {
+      this.ids[id].remove()
+      delete this.ids[id]
     }
     if (this.ids[pid]) {
       return this.ids[pid].addChild(this.model.ids[id], id, before)
@@ -237,7 +240,7 @@ View.prototype = {
     var targets = []
     for (var i = children.length - 1; i >= 0; i--) {
       if (id == children[i]) continue;
-      targets = targets.concat(this.ids[children[i]].getDropTargets())
+      targets = targets.concat(this.ids[children[i]].getDropTargets(id, children[i], this.model.ids[children[i]].children))
     }
     return targets
   },
@@ -326,7 +329,7 @@ View.prototype = {
     if (this.moving) return false;
     var y = e.clientY / this._zoom - rect.top/this._zoom
       , x = e.clientX / this._zoom - rect.left/this._zoom
-    var children = this.getByZIndex()
+    var children = this.shuffleZIndices(id)
     var targets = this.findTargets(children, id)
     this.moving = {
       shift: shiftMove,
@@ -345,7 +348,7 @@ View.prototype = {
     var box = this.container.getBoundingClientRect()
     var x = e.clientX/this._zoom - box.left/this._zoom
       , y = e.clientY/this._zoom - box.top/this._zoom
-    var children = this.shuffleZIndices(id)
+    var children = this.getByZIndex()
     var targets = this.findTargets(children, cid, true)
     this.moving = {
       shift: shiftMove,
@@ -376,6 +379,7 @@ View.prototype = {
       return this._onMouseUp(e)
     }
     e.preventDefault()
+
     if (this.moving.child) {
       var box = this.container.getBoundingClientRect()
       var x = e.clientX/this._zoom - box.left/this._zoom
@@ -454,26 +458,43 @@ View.prototype = {
     this.moving.handle.parentNode.removeChild(this.moving.handle)
     var pos = this.model.ids[this.root].children.length
 
-    this.ctrl.executeCommands('changeNodeAttr', [
-      this.moving.child,
-      'whiteboard',
-      {top: this.moving.y, left: this.moving.x}
-    ]);
+    if (this.moving.currentTarget) {
+      var pos = this.moving.currentTarget.pos
+      if (this.moving.currentTarget.pid == this.moving.parent_id) {
+        if (pos > this.model.ids[this.moving.parent_id].children.indexOf(this.moving.child)) {
+          pos -= 1
+        }
+      }
+      this.ctrl.executeCommands('move', [
+        this.moving.child,
+        this.moving.currentTarget.pid,
+        pos
+      ]);
+    } else {
 
-    this.ctrl.executeCommands('move', [
-      this.moving.child,
-      this.root,
-      pos
-    ])
+      this.ctrl.executeCommands('changeNodeAttr', [
+        this.moving.child,
+        'whiteboard',
+        {top: this.moving.y, left: this.moving.x}
+      ], 'move', [
+        this.moving.child,
+        this.root,
+        pos
+      ])
+
+    }
+
     this.ids[this.moving.parent_id].doneMoving()
   },
 
   showDropShadow: function (rect) {
     var box = this.rootNode.getBoundingClientRect()
-    this.dropShadow.style.top = rect.top - box.top + 'px'
+      , realheight = rect.height * this._zoom
+      , yoff = (rect.height - realheight) / 2
+    this.dropShadow.style.top = rect.top - box.top + yoff + 'px'
     this.dropShadow.style.left = rect.left - box.left + 'px'
     this.dropShadow.style.width = rect.width + 'px'
-    this.dropShadow.style.height = rect.height + 'px'
+    this.dropShadow.style.height = realheight + 'px'
     this.dropShadow.style.display = 'block'
   },
 
@@ -481,11 +502,22 @@ View.prototype = {
     this.dropShadow.style.display = 'none'
   },
 
+  stopMovingMain: function () {
+    this.ids[this.moving.id].doneMoving()
+    if (this.moving.currentTarget) {
+      this.ctrl.executeCommands('move', [
+        this.moving.id,
+        this.moving.currentTarget.pid,
+        this.moving.currentTarget.pos
+      ]);
+    }
+  },
+
   stopMoving: function () {
     if (this.moving.child) {
       this.stopMovingChild()
     } else if (this.moving.id) {
-      this.ids[this.moving.id].doneMoving()
+      this.stopMovingMain()
     }
     if (this.moving.currentTarget) {
       this.hideDropShadow()
