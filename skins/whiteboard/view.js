@@ -235,7 +235,7 @@ View.prototype = {
     var cmds = []
     this.model.ids[this.root].children.forEach(function (id) {
       cmds.push('changeNodeAttr')
-      cmds.push([id, 'whiteboard', {}])
+      cmds.push([id, 'whiteboard', null])
     });
     this.ctrl.executeCommands(cmds)
   },

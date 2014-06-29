@@ -22,15 +22,15 @@ Block.prototype = {
   setupNode: function (data, children) {
     this.node = document.createElement('div')
     this.node.className = 'whiteboard-item'
-    this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
+    // this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
     this.node.addEventListener('mouseup', this._onMouseUp.bind(this))
-    this.node.addEventListener('click', this._onClick.bind(this))
-    this.node.addEventListener('dblclick', this.o.onZoom)
 
     this.title = document.createElement('div')
     this.title.className='whiteboard-item_title'
     // this.title.addEventListener('click', this._onClick.bind(this))
     this.title.addEventListener('mousedown', this._onMouseDown.bind(this))
+    this.title.addEventListener('click', this._onClick.bind(this))
+    this.title.addEventListener('dblclick', this.o.onZoom)
 
     this.input = document.createElement('div')
     this.input.setAttribute('contenteditable', true)
@@ -44,6 +44,7 @@ Block.prototype = {
       var node = document.createElement('li')
       node.className='whiteboard-item_child'
       node.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
+      node.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
       this.body.appendChild(node)
     }.bind(this))
 
