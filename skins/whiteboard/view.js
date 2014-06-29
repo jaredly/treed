@@ -15,7 +15,7 @@ function View(bindActions, model, ctrl, options) {
 
   this._boundMove = this._onMouseMove.bind(this)
   this._boundUp = this._onMouseUp.bind(this)
-  this._boundKeyUp = this._onKeyUp.bind(this)
+  document.addEventListener('keyup', this._onKeyUp.bind(this))
 }
 
 View.prototype = {
@@ -132,9 +132,8 @@ View.prototype = {
       changeContent: function (content) {
         this.ctrl.executeCommands('changeContent', [node.id, content]);
       }.bind(this),
-      startMoving: function (e, rect, shiftMove) {
-        this._onStartMoving(node.id, e, rect, shiftMove)
-      }.bind(this),
+      startMoving: this._onStartMoving.bind(this, node.id),
+      startMovingChild: this._onStartMovingChild.bind(this, node.id),
       onZoom: function () {
         this.rebase(node.id)
       }.bind(this),
@@ -214,17 +213,20 @@ View.prototype = {
 
   _onWheel: function (e) {
     e.preventDefault()
+    if (this.moving) {
+      return
+    }
     if (e.shiftKey) {
       // console.log(x, y, e.clientX, e.clientY, box.left, box.top)
       var root = this.rootNode.getBoundingClientRect()
-        , x = e.clientX/this._zoom - root.left/this._zoom
-        , y = e.clientY/this._zoom - root.top/this._zoom
+        , x = e.clientX - root.left
+        , y = e.clientY - root.top
       this.zoomMove((e.wheelDeltaY / 500), x, y)
       return
     }
     var x = this.x
     var y = this.y
-    this.setContainerPos(x + e.wheelDeltaX/this._zoom, y + e.wheelDeltaY/this._zoom)
+    this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
   },
 
   resetContainer: function () {
@@ -245,15 +247,16 @@ View.prototype = {
     var next = this._zoom * delta
       , nz = this._zoom + next
       , scale = this._zoom / nz
-      , nx = x - x * scale
-      , ny = y - y * scale
-    this.setContainerPos(this.x - nx, this.y - ny)
+      , nx = x - x / scale
+      , ny = y - y / scale
+    console.log(x, y, x/scale, y/scale)
+    this.setContainerPos(this.x/scale + nx, this.y/scale + ny)
     this.setContainerZoom(nz)
   },
 
   setContainerZoom: function (num) {
     this._zoom = num
-    this.container.style.zoom = num
+    this.container.style.WebkitTransform = 'scale(' + num + ')'
   },
 
   setContainerPos: function (x, y) {
@@ -268,8 +271,8 @@ View.prototype = {
       return
     }
     var box = this.container.getBoundingClientRect()
-    var x = e.clientX/this._zoom - box.left
-      , y = e.clientY/this._zoom - box.top
+    var x = e.clientX/this._zoom - box.left/this._zoom
+      , y = e.clientY/this._zoom - box.top/this._zoom
     this.moving = {
       x: x,
       y: y,
@@ -299,8 +302,8 @@ View.prototype = {
 
   _onStartMoving: function (id, e, rect, shiftMove) {
     if (this.moving) return;
-    var y = e.clientY / this._zoom - rect.top
-      , x = e.clientX / this._zoom - rect.left
+    var y = e.clientY / this._zoom - rect.top/this._zoom
+      , x = e.clientX / this._zoom - rect.left/this._zoom
     this.moving = {
       shift: shiftMove,
       id: id,
@@ -310,10 +313,10 @@ View.prototype = {
     console.log(this.moving)
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
-    if (shiftMove) {
-      document.addEventListener('keyup', this._boundKeyUp)
-    }
     this.shuffleZIndices(id)
+  },
+
+  _onStartMovingChild: function (id, e, cid, shiftMove) {
   },
 
   _onKeyUp: function (e) {
@@ -329,8 +332,8 @@ View.prototype = {
     e.preventDefault()
     if (this.moving.id) {
       var box = this.container.getBoundingClientRect()
-      var x = e.clientX/this._zoom - box.left- this.moving.x
-        , y = e.clientY/this._zoom - box.top - this.moving.y
+      var x = e.clientX/this._zoom - box.left/this._zoom- this.moving.x
+        , y = e.clientY/this._zoom - box.top/this._zoom - this.moving.y
       this.ids[this.moving.id].reposition(x, y, true)
     } else {
       var box = this.rootNode.getBoundingClientRect()

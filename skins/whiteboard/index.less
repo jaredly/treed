@@ -74,12 +74,29 @@
 
 .whiteboard-item_child {
   font-size: 80%;
-  list-style-position: inside;
-  padding: 5px;
+  list-style: none;
+  padding: 5px 5px 5px 25px;
   border-radius: 5px;
+  position: relative;
 
   &:hover {
-    background-color: #ddd;
+    background-color: #f5f5f5;
+  }
+
+  .handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    padding: 5px 6px;
+    border-radius: 5px;
+
+    &:hover {
+      background-color: #aaa;
+    }
+  }
+
+  i {
+    font-size: 10px;
   }
 
   p:first-child {

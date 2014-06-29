@@ -9,6 +9,22 @@ function unEscapeHtml(str) {
     .replace(/\u200b/g, '')
 }
 
+/**
+ * Config looks like:
+ * {
+ *   top: num,
+ *   left: num, (from meta.whiteboard)
+ *  }
+ * Options looks like:
+ * {
+ *  saveConfig
+ *  saveContent
+ *  changeContent
+ *  startMoving(event, rect, ?shiftMove)
+ *  startMovingChild(event, id, ?shiftMove)
+ *  onZoom
+ * }
+ */
 function Block(data, children, config, options) {
   this.o = options
   this.editing = false
@@ -25,11 +41,11 @@ Block.prototype = {
     // this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
     this.node.addEventListener('mouseup', this._onMouseUp.bind(this))
     this.node.addEventListener('mousemove', this._onMouseMove.bind(this))
+    this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
 
     this.title = document.createElement('div')
     this.title.className='whiteboard-item_title'
     // this.title.addEventListener('click', this._onClick.bind(this))
-    this.title.addEventListener('mousedown', this._onMouseDown.bind(this))
     this.title.addEventListener('click', this._onClick.bind(this))
     this.title.addEventListener('dblclick', this.o.onZoom)
 
@@ -41,12 +57,23 @@ Block.prototype = {
     this.body = document.createElement('ul')
     this.body.className='whiteboard-item_body'
 
+    this.children = {}
+
     children.forEach(function (child) {
       var node = document.createElement('li')
       node.className='whiteboard-item_child'
-      node.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
-      node.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
+      var body = document.createElement('div')
+      body.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
+      var handle = document.createElement('div')
+      handle.className = 'handle'
+      handle.innerHTML = '<i class="fa fa-circle"/>'
+      handle.addEventListener('mousemove', this._onMouseMoveChild.bind(this, child.id))
+      handle.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
+      node.appendChild(handle)
+      node.appendChild(body)
+      // node.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
       this.body.appendChild(node)
+      this.children[child.id] = node
     }.bind(this))
 
     /*
@@ -57,7 +84,6 @@ Block.prototype = {
     zoom.addEventListener('click', this.o.onZoom)
     this.footer.appendChild(zoom)
     */
-
 
     this.node.appendChild(this.title)
     this.node.appendChild(this.body)
@@ -72,7 +98,6 @@ Block.prototype = {
   addChild: function () {
     console.log('faile')
   },
-
 
 
   // Not children!!
@@ -114,10 +139,16 @@ Block.prototype = {
     return false
   },
 
+  _onMouseMoveChild: function (id, e) {
+  },
+
   _onMouseDownChild: function (id, e) {
   },
 
   _onMouseDown: function (e) {
+    if (e.button !== 0) {
+      return
+    }
     this._moved = false
     if (e.target !== this.input) {
       e.preventDefault()
