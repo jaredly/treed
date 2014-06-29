@@ -24,6 +24,7 @@ Block.prototype = {
     this.node.className = 'whiteboard-item'
     // this.node.addEventListener('mousedown', this._onMouseDown.bind(this))
     this.node.addEventListener('mouseup', this._onMouseUp.bind(this))
+    this.node.addEventListener('mousemove', this._onMouseMove.bind(this))
 
     this.title = document.createElement('div')
     this.title.className='whiteboard-item_title'
@@ -93,6 +94,13 @@ Block.prototype = {
     return false
   },
 
+  _onMouseMove: function (e) {
+    if (e.shiftKey) {
+      var rect = this.node.getBoundingClientRect()
+      this.o.startMoving(e, rect, true)
+    }
+  },
+
   _onMouseUp: function (e) {
   },
 
@@ -104,6 +112,9 @@ Block.prototype = {
     this.startEditing()
     e.preventDefault()
     return false
+  },
+
+  _onMouseDownChild: function (id, e) {
   },
 
   _onMouseDown: function (e) {
@@ -127,9 +138,6 @@ Block.prototype = {
      */
     //this.o.startMoving(left, top)
     return false
-  },
-
-  _onMouseMove: function (e) {
   },
 
   startEditing: function (fromStart) {

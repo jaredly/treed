@@ -15,6 +15,7 @@ function View(bindActions, model, ctrl, options) {
 
   this._boundMove = this._onMouseMove.bind(this)
   this._boundUp = this._onMouseUp.bind(this)
+  this._boundKeyUp = this._onKeyUp.bind(this)
 }
 
 View.prototype = {
@@ -131,8 +132,8 @@ View.prototype = {
       changeContent: function (content) {
         this.ctrl.executeCommands('changeContent', [node.id, content]);
       }.bind(this),
-      startMoving: function (e, rect) {
-        this._onStartMoving(node.id, e, rect)
+      startMoving: function (e, rect, shiftMove) {
+        this._onStartMoving(node.id, e, rect, shiftMove)
       }.bind(this),
       onZoom: function () {
         this.rebase(node.id)
@@ -296,18 +297,29 @@ View.prototype = {
     this.ids[node.parent].addChild(node, this.model)
   },
 
-  _onStartMoving: function (id, e, rect) {
+  _onStartMoving: function (id, e, rect, shiftMove) {
+    if (this.moving) return;
     var y = e.clientY / this._zoom - rect.top
       , x = e.clientX / this._zoom - rect.left
     this.moving = {
+      shift: shiftMove,
       id: id,
       x: x,
-      y: y
+      y: y,
     }
     console.log(this.moving)
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
+    if (shiftMove) {
+      document.addEventListener('keyup', this._boundKeyUp)
+    }
     this.shuffleZIndices(id)
+  },
+
+  _onKeyUp: function (e) {
+    if (e.keyCode === 16 && this.moving && this.moving.shift) {
+      this.stopMoving()
+    }
   },
 
   _onMouseMove: function (e) {
@@ -330,11 +342,16 @@ View.prototype = {
   },
 
   _onMouseUp: function (e) {
-    this.moving = null
     e.preventDefault()
+    this.stopMoving()
+    return false
+  },
+
+  stopMoving: function () {
+    this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)
-    return false
+    document.removeEventListener('keyup', this._boundKeyUp)
   },
 
   getNode: function () {
