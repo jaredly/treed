@@ -35,6 +35,26 @@
   }
 }
 
+.whiteboard_child-handle {
+  position: absolute;
+  z-index: 1000;
+  background-color: #ddd;
+  opacity: .5;
+  width: 300px;
+  font-size: 80%;
+  font-family: sans-serif;
+  border-radius: 5px;
+  padding: 10px;
+  pointer-events: none;
+
+  p:first-child {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .whiteboard-item {
   border-radius: 5px;
   box-shadow: 0 0 5px black;

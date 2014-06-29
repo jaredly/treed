@@ -60,17 +60,7 @@ Block.prototype = {
     this.children = {}
 
     children.forEach(function (child) {
-      var node = document.createElement('li')
-      node.className='whiteboard-item_child'
-      var body = document.createElement('div')
-      body.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
-      var handle = document.createElement('div')
-      handle.className = 'handle'
-      handle.innerHTML = '<i class="fa fa-circle"/>'
-      handle.addEventListener('mousemove', this._onMouseMoveChild.bind(this, child.id))
-      handle.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
-      node.appendChild(handle)
-      node.appendChild(body)
+      var node = this.createChild(child)
       // node.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
       this.body.appendChild(node)
       this.children[child.id] = node
@@ -120,11 +110,10 @@ Block.prototype = {
   },
 
   _onMouseMove: function (e) {
-    if (e.shiftKey) {
-      var rect = this.node.getBoundingClientRect()
-      this.node.classList.add('whiteboard-item--moving')
-      this.o.startMoving(e, rect, true)
-    }
+    if (!e.shiftKey) return
+    var rect = this.node.getBoundingClientRect()
+    this.node.classList.add('whiteboard-item--moving')
+    this.o.startMoving(e, rect, true)
   },
 
   _onMouseUp: function (e) {
@@ -141,9 +130,17 @@ Block.prototype = {
   },
 
   _onMouseMoveChild: function (id, e) {
+    if (!e.shiftKey) return
+    e.stopPropagation()
+    e.preventDefault()
+    this.node.classList.add('whiteboard-item--moving')
+    var clone = this.children[id].lastChild.cloneNode(true)
+    this.o.startMovingChild(e, id, clone, true)
   },
 
   _onMouseDownChild: function (id, e) {
+    e.stopPropagation()
+    e.preventDefault()
   },
 
   _onMouseDown: function (e) {
@@ -171,6 +168,39 @@ Block.prototype = {
      */
     //this.o.startMoving(left, top)
     return false
+  },
+
+  removeChild: function (id) {
+    if (!this.children[id]) {
+      return false
+    }
+    this.children[id].parentNode.removeChild(this.children[id])
+    delete this.children[id]
+  },
+
+  addChild: function (child, id, before) {
+    var node = this.createChild(child)
+    if (before === false) {
+      this.body.appendChild(node)
+    } else {
+      this.body.insertBefore(node, this.children[before])
+    }
+    this.children[id] = node
+  },
+
+  createChild: function (child) {
+    var node = document.createElement('li')
+    node.className='whiteboard-item_child'
+    var body = document.createElement('div')
+    body.innerHTML = child.content ? marked(child.content) : '<em>Click here to edit</em>'
+    var handle = document.createElement('div')
+    handle.className = 'handle'
+    handle.innerHTML = '<i class="fa fa-circle"/>'
+    handle.addEventListener('mousemove', this._onMouseMoveChild.bind(this, child.id))
+    handle.addEventListener('mousedown', this._onMouseDownChild.bind(this, child.id))
+    node.appendChild(handle)
+    node.appendChild(body)
+    return node
   },
 
   doneMoving: function () {

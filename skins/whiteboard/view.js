@@ -73,6 +73,17 @@ View.prototype = {
   setSelection: function () {
   },
   move: function (id, pid, before, opid, lastchild) {
+    console.log('yeah', id, pid, before, opid, lastchild)
+    if (this.ids[opid]) {
+      this.ids[opid].removeChild(id)
+    }
+    if (this.ids[pid]) {
+      return this.ids[pid].addChild(this.model.ids[id], id, before)
+    }
+    if (pid !== this.root) {
+      return
+    }
+    this.add(this.model.ids[id], before)
   },
   remove: function (id) {
     console.warn("FIX??")
@@ -310,13 +321,23 @@ View.prototype = {
       x: x,
       y: y,
     }
-    console.log(this.moving)
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
     this.shuffleZIndices(id)
   },
 
-  _onStartMovingChild: function (id, e, cid, shiftMove) {
+  _onStartMovingChild: function (id, e, cid, handle, shiftMove) {
+    if (this.moving) return;
+    this.moving = {
+      shift: shiftMove,
+      handle: handle,
+      child: cid,
+      parent_id: id,
+    }
+    this.container.appendChild(handle)
+    handle.className = 'whiteboard_child-handle'
+    document.addEventListener('mousemove', this._boundMove)
+    document.addEventListener('mouseup', this._boundUp)
   },
 
   _onKeyUp: function (e) {
@@ -330,17 +351,30 @@ View.prototype = {
       return this._onMouseUp(e)
     }
     e.preventDefault()
+    if (this.moving.child) {
+      var box = this.container.getBoundingClientRect()
+      var x = e.clientX/this._zoom - box.left/this._zoom
+        , y = e.clientY/this._zoom - box.top/this._zoom
+      this.moving.handle.style.top = y + 'px'
+      this.moving.handle.style.left = x + 'px'
+      this.moving.x = x
+      this.moving.y = y
+      return false
+    }
+
     if (this.moving.id) {
       var box = this.container.getBoundingClientRect()
       var x = e.clientX/this._zoom - box.left/this._zoom- this.moving.x
         , y = e.clientY/this._zoom - box.top/this._zoom - this.moving.y
       this.ids[this.moving.id].reposition(x, y, true)
-    } else {
-      var box = this.rootNode.getBoundingClientRect()
-      var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
-        , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
-      this.setContainerPos(x, y)
-    }
+      return false
+    } 
+
+    // dragging the canvas
+    var box = this.rootNode.getBoundingClientRect()
+    var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
+      , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
+    this.setContainerPos(x, y)
     return false
   },
 
@@ -350,14 +384,34 @@ View.prototype = {
     return false
   },
 
+  stopMovingChild: function () {
+    // TODO move into
+    this.moving.handle.parentNode.removeChild(this.moving.handle)
+    var pos = this.model.ids[this.root].children.length
+
+    this.ctrl.executeCommands('changeNodeAttr', [
+      this.moving.child,
+      'whiteboard',
+      {top: this.moving.y, left: this.moving.x}
+    ]);
+
+    this.ctrl.executeCommands('move', [
+      this.moving.child,
+      this.root,
+      pos
+    ])
+    this.ids[this.moving.parent_id].doneMoving()
+  },
+
   stopMoving: function () {
-    if (this.moving.id) {
+    if (this.moving.child) {
+      this.stopMovingChild()
+    } else if (this.moving.id) {
       this.ids[this.moving.id].doneMoving()
     }
     this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)
-    document.removeEventListener('keyup', this._boundKeyUp)
   },
 
   getNode: function () {
