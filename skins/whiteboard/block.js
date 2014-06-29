@@ -94,7 +94,7 @@ Block.prototype = {
    * cid: the child that is being moved
    * children: list of child ids
    */
-  getDropTargets: function (cid, bid, children) {
+  getChildTargets: function (cid, bid, children) {
     var targets = children ? children.map(this.childTarget.bind(this, bid)) : []
     targets.push(this.wholeTarget(bid, children.length))
     return targets
@@ -200,6 +200,10 @@ Block.prototype = {
   _onMouseDownChild: function (id, e) {
     e.stopPropagation()
     e.preventDefault()
+    var clone = this.children[id].lastChild.cloneNode(true)
+    if (this.o.startMovingChild(e, id, clone)) {
+      this.children[id].classList.add('whiteboard-item_child--moving')
+    }
   },
 
   _onMouseDown: function (e) {

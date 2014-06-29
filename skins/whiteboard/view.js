@@ -256,7 +256,7 @@ View.prototype = {
       var childids = this.model.ids[children[i]].children
         , child = this.ids[children[i]]
         , whole = child.wholeTarget(id, childids.length)
-      targets = targets.concat(child.getDropTargets(id, children[i], childids))
+      targets = targets.concat(child.getChildTargets(id, children[i], childids))
       targets.push(whole)
       if (!isChild) {
         snaps.push({
@@ -429,8 +429,8 @@ View.prototype = {
       return
     }
     var box = this.container.getBoundingClientRect()
-    var x = e.clientX/this._zoom - box.left/this._zoom
-      , y = e.clientY/this._zoom - box.top/this._zoom
+    var x = e.clientX - box.left
+      , y = e.clientY - box.top
     this.moving = {
       x: x,
       y: y,
@@ -531,8 +531,8 @@ View.prototype = {
 
     // dragging the canvas
     var box = this.rootNode.getBoundingClientRect()
-    var x = (e.clientX)/this._zoom - box.left/this._zoom - this.moving.x
-      , y = (e.clientY)/this._zoom - box.top/this._zoom - this.moving.y
+    var x = e.clientX - box.left - this.moving.x
+      , y = e.clientY - box.top - this.moving.y
     this.setContainerPos(x, y)
     return false
   },
