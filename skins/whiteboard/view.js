@@ -525,6 +525,8 @@ View.prototype = {
           y = pos.y
         }
       }
+      this.moving.atx = x
+      this.moving.aty = y
       this.ids[this.moving.id].reposition(x, y, true)
       return false
     } 
@@ -631,6 +633,7 @@ View.prototype = {
   },
 
   stopMovingMain: function () {
+    this.ids[this.moving.id].reposition(this.moving.atx, this.moving.aty)
     this.ids[this.moving.id].doneMoving()
     if (this.moving.currentTarget) {
       this.ctrl.executeCommands('move', [
