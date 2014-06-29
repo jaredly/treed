@@ -122,6 +122,7 @@ Block.prototype = {
   _onMouseMove: function (e) {
     if (e.shiftKey) {
       var rect = this.node.getBoundingClientRect()
+      this.node.classList.add('whiteboard-item--moving')
       this.o.startMoving(e, rect, true)
     }
   },
@@ -155,6 +156,7 @@ Block.prototype = {
       document.activeElement.blur()
     }
     var rect = this.node.getBoundingClientRect()
+    this.node.classList.add('whiteboard-item--moving')
     this.o.startMoving(e, rect)
       //, top = e.clientY - rect.top
       //, left = e.clientX - rect.left
@@ -169,6 +171,10 @@ Block.prototype = {
      */
     //this.o.startMoving(left, top)
     return false
+  },
+
+  doneMoving: function () {
+    this.node.classList.remove('whiteboard-item--moving')
   },
 
   startEditing: function (fromStart) {

@@ -351,6 +351,9 @@ View.prototype = {
   },
 
   stopMoving: function () {
+    if (this.moving.id) {
+      this.ids[this.moving.id].doneMoving()
+    }
     this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)
