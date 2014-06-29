@@ -329,14 +329,21 @@ View.prototype = {
 
   _onStartMovingChild: function (id, e, cid, handle, shiftMove) {
     if (this.moving) return false;
+    var box = this.container.getBoundingClientRect()
+    var x = e.clientX/this._zoom - box.left/this._zoom
+      , y = e.clientY/this._zoom - box.top/this._zoom
     this.moving = {
       shift: shiftMove,
       handle: handle,
       child: cid,
       parent_id: id,
+      x: x,
+      y: y
     }
     this.container.appendChild(handle)
     handle.className = 'whiteboard_child-handle'
+    handle.style.top = y + 'px'
+    handle.style.left = x + 'px'
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
     return true

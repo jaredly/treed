@@ -135,7 +135,9 @@ Block.prototype = {
     e.stopPropagation()
     e.preventDefault()
     var clone = this.children[id].lastChild.cloneNode(true)
-    this.o.startMovingChild(e, id, clone, true)
+    if (this.o.startMovingChild(e, id, clone, true)) {
+      this.children[id].classList.add('whiteboard-item_child--moving')
+    }
   },
 
   _onMouseDownChild: function (id, e) {
@@ -205,6 +207,10 @@ Block.prototype = {
 
   doneMoving: function () {
     this.node.classList.remove('whiteboard-item--moving')
+  },
+
+  doneMovingChild: function (id) {
+    this.children[id].classList.remove('whiteboard-item_child--moving')
   },
 
   startEditing: function (fromStart) {
