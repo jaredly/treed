@@ -112,8 +112,9 @@ Block.prototype = {
   _onMouseMove: function (e) {
     if (!e.shiftKey) return
     var rect = this.node.getBoundingClientRect()
-    this.node.classList.add('whiteboard-item--moving')
-    this.o.startMoving(e, rect, true)
+    if (this.o.startMoving(e, rect, true)) {
+      this.node.classList.add('whiteboard-item--moving')
+    }
   },
 
   _onMouseUp: function (e) {
@@ -133,7 +134,6 @@ Block.prototype = {
     if (!e.shiftKey) return
     e.stopPropagation()
     e.preventDefault()
-    this.node.classList.add('whiteboard-item--moving')
     var clone = this.children[id].lastChild.cloneNode(true)
     this.o.startMovingChild(e, id, clone, true)
   },

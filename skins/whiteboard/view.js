@@ -312,7 +312,7 @@ View.prototype = {
   },
 
   _onStartMoving: function (id, e, rect, shiftMove) {
-    if (this.moving) return;
+    if (this.moving) return false;
     var y = e.clientY / this._zoom - rect.top/this._zoom
       , x = e.clientX / this._zoom - rect.left/this._zoom
     this.moving = {
@@ -324,10 +324,11 @@ View.prototype = {
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
     this.shuffleZIndices(id)
+    return true
   },
 
   _onStartMovingChild: function (id, e, cid, handle, shiftMove) {
-    if (this.moving) return;
+    if (this.moving) return false;
     this.moving = {
       shift: shiftMove,
       handle: handle,
@@ -338,6 +339,7 @@ View.prototype = {
     handle.className = 'whiteboard_child-handle'
     document.addEventListener('mousemove', this._boundMove)
     document.addEventListener('mouseup', this._boundUp)
+    return true
   },
 
   _onKeyUp: function (e) {
