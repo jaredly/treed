@@ -51,9 +51,17 @@ View.prototype = {
     this.dropShadow = document.createElement('div')
     this.dropShadow.className = 'whiteboard-dropshadow'
 
+    this.vline = document.createElement('div')
+    this.vline.className='whiteboard_vline'
+    this.hline = document.createElement('div')
+    this.hline.className='whiteboard_hline'
+
     rootNode.appendChild(this.container)
     rootNode.appendChild(this.controls)
     rootNode.appendChild(this.dropShadow)
+    rootNode.appendChild(this.vline)
+    rootNode.appendChild(this.hline)
+
     this.rootNode = rootNode
     this.setContainerZoom(1)
     this.setContainerPos(0, 0)
@@ -290,16 +298,16 @@ View.prototype = {
         // top
         if (Math.abs(snap.top - space - b) < allowance) {
           y = snap.top - space - h
-          dy = true
+          dy = [snap.left, snap.right, snap.top - space / 2]
         } else if (Math.abs(snap.top - y) < allowance) {
           y = snap.top
-          dy = true
+          dy = [snap.left, snap.right, snap.top - space / 2]
         } else if (Math.abs(snap.bottom + space - y) < allowance) { // bottom
           y = snap.bottom + space
-          dy = true
+          dy = [snap.left, snap.right, snap.bottom + space / 2]
         } else if (Math.abs(snap.bottom - b) < allowance) {
           y = snap.bottom - h
-          dy = true
+          dy = [snap.left, snap.right, snap.bottom + space / 2]
         }
       }
 
@@ -307,19 +315,41 @@ View.prototype = {
         // left
         if (Math.abs(snap.left - space - r) < allowance) {
           x = snap.left - space - w
-          dx = true
+          dx = [snap.top, snap.bottom, snap.left - space / 2]
         } else if (Math.abs(snap.left - x) < allowance) {
           x = snap.left
-          dx = true
+          dx = [snap.top, snap.bottom, snap.left - space / 2]
         } else if (Math.abs(snap.right + space - x) < allowance) { // right
           x = snap.right + space
-          dx = true
+          dx = [snap.top, snap.bottom, snap.right + space / 2]
         } else if (Math.abs(snap.right - r) < allowance) {
           x = snap.right - w
-          dx = true
+          dx = [snap.top, snap.bottom, snap.right + space / 2]
         }
       }
     })
+
+    if (dx) {
+      var ht = Math.min(dx[0], y)
+        , hb = Math.max(dx[1], y + h)
+      this.vline.style.left = dx[2] - 1 + 'px'
+      this.vline.style.top = ht + 'px'
+      this.vline.style.height = (hb - ht) + 'px'
+      this.vline.style.display = 'block'
+    } else {
+      this.vline.style.display = 'none'
+    }
+
+    if (dy) {
+      var vl = Math.min(dy[0], x)
+        , vr = Math.max(dy[1], x + w)
+      this.hline.style.top = dy[2] - 1 + 'px'
+      this.hline.style.left = vl + 'px'
+      this.hline.style.width = (vr - vl) + 'px'
+      this.hline.style.display = 'block'
+    } else {
+      this.hline.style.display = 'none'
+    }
 
     if (dx || dy) {
       return {
@@ -623,6 +653,8 @@ View.prototype = {
     this.moving = null
     document.removeEventListener('mousemove', this._boundMove)
     document.removeEventListener('mouseup', this._boundUp)
+    this.vline.style.display = 'none'
+    this.hline.style.display = 'none'
     this.rootNode.classList.remove('whiteboard--moving')
   },
 
