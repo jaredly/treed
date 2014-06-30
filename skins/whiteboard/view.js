@@ -601,6 +601,10 @@ View.prototype = {
         this.moving.child,
         this.moving.currentTarget.pid,
         pos
+      ], 'changeNodeAttr', [
+        this.moving.child,
+        'whiteboard',
+        null
       ]);
     } else {
 
@@ -642,6 +646,10 @@ View.prototype = {
         this.moving.id,
         this.moving.currentTarget.pid,
         this.moving.currentTarget.pos
+      ], 'changeNodeAttr', [
+        this.moving.id,
+        'whiteboard',
+        null
       ]);
     }
   },
