@@ -333,8 +333,8 @@ View.prototype = {
       var ht = Math.min(dx[0], y)
         , hb = Math.max(dx[1], y + h)
       this.vline.style.left = dx[2] - 1 + 'px'
-      this.vline.style.top = ht + 'px'
-      this.vline.style.height = (hb - ht) + 'px'
+      this.vline.style.top = ht - space/2 + 'px'
+      this.vline.style.height = (hb - ht) + space + 'px'
       this.vline.style.display = 'block'
     } else {
       this.vline.style.display = 'none'
@@ -344,8 +344,8 @@ View.prototype = {
       var vl = Math.min(dy[0], x)
         , vr = Math.max(dy[1], x + w)
       this.hline.style.top = dy[2] - 1 + 'px'
-      this.hline.style.left = vl + 'px'
-      this.hline.style.width = (vr - vl) + 'px'
+      this.hline.style.left = vl - space/2 + 'px'
+      this.hline.style.width = (vr - vl) + space + 'px'
       this.hline.style.display = 'block'
     } else {
       this.hline.style.display = 'none'
