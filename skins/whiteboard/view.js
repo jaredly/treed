@@ -452,6 +452,8 @@ View.prototype = {
       snaps: boxes.snaps,
       width: rect.width,
       height: rect.height,
+      atx: this.ids[id].x,
+      aty: this.ids[id].y,
       id: id,
       x: x,
       y: y,

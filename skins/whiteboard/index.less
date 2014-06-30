@@ -98,6 +98,23 @@
   box-shadow: 0 0 5px green;
 }
 
+.whiteboard-item_zoom {
+  display: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  color: #777;
+
+  &:hover {
+    color: black;
+  }
+  
+  .whiteboard-item:hover & {
+    display: block;
+  }
+}
+
 .whiteboard-item_input {
   white-space: pre-wrap;
   // min-height: 20px;

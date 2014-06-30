@@ -57,6 +57,11 @@ Block.prototype = {
     this.body = document.createElement('ul')
     this.body.className='whiteboard-item_body'
 
+    var zoom = document.createElement('div')
+    zoom.className = 'whiteboard-item_zoom'
+    zoom.innerHTML = '<i class="fa fa-expand"/>'
+    zoom.addEventListener('click', this.o.onZoom)
+
     this.children = {}
 
     children.forEach(function (child) {
@@ -77,6 +82,7 @@ Block.prototype = {
 
     this.node.appendChild(this.title)
     this.node.appendChild(this.body)
+    this.node.appendChild(zoom)
     // this.node.appendChild(this.footer)
 
     this.setTextContent(data.content)
