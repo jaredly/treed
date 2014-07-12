@@ -412,16 +412,17 @@ View.prototype = {
       return
     }
     var x, y
+    var deltaX = -e.deltaX, deltaY = -e.deltaY
     if (e.shiftKey) {
       var root = this.rootNode.getBoundingClientRect()
       x = e.clientX - root.left
       y = e.clientY - root.top
-      this.zoomMove((e.wheelDeltaY / 500), x, y)
+      this.zoomMove((deltaY / 500), x, y)
       return
     }
     x = this.x
     y = this.y
-    this.setContainerPos(x + e.wheelDeltaX, y + e.wheelDeltaY)
+    this.setContainerPos(x + deltaX, y + deltaY)
   },
 
   _onMouseDown: function (e) {
@@ -577,6 +578,7 @@ View.prototype = {
   setContainerZoom: function (num) {
     this._zoom = num
     this.container.style.WebkitTransform = 'scale(' + num + ')'
+    this.container.style.transform = 'scale(' + num + ')'
   },
 
   setContainerPos: function (x, y) {
