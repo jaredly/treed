@@ -30,10 +30,19 @@ View.prototype = {
   setupRoot: function () {
     var rootNode = document.createElement('div')
     rootNode.className='whiteboard'
-    rootNode.addEventListener('dblclick', this._onDoubleClick.bind(this))
     rootNode.addEventListener('click', this._onClick.bind(this))
     rootNode.addEventListener('mousedown', this._onMouseDown.bind(this))
     rootNode.addEventListener('wheel', this._onWheel.bind(this))
+
+    this.head = document.createElement('div')
+    this.head.className = 'whiteboard-head'
+    this.head.addEventListener('click', this._onClickHead.bind(this))
+
+    this.input = document.createElement('input')
+    this.input.setAttribute('contenteditable', true)
+    this.input.className = 'whiteboard-input-head'
+    this.input.addEventListener('blur', this._onBlurHead.bind(this))
+
     this.container = document.createElement('div')
     this.container.className = 'whiteboard-container'
 
@@ -51,16 +60,22 @@ View.prototype = {
     this.dropShadow = document.createElement('div')
     this.dropShadow.className = 'whiteboard-dropshadow'
 
+    this.body = document.createElement('div')
+    this.body.appendChild(this.container)
+    this.body.className = 'whiteboard-body'
+    this.body.addEventListener('dblclick', this._onDoubleClick.bind(this))
+
     this.vline = document.createElement('div')
     this.vline.className='whiteboard_vline'
     this.hline = document.createElement('div')
     this.hline.className='whiteboard_hline'
+    this.body.appendChild(this.vline)
+    this.body.appendChild(this.hline)
+    this.body.appendChild(this.dropShadow)
+    this.body.appendChild(this.controls)
 
-    rootNode.appendChild(this.container)
-    rootNode.appendChild(this.controls)
-    rootNode.appendChild(this.dropShadow)
-    rootNode.appendChild(this.vline)
-    rootNode.appendChild(this.hline)
+    rootNode.appendChild(this.head)
+    rootNode.appendChild(this.body)
 
     this.rootNode = rootNode
     this.setContainerZoom(1)
@@ -170,7 +185,12 @@ View.prototype = {
     this.ids[id].setContent(content)
   },
 
+  setRootContent: function (content) {
+    this.head.innerHTML = marked(content);
+  },
+
   makeBlocks: function (root) {
+    this.setRootContent(this.model.ids[root].content);
     var children = this.model.ids[root].children
     if (!children) return
     children.forEach(this.makeBlock.bind(this));
@@ -250,7 +270,7 @@ View.prototype = {
   findTargets: function (children, id, isChild) {
     var targets = []
       , snaps = []
-      , root = this.rootNode.getBoundingClientRect()
+      , root = this.body.getBoundingClientRect()
     for (var i = children.length - 1; i >= 0; i--) {
       if (id == children[i]) continue;
       var childids = this.model.ids[children[i]].children
@@ -382,6 +402,29 @@ View.prototype = {
 
   // event handlers
 
+  _onClickHead: function (e) {
+    e.preventDefault()
+    this.startEditing()
+  },
+
+  _onBlurHead: function (e) {
+    e.preventDefault()
+    this.stopEditing()
+  },
+
+  startEditing: function () {
+    this.input.value = this.model.ids[this.root].content
+    this.rootNode.replaceChild(this.input, this.head)
+    this.input.focus()
+    this.input.selectionStart = this.input.selectionEnd = this.input.value.length
+  },
+
+  stopEditing: function () {
+    this.ctrl.executeCommands('changeContent', [this.root, this.input.value])
+    this.setRootContent(this.input.value)
+    this.rootNode.replaceChild(this.head, this.input)
+  },
+
   _onClick: function (e) {
     if (e.target === this.rootNode) {
       document.activeElement.blur()
@@ -389,7 +432,7 @@ View.prototype = {
   },
 
   _onDoubleClick: function (e) {
-    if (e.target !== this.rootNode) {
+    if (e.target !== this.body) {
       return
     }
     var box = this.container.getBoundingClientRect()
@@ -414,7 +457,7 @@ View.prototype = {
     var x, y
     var deltaX = -e.deltaX, deltaY = -e.deltaY
     if (e.shiftKey) {
-      var root = this.rootNode.getBoundingClientRect()
+      var root = this.body.getBoundingClientRect()
       x = e.clientX - root.left
       y = e.clientY - root.top
       this.zoomMove((deltaY / 500), x, y)
@@ -538,7 +581,7 @@ View.prototype = {
     } 
 
     // dragging the canvas
-    var box = this.rootNode.getBoundingClientRect()
+    var box = this.body.getBoundingClientRect()
     var x = e.clientX - box.left - this.moving.x
       , y = e.clientY - box.top - this.moving.y
     this.setContainerPos(x, y)
@@ -629,7 +672,7 @@ View.prototype = {
   },
 
   showDropShadow: function (rect) {
-    var box = this.rootNode.getBoundingClientRect()
+    var box = this.body.getBoundingClientRect()
       , realheight = rect.height * this._zoom
       , yoff = (rect.height - realheight) / 2
     this.dropShadow.style.top = rect.top - box.top + yoff + 'px'

@@ -4,6 +4,8 @@
   flex: 1;
   cursor: pointer;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   &:empty:after {
     content: 'Double click to create a new node';
@@ -31,6 +33,42 @@
   opacity: .7;
   z-index: 100;
   pointer-events: none;
+}
+
+.rendered {
+  p:first-child {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.whiteboard-input-head,
+.whiteboard-head {
+  font-size: 30px;
+  font-family: sans-serif;
+  padding: 10px 10px 0;
+  cursor: pointer;
+
+  .rendered;
+}
+
+.whiteboard-input-head {
+  border: none;
+  
+  &:focus {
+    outline: none;
+  }
+}
+
+.whiteboard-body {
+  position: relative;
+  border: 1px solid #aaa;
+  margin: 5px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 10px;
 }
 
 .whiteboard-container {
@@ -72,12 +110,7 @@
   padding: 10px;
   pointer-events: none;
 
-  p:first-child {
-    margin-top: 0;
-  }
-  p:last-child {
-    margin-bottom: 0;
-  }
+  .rendered;
 }
 
 .whiteboard-item {
@@ -130,12 +163,7 @@
   font-size: 16px;
   min-height: 18px;
 
-  p:first-child {
-    margin-top: 0;
-  }
-  p:last-child {
-    margin-bottom: 0;
-  }
+  .rendered;
 }
 
 .whiteboard-item_child {
@@ -189,7 +217,6 @@
 .whiteboard-item_title {
   padding: 10px 10px;
   font-size: 16px;
-  font-weight: bold;
   cursor: pointer;
 }
 
