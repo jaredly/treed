@@ -478,10 +478,13 @@ View.prototype = {
       handle: handle,
       child: cid,
       parent_id: id,
+      oty: x,
+      otx: y,
       x: x,
       y: y
     }
     this.container.appendChild(handle)
+    this.updateDropTarget(e.clientX, e.clientY)
     handle.className = 'whiteboard_child-handle'
     handle.style.top = y + 'px'
     handle.style.left = x + 'px'
