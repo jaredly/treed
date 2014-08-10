@@ -4,14 +4,14 @@ var Block = require('./block')
 
 module.exports = View
 
-function View(bindActions, model, ctrl, options) {
+function View(bindActions, model, actions, options) {
   this.mode = 'normal'
   this.active = null
   this.ids = {}
 
   this.bindActions = bindActions
   this.model = model
-  this.ctrl = ctrl
+  this.ctrlactions = actions
 
   this._boundMove = this._onMouseMove.bind(this)
   this._boundUp = this._onMouseUp.bind(this)
@@ -154,7 +154,7 @@ View.prototype = {
     this.clear()
     this.root = newroot
     this.makeBlocks(newroot)
-    this.ctrl.trigger('rebase', newroot)
+    this.ctrlactions.trigger('rebase', newroot)
   },
 
   setAttr: function (id, attr, value) {
@@ -216,13 +216,14 @@ View.prototype = {
     }.bind(this));
     var block = new Block(node, children, config, {
       saveConfig: function (config) {
-        this.ctrl.executeCommands('changeNodeAttr', [node.id, 'whiteboard', config]);
+        this.ctrlactions.changed(node.id, 'whiteboard', config)
+        // this.ctrl.executeCommands('changeNodeAttr', [node.id, 'whiteboard', config]);
       }.bind(this),
       saveContent: function (content) {
-        this.ctrl.executeCommands('changeContent', [node.id, content]);
+        this.ctrlactions.changeContent(node.id, content)
       }.bind(this),
       changeContent: function (content) {
-        this.ctrl.executeCommands('changeContent', [node.id, content]);
+        this.ctrlactions.changeContent(node.id, content)
       }.bind(this),
       startMoving: this._onStartMoving.bind(this, node.id),
       startMovingChild: this._onStartMovingChild.bind(this, node.id),
@@ -420,7 +421,7 @@ View.prototype = {
   },
 
   stopEditing: function () {
-    this.ctrl.executeCommands('changeContent', [this.root, this.input.value])
+    this.ctrlactions.changeContent(this.root, this.input.value)
     this.setRootContent(this.input.value)
     this.rootNode.replaceChild(this.head, this.input)
   },
@@ -439,14 +440,14 @@ View.prototype = {
     var x = e.clientX - 50 - box.left
       , y = e.clientY - 10 - box.top
       , idx = this.model.ids[this.root].children.length
-    this.ctrl.executeCommands('newNode', [this.root, idx, '', {
+    this.ctrlactions.addChild(this.root, idx, '', {
       whiteboard: {
         // width: 200,
         // height: 200,
         top: y,
         left: x
       }
-    }]);
+    })
   },
 
   _onWheel: function (e) {
@@ -605,7 +606,7 @@ View.prototype = {
       cmds.push('changeNodeAttr')
       cmds.push([id, 'whiteboard', null])
     });
-    this.ctrl.executeCommands(cmds)
+    this.ctrlactions.commands(cmds)
   },
 
   zoomMove: function (delta, x, y) {
@@ -645,7 +646,7 @@ View.prototype = {
           pos -= 1
         }
       }
-      this.ctrl.executeCommands('move', [
+      this.ctrlactions.commands('move', [
         this.moving.child,
         this.moving.currentTarget.pid,
         pos
@@ -656,7 +657,7 @@ View.prototype = {
       ]);
     } else {
 
-      this.ctrl.executeCommands('changeNodeAttr', [
+      this.ctrlactions.commands('changeNodeAttr', [
         this.moving.child,
         'whiteboard',
         {top: this.moving.y, left: this.moving.x}
@@ -690,7 +691,7 @@ View.prototype = {
     this.ids[this.moving.id].reposition(this.moving.atx, this.moving.aty)
     this.ids[this.moving.id].doneMoving()
     if (this.moving.currentTarget) {
-      this.ctrl.executeCommands('move', [
+      this.ctrlactions.commands('move', [
         this.moving.id,
         this.moving.currentTarget.pid,
         this.moving.currentTarget.pos
