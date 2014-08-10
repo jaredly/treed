@@ -72,7 +72,7 @@
   flex-direction: column;
 }
 
-.treed__body:hover {
+.treed__head:hover .treed__body {
   border-radius: 10px;
   background-color: #ccc;
 }
@@ -157,8 +157,8 @@
 
 .treed__item.dropping,
 .treed__item.dropping-child > .treed__head {
-  outline: 2px solid #afc;
-  border-radius: 10px;
+  // outline: 2px solid #afc;
+  // border-radius: 10px;
 }
 
 .treed__item.moving {
@@ -166,12 +166,18 @@
   opacity: .5;
 }
 
-.treed.moving .treed__head:hover {
-  background-color: transparent;
-}
+.treed.moving {
+  .treed__head:hover {
+    background-color: transparent;
 
-.treed.moving .treed__head:hover .treed__mover {
-  display: none;
+    .treed__mover {
+      display: none;
+    }
+
+    .treed__body {
+      background-color: transparent;
+    }
+  }
 }
 
 

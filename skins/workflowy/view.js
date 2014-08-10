@@ -13,13 +13,13 @@ WFView.prototype.extra_actions = {
   'rebase': {
     binding: 'alt+return',
     action: function () {
-      this.ctrl.actions.clickBullet(this.active)
+      this.ctrlactions.clickBullet(this.active)
     }
   },
   'back a level': {
     binding: 'shift+alt+return',
     action: function () {
-      this.ctrl.actions.backALevel()
+      this.ctrlactions.backALevel()
     }
   },
   'toggle done': {
@@ -30,7 +30,7 @@ WFView.prototype.extra_actions = {
         , done = !this.model.ids[id].meta.done
         , next = this.model.idBelow(id, this.root)
       if (next === undefined) next = id
-      this.ctrl.actions.changed(this.active, 'done', done)
+      this.ctrlactions.changed(this.active, 'done', done)
       if (done) {
         this.goTo(next)
       }
