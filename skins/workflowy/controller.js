@@ -25,7 +25,7 @@ WFController.prototype.actions = util.extend({
   clickBullet: function (id) {
     if (id === 'new') return
     this.view.rebase(id)
-    this.trigger('bullet', this.model.getLineage(id))
+    // this.trigger('bullet', this.model.getLineage(id))
   },
   backALevel: function () {
     var root = this.view.root
