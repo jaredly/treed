@@ -25,6 +25,7 @@ function merge(a, b) {
 
 function runDemo(options) {
   var o = merge({
+    noTitle: false,
     title: 'Treed Example',
     el: 'example',
     Model: nm.Model,
@@ -39,8 +40,10 @@ function runDemo(options) {
     data: demoData
   }, options)
 
-  document.title = o.title
-  document.getElementById('title').textContent = o.title
+  if (!o.noTitle) {
+    document.title = o.title
+    document.getElementById('title').textContent = o.title
+  }
 
   o.style.forEach(function (name) {
     var style = document.createElement('link');

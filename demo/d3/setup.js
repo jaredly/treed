@@ -1,4 +1,18 @@
 
+function flare2treed(data) {
+  return {
+    content: data.name,
+    children: data.children ? data.children.map(flare2treed) : []
+  }
+}
+
+demo.run({
+  data: flare2treed(flare_data),
+  el: 'editme',
+  noTitle: true
+})
+
+/*
 var margin = {top: 20, right: 120, bottom: 20, left: 120},
     width = 960 - margin.right - margin.left,
     height = 800 - margin.top - margin.bottom;
@@ -176,4 +190,5 @@ function update(source, setCollapsed) {
 }
 
 start(flare_data);
+*/
 
