@@ -1,27 +1,34 @@
+/* jshint undef: true, unused: true */
+/* global d3, demo, flare_data */
 
 function flare2treed(data) {
   return {
     content: data.name,
-    children: data.children ? data.children.map(flare2treed) : []
+    children: data.children ? data.children.map(flare2treed) : [],
+    collapsed: true
   }
+}
+
+var COLORS = {
+  done: '#0f0',
+  parent: 'lightsteelblue'
 }
 
 demo.run({
   data: flare2treed(flare_data),
+  ctrlOptions: {
+    noCollapseRoot: false
+  },
   el: 'editme',
   noTitle: true
-})
+}, initD3);
 
-/*
-var margin = {top: 20, right: 120, bottom: 20, left: 120},
-    width = 960 - margin.right - margin.left,
-    height = 800 - margin.top - margin.bottom;
+function initD3(model, ctrl, view) {
+  var margin = {top: 20, right: 120, bottom: 20, left: 120}
+    , width = 960 - margin.right - margin.left
+    , height = 800 - margin.top - margin.bottom;
 
-var i = 0,
-    duration = 750,
-    root;
-
-var tree = d3.layout.tree()
+  var tree = d3.layout.tree()
     .children(function (d) {
       if (!d.hidesChildren && d.children && d.collapsed && d.children.length) {
         d.hidesChildren = true
@@ -30,58 +37,53 @@ var tree = d3.layout.tree()
     })
     .size([height, width]);
 
-var diagonal = d3.svg.diagonal()
+  var diagonal = d3.svg.diagonal()
     .projection(function(d) { return [d.y, d.x]; });
 
-var svg = d3.select("#d3view").append("svg")
+  var svg = d3.select("#d3view").append("svg")
     .attr("width", width + margin.right + margin.left)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-var listed
+  ctrl.setCollapsed(view.root, false)
 
-function start(flare) {
-  root = flare;
-
-  var conved = make_listed(flare, undefined, true)
-    , main = document.getElementById('editme')
-  conved.tree[conved.id].collapsed = false
-  listed = new Listed(conved.id, conved.tree, main)
+  // d3.select(self.frameElement).style("height", "800px");
 
   function setCollapsed(id, doCollapse) {
-    listed.ctrl.setCollapsed(id, doCollapse)
-    listed.ctrl.view.startEditing(id)
+    ctrl.setCollapsed(id, doCollapse)
+    view.startEditing(id)
   }
 
-  var root = listed.ctrl.model.dumpData()
+  var up = update.bind(null, tree, svg, setCollapsed, diagonal)
+
+  var root = model.dumpData().children[0]
   root.x0 = height / 2;
   root.y0 = 0;
-  update(root, setCollapsed);
+  up(root)
 
-  listed.ctrl.on('change', function () {
-    var root = listed.ctrl.model.dumpData()
+  ctrl.on('change', function () {
+    var root = model.dumpData().children[0]
     root.x0 = height / 2;
     root.y0 = 0;
-    update(root, setCollapsed)
+    up(root)
   })
 }
 
-d3.select(self.frameElement).style("height", "800px");
 
-var COLORS = {
-  done: '#0f0',
-  parent: 'lightsteelblue'
-}
-
-function update(source, setCollapsed) {
+function update(tree, svg, setCollapsed, diagonal, source) {
 
   // Compute the new tree layout.
   var nodes = tree.nodes(source).reverse(),
       links = tree.links(nodes);
 
+  var i = 0
+    , duration = 750
+
+  var i = 0;
+
   // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 180; });
+  nodes.forEach(function(d) { d.y = d.depth * 100; });
 
   // Update the nodes…
   var node = svg.selectAll("g.node")
@@ -112,7 +114,7 @@ function update(source, setCollapsed) {
       .attr("x", function(d) { return d.hidesChildren ? -10 : 10; })
       .attr("dy", ".35em")
       .attr("text-anchor", function(d) { return d.hidesChildren ? "end" : "start"; })
-      .text(function(d) { return d.name; })
+      .text(function(d) { return d.content; })
       .style("fill-opacity", 1e-6);
 
   // Transition nodes to their new position.
@@ -133,7 +135,7 @@ function update(source, setCollapsed) {
       });
 
   nodeUpdate.select("text")
-      .text(function(d) { return d.name; })
+      .text(function(d) { return d.content; })
       .style("fill-opacity", 1);
 
   // Transition exiting nodes to the parent's new position.
@@ -188,7 +190,4 @@ function update(source, setCollapsed) {
     setCollapsed(d.id, !d.collapsed)
   }
 }
-
-start(flare_data);
-*/
 

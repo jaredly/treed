@@ -70,33 +70,34 @@ h1 {
   margin: 20px auto;
 }
 
-      body {
-        font-family: sans-serif;
-      }
+body {
+  font-family: sans-serif;
+}
 
-      .node {
-        cursor: pointer;
-      }
+.node {
+  cursor: pointer;
+}
 
-      .node circle {
-        fill: #fff;
-        stroke: steelblue;
-        stroke-width: 1.5px;bind
-      }
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;bind
+}
 
-      .node text {
-        font: 10px sans-serif;
-      }
+.node text {
+  font: 10px sans-serif;
+}
 
-      .link {
-        fill: none;
-        stroke: #ccc;
-        stroke-width: 1.5px;
-      }
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
 
-      #editme {
-        float: left;
-        width: 300px;
-      }
+#editme {
+  float: left;
+  height: 800px;
+  overflow: auto;
+}
 
 

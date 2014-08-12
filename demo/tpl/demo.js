@@ -23,7 +23,7 @@ function merge(a, b) {
   return a
 }
 
-function runDemo(options) {
+function runDemo(options, done) {
   var o = merge({
     noTitle: false,
     title: 'Treed Example',
@@ -37,7 +37,8 @@ function runDemo(options) {
       Node: nm.Node
     },
     style: [],
-    data: demoData
+    data: demoData,
+    ctrlOptions: {}
   }, options)
 
   if (!o.noTitle) {
@@ -62,7 +63,7 @@ function runDemo(options) {
     initDB(db, function (err, id, map) {
 
       window.model = window.model = new o.Model(id, map, db)
-      window.ctrl = window.controller = new o.Controller(model)
+      window.ctrl = window.controller = new o.Controller(model, o.ctrlOptions)
       window.view = window.view = ctrl.setView(
         o.View,
         o.viewOptions
@@ -71,6 +72,8 @@ function runDemo(options) {
       var child = model.ids[id].children[0]
       window.view.rebase(child);
       document.getElementById(o.el).appendChild(view.getNode());
+
+      done && done(window.model, window.ctrl, window.view)
 
     });
   });
