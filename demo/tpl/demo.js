@@ -1,4 +1,21 @@
 
+var nm = require('../../lib')
+var MemPL = require('../../lib/pl/mem')
+var wf = require('../../skins/workflowy')
+var wb = require('../../skins/whiteboard')
+
+
+module.exports = {
+  run: runDemo,
+  skins: {
+    wf: wf,
+    wb: wb
+  },
+  pl: {
+    Mem: MemPL
+  }
+}
+
 function merge(a, b) {
   for (var c in b) {
     a[c] = b[c]
@@ -13,7 +30,7 @@ function runDemo(options) {
     Model: nm.Model,
     Controller: nm.Controller,
     View: nm.View,
-    Pl: nm.pl.Mem,
+    Pl: MemPL,
     viewOptions: {
       ViewLayer: nm.ViewLayer,
       Node: nm.Node

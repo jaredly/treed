@@ -1,12 +1,12 @@
 
-runDemo({
+demo.run({
   title: 'Workflowy example',
-  View: nm.skins.wf.View,
-  Model: nm.skins.wf.Model,
-  Controller: nm.skins.wf.Controller,
+  View: demo.skins.wf.View,
+  Model: demo.skins.wf.Model,
+  Controller: demo.skins.wf.Controller,
   viewOptions: {
-    ViewLayer: nm.skins.wf.ViewLayer,
-    Node: nm.skins.wf.Node
+    ViewLayer: demo.skins.wf.ViewLayer,
+    Node: demo.skins.wf.Node
   },
   style: ['build/workflowy.css']
 });

@@ -5,7 +5,10 @@ build:
 	browserify lib/index.js -o build/build.js -d -s nm
 
 watch:
-	watchify lib/index.js -o build/build.js -d -s nm
+	watchify lib/index.js -v -o build/build.js -d -s nm
+
+demo:
+	watchify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
 
 test:
 	@echo "Working on that..."
@@ -30,4 +33,4 @@ css:
 	lessc skins/workflowy/index.less build/workflowy.css
 	lessc skins/whiteboard/index.less build/whiteboard.css
 
-.PHONY: docs test build css watch
+.PHONY: docs test build css watch demo
