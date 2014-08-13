@@ -1,18 +1,16 @@
 
 var nm = require('../../lib')
-var MemPL = require('../../lib/pl/mem')
-var wf = require('../../skins/workflowy')
-var wb = require('../../skins/whiteboard')
-
 
 module.exports = {
   run: runDemo,
+  preload: preload,
   skins: {
-    wf: wf,
-    wb: wb
+    wf: require('../../skins/workflowy'),
+    wb: require('../../skins/whiteboard')
   },
   pl: {
-    Mem: MemPL
+    Mem: require('../../lib/pl/mem'),
+    Firebase: require('../../lib/pl/firebase')
   }
 }
 
@@ -23,6 +21,28 @@ function merge(a, b) {
   return a
 }
 
+function preload(scripts, cb) {
+  var waiting = 0
+  scripts.forEach(function (name) {
+    waiting += 1
+    var node = document.createElement('script')
+    node.src = name
+    var done = false
+    node.onload = node.onreadystatechange = function () {
+      if (done || (this.readyState && this.readyState !== 'loaded' && this.readyState !== 'complete')) {
+        return
+      }
+      done = true
+      node.onload = node.onreadystatechange = null
+      waiting -= 1
+      if (!waiting) {
+        cb()
+      }
+    }
+    document.body.appendChild(node)
+  })
+}
+
 function runDemo(options, done) {
   var o = merge({
     noTitle: false,
@@ -31,7 +51,6 @@ function runDemo(options, done) {
     Model: nm.Model,
     Controller: nm.Controller,
     View: nm.View,
-    Pl: MemPL,
     viewOptions: {
       ViewLayer: nm.ViewLayer,
       Node: nm.Node
@@ -53,14 +72,14 @@ function runDemo(options, done) {
     document.head.appendChild(style);
   });
 
-  var db = new o.Pl({});
+  var db = o.pl || new module.exports.pl.Mem({});
 
   db.init(function (err) {
     if (err) {
       return loadFailed(err);
     }
 
-    initDB(db, function (err, id, map) {
+    initDB(db, function (err, id, map, wasEmpty) {
 
       window.model = window.model = new o.Model(id, map, db)
       window.ctrl = window.controller = new o.Controller(model, o.ctrlOptions)
@@ -68,9 +87,11 @@ function runDemo(options, done) {
         o.View,
         o.viewOptions
       );
-      ctrl.importData(o.data);
-      var child = model.ids[id].children[0]
-      window.view.rebase(child);
+      if (wasEmpty) {
+        ctrl.importData(o.data);
+        var child = model.ids[id].children[0]
+        window.view.rebase(child);
+      }
       document.getElementById(o.el).appendChild(view.getNode());
 
       done && done(window.model, window.ctrl, window.view)
@@ -96,7 +117,7 @@ function initDB(db, done) {
       for (var i=0; i<nodes.length; i++) {
         map[nodes[i].id] = nodes[i]
       }
-      done(null, id, map)
+      done(null, id, map, false)
     })
   })
 }
@@ -117,7 +138,7 @@ function loadDefault(db, done) {
     }
 
     db.save('node', ROOT_ID, map[ROOT_ID], function () {
-      done(null, ROOT_ID, map)
+      done(null, ROOT_ID, map, true)
     })
   })
 }
