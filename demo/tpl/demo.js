@@ -94,7 +94,7 @@ function runDemo(options, done) {
       }
       document.getElementById(o.el).appendChild(view.getNode());
 
-      done && done(window.model, window.ctrl, window.view)
+      done && done(window.model, window.ctrl, window.view, db)
 
     });
   });

@@ -4,3 +4,19 @@ body {
   margin: 0 auto;
 }
 
+.other-active {
+  display: inline-block;
+  margin-left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+
+.other-present {
+  position: absolute;
+  right: calc(100% - 15px);
+  top: 3px;
+  text-align: right;
+  width: 50px;
+}
+
