@@ -46,8 +46,6 @@ function initD3(model, ctrl, view) {
     .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  ctrl.setCollapsed(view.root, false)
-
   // d3.select(self.frameElement).style("height", "800px");
 
   function setCollapsed(id, doCollapse) {
@@ -68,6 +66,10 @@ function initD3(model, ctrl, view) {
     root.y0 = 0;
     up(root)
   })
+
+  setTimeout(function () {
+    ctrl.setCollapsed(view.root, false)
+  }, 100);
 }
 
 
