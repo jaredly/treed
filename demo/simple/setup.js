@@ -1,5 +1,5 @@
 
-runDemo({
+demo.run({
   title: 'Simple example',
 });
 
