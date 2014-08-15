@@ -57,7 +57,8 @@ function runDemo(options, done) {
     },
     style: [],
     data: demoData,
-    ctrlOptions: {}
+    ctrlOptions: {},
+    initDB: function () {},
   }, options)
 
   if (!o.noTitle) {
@@ -81,7 +82,8 @@ function runDemo(options, done) {
 
     initDB(db, function (err, id, map, wasEmpty) {
 
-      window.model = window.model = new o.Model(id, map, db)
+      window.model = new o.Model(id, map, db)
+      options.initDB(window.model)
       window.ctrl = window.controller = new o.Controller(model, o.ctrlOptions)
       window.view = window.view = ctrl.setView(
         o.View,
