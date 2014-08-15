@@ -24,19 +24,24 @@
   },
   "dependencies": {
     "bluebird": "~1.2.3",
+    "level-js": "^2.1.6",
     "superagent-browserify": "0.0.2"
   },
   "devDependencies": {
     "reactify": "~0.13.1"
   },
   "browserify": {
-    "transform": ["reactify"]
+    "transform": [
+      "reactify"
+    ]
   },
   "atomify": {
     "js": {
       "entry": "index.js",
       "output": "demo/bundle.js",
-      "transforms": ["reactify"]
+      "transforms": [
+        "reactify"
+      ]
     },
     "css": {
       "entry": "index.less",
