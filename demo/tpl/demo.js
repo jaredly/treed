@@ -83,7 +83,6 @@ function runDemo(options, done) {
     initDB(db, function (err, id, map, wasEmpty) {
 
       window.model = new o.Model(id, map, db)
-      options.initDB(window.model)
       window.ctrl = window.controller = new o.Controller(model, o.ctrlOptions)
       window.view = window.view = ctrl.setView(
         o.View,
@@ -92,6 +91,7 @@ function runDemo(options, done) {
       if (wasEmpty) {
         ctrl.importData(o.data);
         var child = model.ids[id].children[0]
+        options.initDB(window.model)
         window.view.rebase(child);
       }
       document.getElementById(o.el).appendChild(view.getNode());

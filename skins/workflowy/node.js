@@ -1,22 +1,31 @@
 
 var DefaultNode = require('../../lib/default-node')
+var Tags = require('./tags')
 
 module.exports = WFNode
 
-function WFNode(content, meta, options, isNew) {
-  DefaultNode.call(this, content, meta, options, isNew)
+function WFNode(content, meta, actions, isNew, modelActions) {
+  DefaultNode.call(this, content, meta, actions, isNew, modelActions)
   this.done = meta.done
+  this.tags = new Tags(modelActions.resolveTags(meta.tags), actions, modelActions)
+  this.node.appendChild(this.tags.node)
 }
 
 WFNode.prototype = Object.create(DefaultNode.prototype)
 WFNode.prototype.constructor = WFNode
 
 WFNode.prototype.setAttr = function (attr, value) {
-  if (attr !== 'done') {
-    DefaultNode.prototype.setAttr.call(this, attr, value)
-    return
+  if (attr === 'tags') {
+    return this.setTags(value)
   }
-  this.setDone(value)
+  if (attr === 'done') {
+    return this.setDone(value)
+  }
+  DefaultNode.prototype.setAttr.call(this, attr, value)
+}
+
+WFNode.prototype.setTags = function (tags) {
+  this.tags.set(this.modelActions.resolveTags(tags))
 }
 
 WFNode.prototype.setDone = function (isDone) {

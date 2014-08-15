@@ -27,6 +27,9 @@ WFController.prototype.actions = util.extend({
     this.view.rebase(id)
     // this.trigger('bullet', this.model.getLineage(id))
   },
+  rebase: function (id, toid) {
+    this.view.rebase(toid)
+  },
   backALevel: function () {
     var root = this.view.root
       , pid = this.model.ids[root].parent

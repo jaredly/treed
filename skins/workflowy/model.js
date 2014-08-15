@@ -9,6 +9,17 @@ function WFModel() {
 
 WFModel.prototype = Object.create(Model.prototype)
 
+WFModel.prototype.actions = {
+  resolveTags: function (tags) {
+    if (!tags) return []
+    return tags.map(function (id) {
+      return this.ids[id]
+    }.bind(this))
+  },
+  getAllTags: function () {
+  }
+}
+
 WFModel.prototype.getLineage = function (id) {
   var lineage = []
   while (this.ids[id]) {
