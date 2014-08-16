@@ -50,7 +50,7 @@ WFModel.prototype.setTags = function (id, tags) {
   if (old) {
     for (var i=0; i<old.length; i++) {
       if (used[old[i]]) continue;
-      var refs = this.ids[tags[i]].meta.references
+      var refs = this.ids[old[i]].meta.references
       refs.splice(refs.indexOf(id), 1)
       used[old[i]] = true
     }

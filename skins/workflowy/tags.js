@@ -21,27 +21,37 @@ Tags.prototype = {
     this.tags = document.createElement('div')
     this.tags.className = 'treed_tags_list'
 
+    this.editor = document.createElement('div')
+    this.editor.className = 'treed_tags_editor'
+
     this.input = document.createElement('input')
     this.input.className = 'treed_tags_input'
 
     this.input.addEventListener('keydown', this.keyDown.bind(this))
     this.input.addEventListener('keyup', this.keyUp.bind(this))
+    this.input.addEventListener('blur', this.onBlur.bind(this))
 
     this.resultsNode = document.createElement('ul')
     this.resultsNode.className = 'treed_tags_results'
+    this.resultsNode.addEventListener('mousedown', function (e) {e.preventDefault()})
 
     this.node.appendChild(this.tags)
     this.node.appendChild(this.handle)
+    this.node.appendChild(this.editor)
+
+    this.editor.appendChild(this.input)
+    this.editor.appendChild(this.resultsNode)
 
     this.dom = {}
   },
 
   startEditing: function (e) {
+    if (this.editing) return
+    this.editing = true
+    this.node.classList.add('treed_tags--open')
     this.fullResults = this.modelactions.getAllTags()
-    this.results = this.fullResults
+    this.filterBy('')
     this.selection = 0
-    this.node.replaceChild(this.input, this.handle)
-    this.node.appendChild(this.resultsNode)
     this.input.value = ''
     this.input.focus()
     this.showResults()
@@ -49,9 +59,14 @@ Tags.prototype = {
   },
 
   doneEditing: function (e) {
-    this.node.replaceChild(this.handle, this.input)
-    this.node.removeChild(this.resultsNode)
+    if (!this.editing) return
+    this.editing = false
+    this.node.classList.remove('treed_tags--open')
     this.actions.setTags(this.value.map(function (x){ return x.id }))
+  },
+
+  onBlur: function () {
+    this.doneEditing()
   },
 
   keys: {
@@ -110,11 +125,13 @@ Tags.prototype = {
     var num = 5
     if (num > this.results.length) num = this.results.length
     var click = function (tag, e) {
+      e.preventDefault()
       this.addCurrent(tag)
     }
     for (var i=0; i<num; i++) {
       var node = document.createElement('li')
       node.innerText = this.results[i].content
+      node.className = 'treed_tags_result'
       node.addEventListener('click', click.bind(this, this.results[i]))
       this.resultsNode.appendChild(node)
     }
@@ -123,6 +140,7 @@ Tags.prototype = {
   addCurrent: function (tag) {
     if (!this.results.length) return
     tag = tag || this.results[this.selection]
+    if (this.value.indexOf(tag) !== -1) return this.resetSearch()
     this.value.push(tag)
     this.add(tag)
     this.resetSearch()
@@ -130,8 +148,9 @@ Tags.prototype = {
 
   resetSearch: function () {
     this.input.value = ''
-    this.results = this.fullResults
+    this.filterBy('')
     this.selection = 0
+    this.showResults()
   },
 
   removeLast: function () {

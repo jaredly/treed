@@ -9,6 +9,10 @@ function WFVL() {
 
 WFVL.prototype = Object.create(DomViewLayer.prototype)
 
+WFVL.prototype.editTags = function (id) {
+  this.body(id).tags.startEditing()
+}
+
 WFVL.prototype.makeHead = function (body, actions) {
   var head = DomViewLayer.prototype.makeHead.call(this, body, actions)
     , bullet = document.createElement('div')

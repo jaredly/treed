@@ -4,6 +4,8 @@
   right: 5px;
   top: 3px;
   opacity: .5;
+
+  &--open,
   &:hover {
     opacity: 1;
   }
@@ -18,10 +20,14 @@
   display: inline-block;
   cursor: pointer;
   transition: opacity .2s ease;
-  top: 2px;
   position: absolute;
   left: 100%;
+  top: 0;
 
+  margin-left: 5px;
+  padding: 2px 5px;
+
+  .treed_tags--open &,
   .treed__head:hover & {
     opacity: 1;
   }
@@ -40,15 +46,36 @@
   }
 }
 
-.treed_tags_input {
+.treed_tags_editor {
   position: absolute;
-  left: 100%;
   top: 0;
+  left: 100%;
+  margin-left: 27px;
+  display: none;
+
+  .treed_tags--open & {
+    display: block;
+  }
+}
+
+.treed_tags_input {
+  outline: none;
+  border: none;
+  border-bottom: 1px dashed #aaa;
 }
 
 .treed_tags_results {
-  position: absolute;
-  left: 100%;
-  top: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.treed_tags_result {
+  padding: 3px 5px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #eee;
+  }
 }
 
