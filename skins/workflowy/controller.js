@@ -5,10 +5,12 @@ var Controller = require('../../lib/controller')
   , WFNode = require('./node')
   , WFView = require('./view')
   , WFVL = require('./vl')
+  , commands = require('./commands')
 
 module.exports = WFController
 
 function WFController(model, options) {
+  options.extra_commands = util.extend(options.extra_commands || {}, commands)
   Controller.call(this, model, options)
   this.on('rebase', function (id) {
       this.trigger('bullet', this.model.getLineage(id))
@@ -35,6 +37,9 @@ WFController.prototype.actions = util.extend({
       , pid = this.model.ids[root].parent
     if (!this.model.ids[pid]) return
     this.actions.clickBullet(pid)
-  }
+  },
+  setTags: function (id, ids) {
+    this.executeCommands('setTags', [id, ids])
+  },
 }, Controller.prototype.actions)
 

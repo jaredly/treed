@@ -1,6 +1,9 @@
 
 all: build css
 
+lint:
+	jshint lib
+
 build:
 	browserify lib/index.js -o build/build.js -d -s nm
 

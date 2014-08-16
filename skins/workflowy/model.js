@@ -17,7 +17,52 @@ WFModel.prototype.actions = {
     }.bind(this))
   },
   getAllTags: function () {
+    var tags = []
+    for (var id in this.ids) {
+      tags.push(this.ids[id])
+    }
+    // todo sort by number of references
+    return tags
   }
+}
+
+// TODO should I make references be a dict instead?
+WFModel.prototype.setTags = function (id, tags) {
+  var old = this.ids[id].meta.tags
+  var used = {}
+  if (old) old = old.slice()
+
+  // add references
+  if (tags) {
+    for (var i=0; i<tags.length; i++) {
+      used[tags[i]] = true
+      var refs = this.ids[tags[i]].meta.references
+      if (!refs) {
+        refs = this.ids[tags[i]].meta.references = []
+      }
+      if (refs.indexOf(id) === -1) {
+        refs.push(id)
+      }
+    }
+  }
+
+  // remove old references that were removed
+  if (old) {
+    for (var i=0; i<old.length; i++) {
+      if (used[old[i]]) continue;
+      var refs = this.ids[tags[i]].meta.references
+      refs.splice(refs.indexOf(id), 1)
+      used[old[i]] = true
+    }
+  }
+
+  this.ids[id].meta.tags = tags
+  // update things
+  this.db.update(id, {meta: this.ids[id].meta})
+  for (var oid in used) {
+    this.db.update(oid, {meta: this.ids[oid].meta})
+  }
+  return old
 }
 
 WFModel.prototype.getLineage = function (id) {

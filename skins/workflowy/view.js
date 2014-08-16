@@ -9,6 +9,14 @@ function WFView() {
 
 WFView.prototype = Object.create(View.prototype)
 
+WFView.prototype.setTags = function (id, tags) {
+  this.setAttr(id, 'tags', tags)
+  // todo update references
+  for (var i=0; i<tags.length; i++) {
+    this.setAttr(tags[i], 'references', this.model.ids[tags[i]].meta.references)
+  }
+}
+
 WFView.prototype.extra_actions = {
   'rebase': {
     binding: 'alt+return',

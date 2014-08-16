@@ -18,9 +18,9 @@
   display: inline-block;
   cursor: pointer;
   transition: opacity .2s ease;
-  position: relative;
   top: 2px;
-  margin-right: 5px;
+  position: absolute;
+  left: 100%;
 
   .treed__head:hover & {
     opacity: 1;
@@ -38,5 +38,17 @@
 
   &:hover {
   }
+}
+
+.treed_tags_input {
+  position: absolute;
+  left: 100%;
+  top: 0;
+}
+
+.treed_tags_results {
+  position: absolute;
+  left: 100%;
+  top: 100%;
 }
 
