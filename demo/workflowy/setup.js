@@ -11,7 +11,9 @@ demo.run({
   initDB: function (model) {
     var ids = model.ids
     var last = '50'
+    var i = 0
     for (var id in ids) {
+      if (i++ % 2) continue;
       ids[id].meta.tags = [last]
       last = id
     }

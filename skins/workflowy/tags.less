@@ -1,5 +1,5 @@
 
-.treed__tags {
+.treed_tags {
   position: absolute;
   right: 5px;
   top: 3px;
@@ -9,7 +9,25 @@
   }
 }
 
-.treed__tag {
+.treed_tags_list {
+  display: inline-block;
+}
+
+.treed_tags_handle {
+  opacity: 0;
+  display: inline-block;
+  cursor: pointer;
+  transition: opacity .2s ease;
+  position: relative;
+  top: 2px;
+  margin-right: 5px;
+
+  .treed__head:hover & {
+    opacity: 1;
+  }
+}
+
+.treed_tag {
   display: inline-block;
   margin-left: 3px;
   background-color: white;
