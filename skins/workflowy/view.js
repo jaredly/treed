@@ -9,6 +9,29 @@ function WFView() {
 
 WFView.prototype = Object.create(View.prototype)
 
+WFView.prototype.addTree = function (node, before) {
+  if (!this.vl.body(node.parent)) {
+    return this.rebase(node.parent, true)
+  }
+  this.add(node, before)
+
+  if (node.meta.tags) {
+    node.meta.tags.forEach(function (id) {
+      this.vl.addReference(id, node.id)
+    }.bind(this))
+  }
+  if (node.meta.references) {
+    node.meta.references.forEach(function (id) {
+      this.vl.addTag(id, node)
+    }.bind(this))
+  }
+
+  if (!node.children || !node.children.length) return
+  for (var i=0; i<node.children.length; i++) {
+    this.addTree(this.model.ids[node.children[i]], false)
+  }
+}
+
 WFView.prototype.remove = function (id, ignoreActive) {
   var node = this.model.ids[id]
     , pid = node.parent
@@ -32,7 +55,7 @@ WFView.prototype.remove = function (id, ignoreActive) {
 
   // remove the references and tags
 
-  var ids = this.ids
+  var ids = this.model.ids
 
   function process(node) {
     for (var i=0; i<node.children.length; i++) {
@@ -41,13 +64,13 @@ WFView.prototype.remove = function (id, ignoreActive) {
 
     if (node.meta.references) {
       node.meta.references.forEach(function (rid) {
-        this.vl.removeTag(rid, id)
+        this.vl.removeTag(rid, node.id)
       }.bind(this))
     }
 
     if (node.meta.tags) {
       node.meta.tags.forEach(function (tid) {
-        this.vl.removeReference(tid, id)
+        this.vl.removeReference(tid, node.id)
       }.bind(this))
     }
   }

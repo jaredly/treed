@@ -26,6 +26,55 @@ WFModel.prototype.actions = {
   }
 }
 
+WFModel.prototype.readd = function (saved) {
+  this.ids[saved.id] = saved.node
+  var children = this.ids[saved.node.parent].children
+  children.splice(saved.ix, 0, saved.id)
+  var before = false
+  if (saved.ix < children.length - 1) {
+    before = children[saved.ix + 1]
+  }
+
+  var upRefs = {}
+  var upTags = {}
+  var ids = this.ids
+
+  function process(node) {
+    for (var i=0; i<node.children.length; i++) {
+      process(ids[node.children[i]])
+    }
+
+    if (node.meta.tags) {
+      node.meta.tags.forEach(function (id) {
+        ids[id].meta.references.push(node.id)
+        upRefs[id] = true
+      })
+    }
+
+    if (node.meta.references) {
+      node.meta.references.forEach(function (id) {
+        ids[id].meta.tags.push(node.id)
+        upTags[id] = true
+      })
+    }
+  }
+
+  process(this.ids[saved.id])
+
+  this.db.save('node', saved.node.id, saved.node)
+  this.db.update('node', saved.node.parent, {children: children})
+
+  for (id in upTags) {
+    this.db.update('node', id, {tags: this.ids[id].tags})
+  }
+
+  for (id in upRefs) {
+    this.db.update('node', id, {references: this.ids[id].references})
+  }
+
+  return before
+}
+
 WFModel.prototype.remove = function (id) {
   // remove the references and tags
 

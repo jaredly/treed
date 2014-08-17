@@ -15,6 +15,16 @@ WFVL.prototype.removeTag = function (id, tid) {
   body.removeTag(tid)
 }
 
+WFVL.prototype.addTag = function (id, node) {
+  var body = this.body(id)
+  if (!body) return
+  body.addTag(node)
+}
+
+WFVL.prototype.addReference = function (id, rid) {
+  // TODO fill in 
+}
+
 WFVL.prototype.removeReference = function (id, rid) {
   // TODO fill this in
 }
