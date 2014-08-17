@@ -24,6 +24,10 @@ WFNode.prototype.setAttr = function (attr, value) {
   DefaultNode.prototype.setAttr.call(this, attr, value)
 }
 
+WFNode.prototype.removeTag = function (tid) {
+  this.tags.remove(tid)
+}
+
 WFNode.prototype.setTags = function (tags) {
   this.tags.set(this.modelActions.resolveTags(tags))
 }

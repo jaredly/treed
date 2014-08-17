@@ -70,20 +70,20 @@ Tags.prototype = {
   },
 
   keys: {
-    27: function (e) {
+    27: function (e) { // escape
       e.preventDefault()
       this.doneEditing()
     },
-    9: function (e) {
+    9: function (e) { // tab
+      e.preventDefault()
+      this.addCurrent()
+    },
+    13: function (e) { // return
       e.preventDefault()
       this.addCurrent()
       this.doneEditing()
     },
-    13: function (e) {
-      e.preventDefault()
-      this.addCurrent()
-    },
-    8: function (e) {
+    8: function (e) { // backspace
       if (!this.input.value) {
         e.preventDefault()
         this.removeLast()
@@ -156,7 +156,11 @@ Tags.prototype = {
   removeLast: function () {
     if (!this.value.length) return
     var last = this.value.pop()
-    this.tags.removeChild(this.dom[last.id])
+    this.remove(last.id)
+  },
+
+  remove: function (id) {
+    this.tags.removeChild(this.dom[id])
   },
 
   /*

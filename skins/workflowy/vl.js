@@ -9,6 +9,16 @@ function WFVL() {
 
 WFVL.prototype = Object.create(DomViewLayer.prototype)
 
+WFVL.prototype.removeTag = function (id, tid) {
+  var body = this.body(id)
+  if (!body) return
+  body.removeTag(tid)
+}
+
+WFVL.prototype.removeReference = function (id, rid) {
+  // TODO fill this in
+}
+
 WFVL.prototype.editTags = function (id) {
   this.body(id).tags.startEditing()
 }

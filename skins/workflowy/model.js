@@ -26,6 +26,61 @@ WFModel.prototype.actions = {
   }
 }
 
+WFModel.prototype.remove = function (id) {
+  // remove the references and tags
+
+  if (id === this.root) return
+  var n = this.ids[id]
+    , p = this.ids[n.parent]
+    , ix = p.children.indexOf(id)
+  p.children.splice(ix, 1)
+  delete this.ids[id]
+
+  var upRefs = {}
+  var upTags = {}
+  var ids = this.ids
+
+  function process(node) {
+    for (var i=0; i<node.children.length; i++) {
+      process(ids[node.children[i]])
+    }
+
+    if (node.meta.tags) {
+      node.meta.tags.forEach(function (id) {
+        var refs = ids[id].meta.references
+        upRefs[id] = true
+        refs.splice(refs.indexOf(node.id), 1)
+      })
+    }
+
+    if (node.meta.references) {
+      node.meta.references.forEach(function (id) {
+        var tags = ids[id].meta.tags
+        upTags[id] = true
+        tags.splice(tags.indexOf(node.id), 1)
+      })
+    }
+  }
+
+  process(n)
+
+  setTimeout(function () {
+    var id
+    this.db.remove('node', id)
+    this.db.update('node', n.parent, {children: p.children})
+
+    for (id in upTags) {
+      this.db.update('node', id, {tags: this.ids[id].tags})
+    }
+
+    for (id in upRefs) {
+      this.db.update('node', id, {references: this.ids[id].references})
+    }
+  }.bind(this))
+
+  return {id: id, node: n, ix: ix}
+}
+
 // TODO should I make references be a dict instead?
 WFModel.prototype.setTags = function (id, tags) {
   var old = this.ids[id].meta.tags
