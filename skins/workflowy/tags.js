@@ -183,6 +183,7 @@ Tags.prototype = {
   },
 
   add: function (tag) {
+    if (this.dom[tag.id]) return console.warn('tried to add duplicate tag')
     var node = document.createElement('div')
     this.dom[tag.id] = node
     node.className = 'treed_tag'

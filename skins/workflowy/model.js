@@ -46,7 +46,12 @@ WFModel.prototype.readd = function (saved) {
 
     if (node.meta.tags) {
       node.meta.tags.forEach(function (id) {
-        ids[id].meta.references.push(node.id)
+        var refs = ids[id].meta.references
+        if (!refs) {
+          refs = ids[id].meta.references = []
+        }
+        if (refs.indexOf(node.id) !== -1) return console.warn('duplicate ref on readd')
+        refs.push(node.id)
         upRefs[id] = true
       })
     }
@@ -54,6 +59,12 @@ WFModel.prototype.readd = function (saved) {
     if (node.meta.references) {
       node.meta.references.forEach(function (id) {
         ids[id].meta.tags.push(node.id)
+        var tags = ids[id].meta.tags
+        if (!tags) {
+          tags = ids[id].meta.tags = []
+        }
+        if (tags.indexOf(node.id) !== -1) return console.warn('duplicate tag on readd')
+        tags.push(node.id)
         upTags[id] = true
       })
     }
@@ -82,8 +93,6 @@ WFModel.prototype.remove = function (id) {
   var n = this.ids[id]
     , p = this.ids[n.parent]
     , ix = p.children.indexOf(id)
-  p.children.splice(ix, 1)
-  delete this.ids[id]
 
   var upRefs = {}
   var upTags = {}
@@ -113,17 +122,25 @@ WFModel.prototype.remove = function (id) {
 
   process(n)
 
+  p.children.splice(ix, 1)
+  delete this.ids[id]
+
+
   setTimeout(function () {
     var id
     this.db.remove('node', id)
     this.db.update('node', n.parent, {children: p.children})
 
     for (id in upTags) {
-      this.db.update('node', id, {tags: this.ids[id].tags})
+      if (this.ids[id]) {
+        this.db.update('node', id, {tags: this.ids[id].meta.tags})
+      }
     }
 
     for (id in upRefs) {
-      this.db.update('node', id, {references: this.ids[id].references})
+      if (this.ids[id]) {
+        this.db.update('node', id, {references: this.ids[id].meta.references})
+      }
     }
   }.bind(this))
 
