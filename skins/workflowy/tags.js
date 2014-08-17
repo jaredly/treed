@@ -33,6 +33,7 @@ Tags.prototype = {
 
     this.resultsNode = document.createElement('ul')
     this.resultsNode.className = 'treed_tags_results'
+    this.tags.addEventListener('mousedown', function (e) {e.preventDefault()})
     this.resultsNode.addEventListener('mousedown', function (e) {e.preventDefault()})
 
     this.node.appendChild(this.tags)
@@ -47,6 +48,7 @@ Tags.prototype = {
 
   startEditing: function (e) {
     if (this.editing) return
+    this.actions.setActive()
     this.editing = true
     this.node.classList.add('treed_tags--open')
     this.fullResults = this.modelactions.getAllTags()
@@ -163,21 +165,15 @@ Tags.prototype = {
     this.tags.removeChild(this.dom[id])
   },
 
-  /*
-  startEditing: function (e) {
-    e.preventDefault();
-
-    this.node.removeChild(this.handle)
-    this.node.removeChild(this.tags)
-
-    editTags(this.node, this.modelactions.getTagList(), function (tags) {
-      this.node.appendChild(this.handle)
-      this.node.appendChild(this.tags)
-      this.actions.setTags(tags)
-    }.bind(this))
-
+  removeFull: function (id) {
+    for (var i=0; i<this.value.length; i++) {
+      if (this.value[i].id === id) {
+        this.value.splice(i, 1)
+        this.remove(id)
+        return
+      }
+    }
   },
- */
 
   set: function (tags) {
     this.value = tags || []
@@ -190,10 +186,27 @@ Tags.prototype = {
     var node = document.createElement('div')
     this.dom[tag.id] = node
     node.className = 'treed_tag'
-    node.innerHTML = tag.content
+
+    var content = document.createElement('span')
+    content.innerText = tag.content
+    node.appendChild(content)
+
+    var remove = document.createElement('span')
+    remove.className = 'treed_tag_remove'
+    remove.innerHTML = ' &times;'
+    var rmFunc = this.removeFull.bind(this, tag.id)
+    remove.addEventListener('click', function (e) {
+      e.preventDefault()
+      e.stopPropagation()
+      rmFunc()
+    })
+
+    node.appendChild(remove)
+
     node.addEventListener('click', function (e) {
       e.preventDefault()
       e.stopPropagation()
+      if (this.editing) return
       this.actions.rebase(tag.id)
     }.bind(this))
     this.tags.appendChild(node)
