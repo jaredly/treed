@@ -9,17 +9,29 @@ function WFView() {
 
 WFView.prototype = Object.create(View.prototype)
 
+WFView.prototype.initialize = function (root) {
+  var rootNode = View.prototype.initialize.call(this, root)
+    , node = this.model.ids[root]
+  if (node.meta.references) {
+    node.meta.references.forEach(function (id) {
+      this.vl.addReference(this.model.ids[id], this.rebase.bind(this, id))
+    }.bind(this))
+  }
+  return rootNode
+}
+
 WFView.prototype.addTree = function (node, before) {
   if (!this.vl.body(node.parent)) {
     return this.rebase(node.parent, true)
   }
   this.add(node, before)
 
-  if (node.meta.tags) {
+  if (node.meta.tags && node.id === this.root) {
     node.meta.tags.forEach(function (id) {
-      this.vl.addReference(id, node.id)
+      this.vl.addReference(this.model.ids[node.id], this.rebase.bind(this, id))
     }.bind(this))
   }
+
   if (node.meta.references) {
     node.meta.references.forEach(function (id) {
       this.vl.addTag(id, node)
