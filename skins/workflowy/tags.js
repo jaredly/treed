@@ -159,10 +159,12 @@ Tags.prototype = {
     if (!this.value.length) return
     var last = this.value.pop()
     this.remove(last.id)
+    this.resetSearch()
   },
 
   remove: function (id) {
     this.tags.removeChild(this.dom[id])
+    delete this.dom[id]
   },
 
   removeFull: function (id) {
@@ -170,6 +172,7 @@ Tags.prototype = {
       if (this.value[i].id === id) {
         this.value.splice(i, 1)
         this.remove(id)
+        this.resetSearch()
         return
       }
     }

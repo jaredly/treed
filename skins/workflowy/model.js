@@ -86,6 +86,14 @@ WFModel.prototype.readd = function (saved) {
   return before
 }
 
+WFModel.prototype.dumpData = function (id, noids) {
+  var data = Model.prototype.dumpData.call(this, id, noids)
+  if (!noids) return data
+  delete data.meta.references
+  delete data.meta.tags
+  return data
+}
+
 WFModel.prototype.remove = function (id) {
   // remove the references and tags
 
@@ -99,9 +107,6 @@ WFModel.prototype.remove = function (id) {
   var ids = this.ids
 
   function process(node) {
-    for (var i=0; i<node.children.length; i++) {
-      process(ids[node.children[i]])
-    }
 
     if (node.meta.tags) {
       node.meta.tags.forEach(function (id) {
@@ -117,6 +122,9 @@ WFModel.prototype.remove = function (id) {
         upTags[id] = true
         tags.splice(tags.indexOf(node.id), 1)
       })
+    }
+    for (var i=0; i<node.children.length; i++) {
+      process(ids[node.children[i]])
     }
   }
 
