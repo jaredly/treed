@@ -92,3 +92,41 @@
 
 }
 
+.treed_references {
+  padding-left: 30px;
+  opacity: 0;
+  transition: opacity .3s ease;
+
+  &--shown {
+    opacity: 1;
+  }
+}
+
+.treed_references_list {
+  font-size: 90%;
+}
+
+.treed_references_title {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  color: #777;
+}
+
+.treed_reference {
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 5px 10px;
+
+  &:hover {
+    background-color: #ddd;
+  }
+
+  p:first-child {
+    margin-top: 0;
+  }
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+

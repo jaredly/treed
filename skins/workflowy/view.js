@@ -13,9 +13,9 @@ WFView.prototype.initialize = function (root) {
   var rootNode = View.prototype.initialize.call(this, root)
     , node = this.model.ids[root]
   if (node.meta.references) {
-    node.meta.references.forEach(function (id) {
-      this.vl.addReference(this.model.ids[id], this.rebase.bind(this, id))
-    }.bind(this))
+    this.vl.setReferences(node.meta.references.map(function (id) {
+      return this.model.ids[id]
+    }.bind(this)), this.rebase.bind(this))
   }
   return rootNode
 }
@@ -26,9 +26,11 @@ WFView.prototype.addTree = function (node, before) {
   }
   this.add(node, before)
 
-  if (node.meta.tags && node.id === this.root) {
+  if (node.meta.tags) {
     node.meta.tags.forEach(function (id) {
-      this.vl.addReference(this.model.ids[node.id], this.rebase.bind(this, id))
+      if (id === this.root) {
+        this.vl.addReference(this.model.ids[node.id], this.rebase.bind(this, node.id))
+      }
     }.bind(this))
   }
 
@@ -90,11 +92,28 @@ WFView.prototype.remove = function (id, ignoreActive) {
   process.call(this, node)
 }
 
-WFView.prototype.setTags = function (id, tags) {
+WFView.prototype.setAttr = function (id, attr, value, quiet) {
+  var res = View.prototype.setAttr.apply(this, arguments)
+  if (attr !== 'references') return res
+  if (id !== this.root) return
+  this.vl.setReferences(value && value.map(function (id) {
+    return this.model.ids[id]
+  }.bind(this)), this.rebase.bind(this))
+  return res
+}
+
+WFView.prototype.setTags = function (id, tags, oldTags) {
+  var used = {}
+  for (var i=0; i<tags.length; i++) {
+    used[tags[i]] = true
+  }
   this.setAttr(id, 'tags', tags)
-  // todo update references
   for (var i=0; i<tags.length; i++) {
     this.setAttr(tags[i], 'references', this.model.ids[tags[i]].meta.references, true)
+  }
+  for (var i=0; i<oldTags.length; i++) {
+    if (used[oldTags[i]]) continue;
+    this.setAttr(oldTags[i], 'references', this.model.ids[oldTags[i]].meta.references, true)
   }
 }
 
