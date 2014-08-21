@@ -1,0 +1,174 @@
+.treed_tags {
+  position: absolute;
+  right: 5px;
+  top: 3px;
+  opacity: .5;
+}
+.treed_tags--open,
+.treed_tags:hover {
+  opacity: 1;
+}
+.treed_tags_list {
+  display: inline-block;
+}
+.treed_tags_handle {
+  opacity: 0;
+  display: inline-block;
+  cursor: pointer;
+  transition: opacity .2s ease;
+  position: absolute;
+  left: 100%;
+  top: 0;
+  margin-left: 5px;
+  padding: 2px 5px;
+}
+.treed_tags--open .treed_tags_handle,
+.treed__head:hover .treed_tags_handle {
+  opacity: 1;
+}
+.treed_tag {
+  display: inline-block;
+  margin-left: 3px;
+  background-color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 80%;
+  padding: 2px 5px;
+}
+.treed_tags_editor {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  margin-left: 27px;
+  display: none;
+}
+.treed_tags--open .treed_tags_editor {
+  display: block;
+}
+.treed_tags_input {
+  outline: none;
+  border: none;
+  border-bottom: 1px dashed #aaa;
+}
+.treed_tags_results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.treed_tag_remove {
+  display: none;
+}
+.treed_tags--open .treed_tag_remove {
+  display: inline;
+}
+.treed_tags_new,
+.treed_tags_result {
+  padding: 3px 5px;
+  cursor: pointer;
+}
+.treed_tags_new:hover,
+.treed_tags_result:hover {
+  background-color: #eee;
+}
+.treed__item--parent > .treed__head .treed__collapser {
+  display: none;
+}
+.treed__item--parent > .treed__head:hover .treed__collapser {
+  display: block;
+}
+.treed__bullet::before {
+  content: "\2022";
+  cursor: pointer;
+}
+.treed__bullet:hover {
+  background-color: #aaa;
+  border-radius: 10px;
+  line-height: 10px;
+  margin-top: 4px;
+}
+.treed__bullet {
+  position: absolute;
+  padding: 3px;
+  left: 24px;
+  font-size: 25px;
+  line-height: 18px;
+  overflow: hidden;
+}
+.treed__collapser:before {
+  left: 4px;
+  width: 20px;
+}
+.treed__body {
+  margin-left: 20px;
+}
+.treed__item--parent.collapsed > .treed__head .treed__bullet {
+  font-size: 40px;
+  line-height: 14px;
+  margin-top: 2px;
+  left: 22px;
+  overflow: hidden;
+  color: #777;
+}
+.treed__item.selected > .treed__head .treed__body {
+  border-radius: 10px;
+}
+.treed > .treed__item.collapsed > .treed__children {
+  display: block;
+}
+.treed > .treed__item {
+  padding-left: 0;
+}
+.treed > .treed__item > .treed__children > li {
+  padding-left: 0;
+}
+.treed > .treed__item > .treed__children > .treed__item > .treed__head > .treed__bullet {
+  left: 25px;
+}
+.treed > .treed__item > .treed__children > .treed__item.collapsed > .treed__head > .treed__bullet {
+  left: 23px;
+}
+.treed > .treed__item > .treed__head .treed__body {
+  padding-left: 0;
+}
+.treed > .treed__item > .treed__head .treed__body input,
+.treed > .treed__item > .treed__head .treed__body > div {
+  padding-left: 10px;
+  font-size: 30px;
+  border-radius: 10px;
+}
+.treed > .treed__item > .treed__head .treed__bullet,
+.treed > .treed__item > .treed__head .treed__mover,
+.treed > .treed__item > .treed__head .treed__collapser {
+  display: none;
+}
+.treed_references {
+  padding-left: 30px;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+.treed_references--shown {
+  opacity: 1;
+}
+.treed_references_list {
+  font-size: 90%;
+}
+.treed_references_title {
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: bold;
+  color: #777;
+}
+.treed_reference {
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 5px 10px;
+}
+.treed_reference:hover {
+  background-color: #ddd;
+}
+.treed_reference p:first-child {
+  margin-top: 0;
+}
+.treed_reference p:last-child {
+  margin-bottom: 0;
+}

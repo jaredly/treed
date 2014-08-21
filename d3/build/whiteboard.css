@@ -1,0 +1,203 @@
+.whiteboard {
+  position: relative;
+  flex: 1;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.whiteboard:empty:after {
+  content: 'Double click to create a new node';
+}
+.whiteboard_hline,
+.whiteboard_vline {
+  background-color: #aaf;
+  position: absolute;
+}
+.whiteboard_hline {
+  height: 2px;
+}
+.whiteboard_vline {
+  width: 2px;
+}
+.whiteboard-dropshadow {
+  position: absolute;
+  background-color: #afc;
+  border-radius: 3px;
+  opacity: .7;
+  z-index: 100;
+  pointer-events: none;
+}
+.rendered p:first-child {
+  margin-top: 0;
+}
+.rendered p:last-child {
+  margin-bottom: 0;
+}
+.whiteboard-input-head,
+.whiteboard-head {
+  font-size: 30px;
+  font-family: sans-serif;
+  padding: 10px 10px 0;
+  cursor: pointer;
+}
+.whiteboard-input-head p:first-child,
+.whiteboard-head p:first-child {
+  margin-top: 0;
+}
+.whiteboard-input-head p:last-child,
+.whiteboard-head p:last-child {
+  margin-bottom: 0;
+}
+.whiteboard-input-head {
+  border: none;
+}
+.whiteboard-input-head:focus {
+  outline: none;
+}
+.whiteboard-body {
+  position: relative;
+  border: 1px solid #aaa;
+  margin: 5px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.whiteboard-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.whiteboard-controls {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+.whiteboard-controls button {
+  cursor: pointer;
+  background-color: white;
+  border: 1px solid #aaa;
+  color: black;
+  padding: 5px 7px;
+  font-size: 18px;
+  border-radius: 5px;
+}
+.whiteboard-controls button:hover {
+  background-color: #ddd;
+  color: white;
+}
+.whiteboard_child-handle {
+  position: absolute;
+  z-index: 1000;
+  background-color: #ddd;
+  opacity: .5;
+  width: 300px;
+  font-size: 80%;
+  font-family: sans-serif;
+  border-radius: 5px;
+  padding: 10px;
+  pointer-events: none;
+}
+.whiteboard_child-handle p:first-child {
+  margin-top: 0;
+}
+.whiteboard_child-handle p:last-child {
+  margin-bottom: 0;
+}
+.whiteboard-item {
+  border-radius: 5px;
+  box-shadow: 0 0 5px black;
+  font-family: sans-serif;
+  position: absolute;
+  background-color: white;
+  width: 300px;
+}
+.whiteboard-item--moving {
+  opacity: .7;
+}
+.whiteboard-item--editing {
+  box-shadow: 0 0 5px green;
+}
+.whiteboard-item_zoom {
+  display: none;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+  color: #777;
+}
+.whiteboard-item_zoom:hover {
+  color: black;
+}
+.whiteboard-item:hover .whiteboard-item_zoom {
+  display: block;
+}
+.whiteboard-item_input {
+  white-space: pre-wrap;
+}
+.whiteboard-item_input:focus {
+  outline: none;
+}
+.whiteboard-item_title {
+  font-size: 16px;
+  min-height: 18px;
+}
+.whiteboard-item_title p:first-child {
+  margin-top: 0;
+}
+.whiteboard-item_title p:last-child {
+  margin-bottom: 0;
+}
+.whiteboard-item_child {
+  font-size: 80%;
+  list-style: none;
+  padding: 5px 5px 5px 25px;
+  border-radius: 5px;
+  position: relative;
+}
+.whiteboard:not(.whiteboard--moving) .whiteboard-item_child:hover {
+  background-color: #f5f5f5;
+}
+.whiteboard-item_child .handle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 5px 6px;
+  border-radius: 5px;
+  font-size: 10px;
+  line-height: 12px;
+}
+.whiteboard:not(.whiteboard--moving) .whiteboard-item_child .handle:hover {
+  background-color: #aaa;
+}
+.whiteboard-item_child.whiteboard-item_child--parent .handle {
+  padding: 5px 3px 4px;
+  font-size: 16px;
+  color: #777;
+}
+.whiteboard-item_child p:first-child {
+  margin-top: 0;
+}
+.whiteboard-item_child p:last-child {
+  margin-bottom: 0;
+}
+.whiteboard-item_child--moving {
+  background-color: #ccc;
+}
+.whiteboard-item_input,
+.whiteboard-item_title {
+  padding: 10px 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.whiteboard-item_body {
+  margin: 0;
+  padding: 0 5px 5px;
+  margin-top: -5px;
+}
+.whiteboard-item_body:empty {
+  display: none;
+}
+.whiteboard-item_footer .zoom {
+  cursor: pointer;
+}
