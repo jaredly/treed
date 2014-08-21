@@ -1,5 +1,6 @@
 
 module.exports = {
+  id: 'rebase',
   store: {
     actions: {
       rebase: function (id, edit) {

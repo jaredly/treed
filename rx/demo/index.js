@@ -3,6 +3,7 @@ var merge = require('react/lib/merge')
 
 var MainStore = require('treed/stores/main')
 var TempStore = require('treed/stores/temp')
+var Db = require('treed/db')
 
 module.exports = {
   run: run
@@ -21,20 +22,13 @@ function run(options, done) {
   }
 
   var pl = new options.PL()
-  pl.init(function (err) {
+  var db = new Db(pl)
+  db.init(function (err) {
     if (err) return console.error('Failed to start db', err);
-    var actions = new Dispatcher({
-      mixins: options.mixins
-    })
-    var db = new MainStore({
+    var store = new MainStore({
       mixins: options.mixins,
-      pl: pl
+      pl: db
     })
-    var temp = new TempStore({
-      mixins: options.mixins
-    })
-    db.listenTo(actions)
-    temp.listenTo(actions)
-    done(actions, temp, db)
+    done(store)
   })
 }

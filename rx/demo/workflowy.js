@@ -1,9 +1,8 @@
 
-var treed = require('treed')
 var TreeView = require('treed/views/tree')
 
 var Rebase = require('treed/mixins/rebase')
-var Tags = require('treed/mixins/tags')
+// var Tags = require('treed/mixins/tags')
 var Done = require('treed/mixins/done')
 
 var demo = require('./')
@@ -11,15 +10,12 @@ var demo = require('./')
 demo.run({
   mixins: [
     Rebase,
-    Tags,
     Done
   ],
-}, function (actions, temp, db) {
+}, function (store) {
   React.renderComponent(TreeView({
-    mixins: [Rebase, Tags, Done],
-    actions: actions,
-    temp: temp,
-    db: db
+    mixins: [Rebase, Done],
+    store: store,
   }), document.getElementById('example'))
 })
 
