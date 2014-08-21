@@ -1,5 +1,5 @@
 
-all: build css
+all: build css demo
 
 lint:
 	jshint lib
@@ -10,8 +10,11 @@ build:
 watch:
 	watchify lib/index.js -v -o build/build.js -d -s nm
 
-demo:
+watch-demo:
 	watchify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
+
+demo:
+	browserify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
 
 test:
 	@echo "Working on that..."

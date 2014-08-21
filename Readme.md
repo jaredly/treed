@@ -66,4 +66,17 @@ I want to implement a view layer similar to each of the following sevices:
 And hook them all to the same model, allowing you to switch between contexts. And then hook it all up to a database (firebase or hood.ie or pouchdb or leveldb?).
 I think it will be exactly what I've always wanted; we'll see.
 
+# Build instructions
+
+You will need:
+
+- [nodejs](http://nodejs.org/)
+- [browserify](http://browserify.org) `npm install -g browserify watchify`
+- [less](http://lesscss.org) `npm install -g less`
+
+```
+npm install
+make all
+```
+
 
