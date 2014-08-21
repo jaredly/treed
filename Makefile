@@ -5,9 +5,11 @@ lint:
 	jshint lib
 
 build:
+	mkdir -p build
 	browserify lib/index.js -o build/build.js -d -s nm
 
 watch:
+	mkdir -p build
 	watchify lib/index.js -v -o build/build.js -d -s nm
 
 watch-demo:
