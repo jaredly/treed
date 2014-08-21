@@ -1,1 +1,4 @@
 *.swp
+build
+demo
+node_modules
