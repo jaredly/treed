@@ -16,7 +16,7 @@ watch-demo:
 	watchify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
 
 demo:
-	browserify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
+	browserify demo/tpl/demo.js -o demo/tpl/demo-bundle.js -d -s demo
 
 test:
 	@echo "Working on that..."
