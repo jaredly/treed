@@ -26,6 +26,25 @@ WFModel.prototype.actions = {
   }
 }
 
+WFModel.prototype.hasTagRoot = function () {
+  return !!this.rootNode.tagRoot
+}
+
+WFModel.prototype.addTagRoot = function () {
+  var index = this.ids[this.root].children ? this.ids[this.root].children.length : 0
+  var cr = model.create(this.root, index, 'Tags')
+  this.rootNode.tagRoot = cr.node.id
+  this.db.update('root', this.root, {tagRoot: cr.node.id})
+  return cr
+}
+
+WFModel.prototype.addTag = function (name) {
+  var tagRoot = this.rootNode.tagRoot
+  var index = this.ids[tagRoot].children ? this.ids[tagRoot].children.length : 0
+  var cr = model.create(tagRoot, index, name)
+  return cr
+}
+
 WFModel.prototype.readd = function (saved) {
   this.ids[saved.id] = saved.node
   var children = this.ids[saved.node.parent].children

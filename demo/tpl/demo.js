@@ -80,9 +80,9 @@ function runDemo(options, done) {
       return loadFailed(err);
     }
 
-    initDB(db, function (err, id, map, wasEmpty) {
+    initDB(db, function (err, root, map, wasEmpty) {
 
-      window.model = new o.Model(id, map, db)
+      window.model = new o.Model(root, map, db)
       window.ctrl = window.controller = new o.Controller(model, o.ctrlOptions)
       window.view = window.view = ctrl.setView(
         o.View,
@@ -90,10 +90,10 @@ function runDemo(options, done) {
       );
       if (wasEmpty) {
         for (var i=0;i<o.data.children.length; i++) {
-          ctrl.importData(o.data.children[i], id);
+          ctrl.importData(o.data.children[i], root.id);
         }
         options.initDB(window.model)
-        window.view.rebase(id);
+        window.view.rebase(root.id);
       }
       document.getElementById(o.el).appendChild(view.getNode());
 
@@ -116,11 +116,10 @@ function initDB(db, done) {
       if (!nodes.length) return done(new Error("Data corrupted - could not find root node"))
 
       var map = {}
-        , id = roots[0].id
       for (var i=0; i<nodes.length; i++) {
         map[nodes[i].id] = nodes[i]
       }
-      done(null, id, map, false)
+      done(null, roots[0], map, false)
     })
   })
 }
@@ -141,7 +140,7 @@ function loadDefault(db, done) {
     }
 
     db.save('node', ROOT_ID, map[ROOT_ID], function () {
-      done(null, ROOT_ID, map, true)
+      done(null, {id: ROOT_ID}, map, true)
     })
   })
 }
