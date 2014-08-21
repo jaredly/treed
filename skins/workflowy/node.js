@@ -9,6 +9,9 @@ function WFNode(content, meta, actions, isNew, modelActions) {
   this.done = meta.done
   this.tags = new Tags(modelActions.resolveTags(meta.tags), actions, modelActions)
   this.node.appendChild(this.tags.node)
+  if (meta.done) {
+    this.node.classList.add('treed__default-node--done')
+  }
 }
 
 WFNode.prototype = Object.create(DefaultNode.prototype)
