@@ -55,13 +55,13 @@ function initD3(model, ctrl, view) {
 
   var up = update.bind(null, tree, svg, setCollapsed, diagonal)
 
-  var root = model.dumpData().children[0]
+  var root = model.dumpData()
   root.x0 = height / 2;
   root.y0 = 0;
   up(root)
 
   ctrl.on('change', function () {
-    var root = model.dumpData().children[0]
+    var root = model.dumpData()
     root.x0 = height / 2;
     root.y0 = 0;
     up(root)

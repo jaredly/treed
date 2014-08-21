@@ -92,7 +92,7 @@ function runDemo(options, done) {
         for (var i=0;i<o.data.children.length; i++) {
           ctrl.importData(o.data.children[i], root.id);
         }
-        options.initDB(window.model)
+        if (options.initDB) options.initDB(window.model)
         window.view.rebase(root.id);
       }
       document.getElementById(o.el).appendChild(view.getNode());
