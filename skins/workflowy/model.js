@@ -124,9 +124,9 @@ WFModel.prototype.remove = function (id) {
   var upRefs = {}
   var upTags = {}
   var ids = this.ids
+  var removed = []
 
   function process(node) {
-
     if (node.meta.tags) {
       node.meta.tags.forEach(function (id) {
         var refs = ids[id].meta.references
@@ -145,6 +145,9 @@ WFModel.prototype.remove = function (id) {
     for (var i=0; i<node.children.length; i++) {
       process(ids[node.children[i]])
     }
+
+    delete ids[node.id]
+    removed.push(node.id)
   }
 
   process(n)
@@ -152,11 +155,15 @@ WFModel.prototype.remove = function (id) {
   p.children.splice(ix, 1)
   delete this.ids[id]
 
-
   setTimeout(function () {
-    var id
-    this.db.remove('node', id)
+    this.db.removeBatch('node', removed)
     this.db.update('node', n.parent, {children: p.children})
+
+
+    if (id === this.rootNode.tagRoot) {
+      delete this.rootNode.tagRoot
+      this.db.update('root', this.root, {tagRoot: null})
+    }
 
     for (id in upTags) {
       if (this.ids[id]) {

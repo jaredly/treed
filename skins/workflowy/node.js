@@ -32,7 +32,7 @@ WFNode.prototype.addTag = function (node) {
 }
 
 WFNode.prototype.removeTag = function (tid) {
-  this.tags.remove(tid)
+  this.tags.removeFull(tid)
 }
 
 WFNode.prototype.setTags = function (tags) {

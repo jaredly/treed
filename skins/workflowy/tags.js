@@ -36,12 +36,19 @@ Tags.prototype = {
     this.tags.addEventListener('mousedown', function (e) {e.preventDefault()})
     this.resultsNode.addEventListener('mousedown', function (e) {e.preventDefault()})
 
+    this.newNode = document.createElement('div')
+    this.newNode.className = 'treed_tags_new'
+    this.newNode.addEventListener('mousedown', function (e) {e.preventDefault()})
+    this.newNode.addEventListener('click', this.onNew.bind(this))
+    this.newNode.innerText = 'Create new tag'
+
     this.node.appendChild(this.tags)
     this.node.appendChild(this.handle)
     this.node.appendChild(this.editor)
 
     this.editor.appendChild(this.input)
     this.editor.appendChild(this.resultsNode)
+    this.editor.appendChild(this.newNode)
 
     this.dom = {}
   },
@@ -139,9 +146,21 @@ Tags.prototype = {
     }
   },
 
+  onNew: function () {
+    if (!this.input.value.length) return
+    var tag = this.actions.addTag(this.input.value)
+    this.addCurrent(tag)
+  },
+
   addCurrent: function (tag) {
-    if (!this.results.length) return
-    tag = tag || this.results[this.selection]
+    if (!tag) {
+      if (!this.input.value.length) return
+      if (!this.results.length) {
+        tag = this.actions.addTag(this.input.value)
+      } else {
+        tag = this.results[this.selection]
+      }
+    }
     if (this.value.indexOf(tag) !== -1) return this.resetSearch()
     this.value.push(tag)
     this.add(tag)

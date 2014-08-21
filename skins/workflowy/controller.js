@@ -41,7 +41,7 @@ WFController.prototype.actions = util.extend({
   setTags: function (id, ids) {
     this.executeCommands('setTags', [id, ids])
   },
-  addTag: function (contents) {
+  addTag: function (id, contents) {
     return this.executeCommands('addTag', [contents])[0];
   },
 }, Controller.prototype.actions)
