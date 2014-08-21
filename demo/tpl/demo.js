@@ -89,10 +89,11 @@ function runDemo(options, done) {
         o.viewOptions
       );
       if (wasEmpty) {
-        ctrl.importData(o.data);
-        var child = model.ids[id].children[0]
+        for (var i=0;i<o.data.children.length; i++) {
+          ctrl.importData(o.data.children[i], id);
+        }
         options.initDB(window.model)
-        window.view.rebase(child);
+        window.view.rebase(id);
       }
       document.getElementById(o.el).appendChild(view.getNode());
 

@@ -138,6 +138,7 @@ WFView.prototype.extra_actions = {
       this.ctrlactions.backALevel()
     }
   },
+
   'toggle done': {
     binding: 'ctrl+return',
     action: function () {
