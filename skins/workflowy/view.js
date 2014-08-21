@@ -111,9 +111,11 @@ WFView.prototype.setTags = function (id, tags, oldTags) {
   for (var i=0; i<tags.length; i++) {
     this.setAttr(tags[i], 'references', this.model.ids[tags[i]].meta.references, true)
   }
-  for (var i=0; i<oldTags.length; i++) {
-    if (used[oldTags[i]]) continue;
-    this.setAttr(oldTags[i], 'references', this.model.ids[oldTags[i]].meta.references, true)
+  if (oldTags) {
+    for (var i=0; i<oldTags.length; i++) {
+      if (used[oldTags[i]]) continue;
+      this.setAttr(oldTags[i], 'references', this.model.ids[oldTags[i]].meta.references, true)
+    }
   }
 }
 
