@@ -5,16 +5,18 @@ lint:
 	jshint lib
 
 build:
+	mkdir -p build
 	browserify lib/index.js -o build/build.js -d -s nm
 
 watch:
+	mkdir -p build
 	watchify lib/index.js -v -o build/build.js -d -s nm
 
 watch-demo:
 	watchify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
 
 demo:
-	browserify demo/tpl/demo.js -v -o demo/tpl/demo-bundle.js -d -s demo
+	browserify demo/tpl/demo.js -o demo/tpl/demo-bundle.js -d -s demo
 
 test:
 	@echo "Working on that..."

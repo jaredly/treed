@@ -1,5 +1,4 @@
 *.swp
 demo/workflowy/bundle.js
 node_modules
-build
 demo/tpl/demo-bundle.js
