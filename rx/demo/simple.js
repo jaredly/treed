@@ -5,11 +5,9 @@ var TreeView = require('treed/views/tree')
 
 var demo = require('./')
 
-demo.run(function (disp, temp, db) {
-    React.renderComponent(TreeView({
-        disp: disp,
-        temp: temp,
-        db: db
-    }), document.getElementById('example'))
+demo.run(function (store) {
+  React.renderComponent(TreeView({
+    store: store
+  }), document.getElementById('example'))
 })
 

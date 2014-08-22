@@ -33,10 +33,13 @@ module.exports = {
 
   node: {
     left: function (props) {
+      // TODO: movement
       return <div className={cx({
         'm_RebaseDot': true,
         'm_RebaseDot-full': props.node.collapsed && props.node.children.length,
-      })} onClick={props.actions.rebase.bind(null, props.id)}/>
+      })}
+        key='rebase'
+        onClick={props.actions.rebase.bind(null, props.id)}/>
     }
   }
 }

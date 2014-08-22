@@ -1,9 +1,8 @@
 
 var merge = require('react/lib/merge')
 
-var MainStore = require('treed/stores/main')
-var TempStore = require('treed/stores/temp')
-var Db = require('treed/db')
+var MainStore = require('../stores/main')
+var Db = require('../db')
 
 module.exports = {
   run: run

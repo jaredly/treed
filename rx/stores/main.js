@@ -37,6 +37,14 @@ function MainStore(options) {
 MainStore.prototype = merge(Object.create(BaseStore.prototype), {
   constructor: MainStore,
 
+  // just the `store` part of the mixin
+  addMixin: function (mixin) {
+    BaseStore.prototype.addMixin.call(this, mixin, ['commands'])
+    for (var name in mixin.commands) {
+      this.commands[name] = mixin.commands[name]
+    }
+  },
+
   commands: {
 
     set: {
@@ -99,6 +107,8 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
   },
 
   getNode: function (id) {
+    return this.pl.nodes[id]
+    /*
     // TODO could optimize?
     var node = _.cloneDeep(this.pl.nodes[id])
     if (id === this.active) {
@@ -108,6 +118,19 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       node.selected = true
     }
     return node
+    */
+  },
+
+  isActive: function (id) {
+    return id === this.active
+  },
+
+  isSelected: function (id) {
+    return this.selection && this.selection.indexOf(id) !== -1
+  },
+
+  isEditing: function (id) {
+    return this.mode === 'insert' && id === this.active
   },
 
   actions: {

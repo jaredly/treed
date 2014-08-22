@@ -10,26 +10,30 @@ function BaseStore(options) {
     this.actions[name] = this.actions[name].bind(this)
   }
 
-  options.mixins.forEach((mixin) => {
-    if (!mixin.store) return
-    if (mixin.store.init) {
-      mixin.store.init(this)
-    }
-    var name
-    if (mixin.store.actions) {
-      for (name in mixin.store.actions) {
-        this.actions[name] = mixin.store.actions[name].bind(this)
-      }
-    }
-    for (name in mixin.store) {
-      if (name === 'actions' || name === 'init') continue;
-      this[name] = mixin.store[name]
-    }
-  })
+  options.mixins.forEach((mixin) => mixin.store && this.addMixin(mixin.store))
 }
 
 BaseStore.prototype = {
   actions: {},
+
+  addMixin: function (mixin, ignore) {
+    var blacklist = ['init', 'actions'].concat(ignore || [])
+    if (mixin.init) {
+      mixin.init(this) // TODO async?
+    }
+
+    var name
+    if (mixin.actions) {
+      for (name in mixin.actions) {
+        this.actions[name] = mixin.actions[name].bind(this)
+      }
+    }
+
+    for (name in mixin) {
+      if (blacklist.indexOf(name) !== -1) continue;
+      this[name] = mixin[name]
+    }
+  },
 
   listenTo: function (actions) {
     for (var name in this.actions) {
@@ -37,12 +41,21 @@ BaseStore.prototype = {
     }
   },
 
-  listen: function (changes, listener) {
+  on: function (changes, listener) {
     for (var i=0; i<changes.length; i++) {
       if (!this._listeners[changes[i]]) {
         this._listeners[changes[i]] = [listener]
       } else {
         this._listeners[changes[i]].push(listener)
+      }
+    }
+  },
+
+  off: function (changes, listener) {
+    for (var i=0; i<changes.length; i++) {
+      var ix = this._listeners[changes[i]].indexOf(listener)
+      if (ix !== -1) {
+        this._listeners[changes[i]].splice(ix, 1)
       }
     }
   },

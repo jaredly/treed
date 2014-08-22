@@ -1,16 +1,17 @@
 
 var React = require('react')
-var TreeView = require('treed/views/tree')
+var TreeView = require('../views/tree')
 
-var Rebase = require('treed/mixins/rebase')
-// var Tags = require('treed/mixins/tags')
-var Done = require('treed/mixins/done')
+var Rebase = require('../mixins/rebase')
+// var Tags = require('../mixins/tags')
+var Done = require('../mixins/done')
 
 var demo = require('./')
 
 demo.run({
   mixins: [
     Rebase,
+    // Tags,
     Done
   ],
 }, function (store) {
