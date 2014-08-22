@@ -45,12 +45,15 @@ module.exports = {
       },
     },
 
-    left: function (props) {
-      return <div className={cx({
-        'm_Collapser': true,
-        'm_Collapsed': props.node.collapsed
-      })} onClick={props.actions.toggleCollapse.bind(null, props.id)}/>
-    }
+    blocks: {
+      left: function (node, actions) {
+        return <div className={cx({
+          'm_Collapser': true,
+          'm_Collapsed': node.collapsed
+        })} onClick={actions.toggleCollapse.bind(null, props.id)}/>
+      }
+    },
+
   }
 }
 

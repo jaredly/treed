@@ -8,13 +8,32 @@ var Listener = require('../listener')
 
 var TreeItem = React.createClass({
   mixins: [
-    Listener(function (store, props) {
-      return {
-        node: store.getNode(props.id),
-        isActive: store.isActive(props.id),
-        isSelected: store.isSelected(props.id),
-        isEditing: store.isEditing(props.id),
-      }
+    Listener({
+      initStoreState: function (store, props) {
+        var node = store.getNode(props.id)
+        return {
+          node: node,
+          isActive: store.isActive(props.id),
+          isSelected: store.isSelected(props.id),
+          isEditing: store.isEditing(props.id),
+          lazyChildren: node.collapsed && node.children.length
+        }
+      },
+
+      updateStoreState: function (store, props) {
+        var node = store.getNode(props.id)
+        return {
+          node: node,
+          isActive: store.isActive(props.id),
+          isSelected: store.isSelected(props.id),
+          isEditing: store.isEditing(props.id),
+          lazyChildren: this.state.lazyChildren && node.collapsed
+        }
+      },
+
+      shouldGetNew: function (nextProps) {
+        return nextProps.id !== this.props.id
+      },
     })
   ],
 
@@ -30,7 +49,6 @@ var TreeItem = React.createClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     return (
-      nextProps.id !== this.props.id ||
       nextState !== this.state
     )
   },
@@ -53,12 +71,9 @@ var TreeItem = React.createClass({
     if (!this.props.mixins) return
     var items = []
     for (var i=0; i<this.props.mixins.length; i++) {
-      var mixin = this.props.mixins[i].node
+      var mixin = this.props.mixins[i].blocks
       if (!mixin || !mixin[part]) continue;
-      items.push(mixin[part]({
-        node: this.state.node,
-        actions: this.props.store.actions
-      }))
+      items.push(mixin[part](this.state.node, this.props.store.actions, this.state))
     }
     return items
   },
