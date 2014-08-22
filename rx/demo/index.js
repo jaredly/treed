@@ -15,13 +15,7 @@ function run(options, done) {
   }
   options = merge({
     mixins: [],
-    children: [
-      { content: 'one' },
-      {
-        content: 'two',
-        children: [ {content: 'three'} ]
-      }
-    ],
+    children: require('./demo-data'),
   }, options)
   if (!options.PL) {
     options.PL = require('../pl/mem')

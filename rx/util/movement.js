@@ -22,7 +22,7 @@ module.exports = {
     var pid = nodes[active].parent
       , parent = nodes[pid]
       , i = parent.children.indexOf(active)
-    while (parent !== root && i === parent.children.length - 1) {
+    while (pid !== root && i === parent.children.length - 1) {
       parent = nodes[parent.parent]
       i = parent.children.indexOf(pid)
       pid = parent.id

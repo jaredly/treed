@@ -25,7 +25,7 @@ var TreeItem = React.createClass({
   propTypes: {
     id: PT.string.isRequired,
     mixins: PT.array,
-    body: PT.object,
+    body: PT.oneOfType([PT.object, PT.func]),
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
@@ -38,6 +38,16 @@ var TreeItem = React.createClass({
   componenWillMount: function () {
     this.listen('root')
   },
+
+  /** Use to check what things are updating when */
+  componentDidUpdate: function () {
+    var n = this.getDOMNode()
+    n.style.outline = '1px solid red'
+    setTimeout(function () {
+      n.style.outline = ''
+    }, 200)
+  },
+  // **/
 
   fromMix: function (part) {
     if (!this.props.mixins) return

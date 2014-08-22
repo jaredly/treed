@@ -153,7 +153,14 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
 
     startEditing: function (id) {
       this.mode = 'insert'
-      this.actions.setActive(id)
+      var old = this.active
+      this.active = id
+      this.changed('node:' + old, 'node:' + id, 'mode')
+    },
+
+    stopEditing: function (id) {
+      this.mode = 'normal'
+      this.changed('node:' + id, 'mode')
     },
 
     // TODO: put these in a mixin, b/c they only apply to the treelist view?
