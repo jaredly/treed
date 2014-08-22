@@ -1,7 +1,8 @@
 
 var React = require('react')
-var treed = require('treed')
-var TreeView = require('treed/views/tree')
+var TreeView = require('../views/tree')
+
+window.React = React
 
 var demo = require('./')
 

@@ -10,7 +10,9 @@ function BaseStore(options) {
     this.actions[name] = this.actions[name].bind(this)
   }
 
-  options.mixins.forEach((mixin) => mixin.store && this.addMixin(mixin.store))
+  if (options.mixins) {
+    options.mixins.forEach((mixin) => mixin.store && this.addMixin(mixin.store))
+  }
 }
 
 BaseStore.prototype = {

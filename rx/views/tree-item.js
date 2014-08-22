@@ -18,6 +18,10 @@ var TreeItem = React.createClass({
     })
   ],
 
+  componentWillMount: function () {
+    this.listen('node:' + this.props.id)
+  },
+
   propTypes: {
     id: PT.string.isRequired,
     mixins: PT.array,
@@ -36,6 +40,7 @@ var TreeItem = React.createClass({
   },
 
   fromMix: function (part) {
+    if (!this.props.mixins) return
     var items = []
     for (var i=0; i<this.props.mixins.length; i++) {
       var mixin = this.props.mixins[i].node

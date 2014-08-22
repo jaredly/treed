@@ -16,7 +16,7 @@
 
 var BaseStore = require('./base')
 var movement = require('../util/movement')
-var merge = require('react/lib/merge')
+var extend = require('../util/extend')
 
 module.exports = MainStore
 
@@ -34,7 +34,7 @@ function MainStore(options) {
   this.mode = 'normal'
 }
 
-MainStore.prototype = merge(Object.create(BaseStore.prototype), {
+MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   constructor: MainStore,
 
   // just the `store` part of the mixin
@@ -151,24 +151,29 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       this.changed('node:' + old, 'node:' + id)
     },
 
+    startEditing: function (id) {
+      this.mode = 'insert'
+      this.actions.setActive(id)
+    },
+
     // TODO: put these in a mixin, b/c they only apply to the treelist view?
     // this would be the same mixin that does collapsability? Or maybe there
     // would be a simplified one that doesn't know about collapsibility. Seems
     // like there would be some duplication
     goUp: function () {
-      this.setActive(movement.up(this.active, this.root, this.pl.nodes))
+      this.actions.setActive(movement.up(this.active, this.root, this.pl.nodes))
     },
 
     goDown: function () {
-      this.setActive(movement.down(this.active, this.root, this.pl.nodes))
+      this.actions.setActive(movement.down(this.active, this.root, this.pl.nodes))
     },
 
     goLeft: function () {
-      this.setActive(movement.left(this.active, this.root, this.pl.nodes))
+      this.actions.setActive(movement.left(this.active, this.root, this.pl.nodes))
     },
 
     goRight: function () {
-      this.setActive(movement.right(this.active, this.root, this.pl.nodes))
+      this.actions.setActive(movement.right(this.active, this.root, this.pl.nodes))
     },
 
   }

@@ -5,6 +5,7 @@ var PT = React.PropTypes
 
 var Listener = require('../listener')
 var TreeItem = require('./tree-item')
+var SimpleBody = require('./simple-body')
 
 var TreeView = React.createClass({
   mixins: [
@@ -18,8 +19,14 @@ var TreeView = React.createClass({
     body: PT.object,
   },
 
-  componenWillMount: function () {
+  componentWillMount: function () {
     this.listen('root')
+  },
+
+  getDefaultProps: function () {
+    return {
+      body: SimpleBody
+    }
   },
 
   render: function () {

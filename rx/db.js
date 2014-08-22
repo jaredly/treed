@@ -1,7 +1,7 @@
 
 var uuid = require('../lib/uuid')
 
-module.export = Db
+module.exports = Db
 
 function Db(pl) {
   this.nodes = {}
@@ -25,14 +25,40 @@ Db.prototype = {
     })
   },
 
+  dump: function (pid, children) {
+    var ids = children.map((child) => {
+      var id = uuid()
+      this.save(id, {
+        id: id,
+        content: child.content,
+        children: [],
+        parent: pid,
+      })
+      if (child.children && child.children.length) {
+        this.dump(id, child.children)
+      }
+      return id
+    })
+    this.set(pid, 'children', ids)
+  },
+
   makeRoot: function (done) {
     this.root = uuid()
     this.pl.save('root', this.root, {id: this.root})
     this.nodes = {}
     this.nodes[this.root] = {
       id: this.root,
+      content: 'Home',
+      parent: null,
       children: []
     }
+    this.pl.save('node', this.root, this.nodes[this.root])
+    done()
+  },
+
+  save: function (id, value) {
+    this.nodes[id] = value
+    this.pl.save('node', id, value)
   },
 
   set: function (id, attr, value) {
