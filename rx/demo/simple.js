@@ -1,4 +1,5 @@
 
+var React = require('react')
 var treed = require('treed')
 var TreeView = require('treed/views/tree')
 

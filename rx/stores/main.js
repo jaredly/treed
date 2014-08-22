@@ -1,5 +1,22 @@
+/*
+ * So this architecture opens up the possibility of doing multiple views, but
+ * I'm not totally sure how to make it build naturally. I don't want multiple
+ * mainstores. Also, I don't think a mixin would cut it. I think I'll need to
+ * make a MultiViewStore that knows about multiple views, multiple "actives",
+ * "selections", and "roots". And a view can register itself and say "hey I'm
+ * a new view, I care about x".
+ * 
+ * But when an individual node wants to listen to a store, I don't want to
+ * update it when a different view is getting a selection update. And so for
+ * view specific updates (like active, selection, etc), I'll have the nodes
+ * listen to a `node:<id>:view1` event. That seems like it would make sense.
+ * But for now, with only one view, I can just overload the main `node:<id>`
+ * event. Awesome
+ */
 
 var BaseStore = require('./base')
+var movement = require('../util/movement')
+var merge = require('react/lib/merge')
 
 module.exports = MainStore
 
@@ -7,10 +24,14 @@ function MainStore(options) {
   BaseStore.call(this, arguments)
 
   this.pl = options.pl
+  this.history = []
+  this.histpos = 0
+
+  // view stuff
   this.root = this.pl.root
-  this.active = this.pl.root
+  this.active = this.root
   this.selected = null
-  this.cmd = new Commandeger(this.pl, this.change)
+  this.mode = 'normal'
 }
 
 MainStore.prototype = merge(Object.create(BaseStore.prototype), {
@@ -23,11 +44,11 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       apply: function (pl) {
         this.old = pl.nodes[this.id][this.attr]
         pl.set(this.id, this.attr, this.value)
-        return 'node:' + id
+        return 'node:' + this.id
       },
       undo: function (pl) {
         pl.set(this.id, this.attr, this.old)
-        return 'node:' + id
+        return 'node:' + this.id
       },
     },
 
@@ -57,6 +78,7 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       changed = changed.concat(command.changed)
     }
     this.history.push({time: time, changes: changeset})
+    this.histpos = this.history.length
     this.changed.apply(this, changed)
   },
 
@@ -97,6 +119,8 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       this.executeCommands('batchSet', {ids: ids, attr: attr, values: values})
     },
 
+    // TODO should I verify here that it's displayable? that it's rendered
+    // under the current root?
     setActive: function (id) {
       if (!id) return
       var old = this.active
@@ -104,6 +128,10 @@ MainStore.prototype = merge(Object.create(BaseStore.prototype), {
       this.changed('node:' + old, 'node:' + id)
     },
 
+    // TODO: put these in a mixin, b/c they only apply to the treelist view?
+    // this would be the same mixin that does collapsability? Or maybe there
+    // would be a simplified one that doesn't know about collapsibility. Seems
+    // like there would be some duplication
     goUp: function () {
       this.setActive(movement.up(this.active, this.root, this.pl.nodes))
     },

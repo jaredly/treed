@@ -15,12 +15,13 @@ function BaseStore(options) {
     if (mixin.store.init) {
       mixin.store.init(this)
     }
+    var name
     if (mixin.store.actions) {
-      for (var name in mixin.store.actions) {
+      for (name in mixin.store.actions) {
         this.actions[name] = mixin.store.actions[name].bind(this)
       }
     }
-    for (var name in mixin.store) {
+    for (name in mixin.store) {
       if (name === 'actions' || name === 'init') continue;
       this[name] = mixin.store[name]
     }
@@ -48,13 +49,13 @@ BaseStore.prototype = {
 
   changed: function () {
     var what = [].slice.call(arguments)
-    var touched = []
+    var called = []
     for (var i=0; i<what.length; i++) {
       var listeners = this._listeners[what[i]]
       if (!listeners) continue;
       for (var j=0; j<listeners.length; j++) {
         if (called.indexOf(listeners[j]) !== -1) {
-          continue // each listener should be called at most once per changed
+          continue; // each listener should be called at most once per changed
         }
         listeners[j]()
         called.push(listeners[j])

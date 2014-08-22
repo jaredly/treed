@@ -1,4 +1,5 @@
 
+var React = require('react')
 var TreeView = require('treed/views/tree')
 
 var Rebase = require('treed/mixins/rebase')
