@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var d = React.DOM
+var React = require('react')
 
 var Textarea = module.exports = React.createClass({
   getDefaultProps: function () {

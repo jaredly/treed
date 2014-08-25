@@ -9,24 +9,25 @@ var Listener = require('../../listener')
 var TreeItem = React.createClass({
   mixins: [
     Listener({
-      initStoreState: function (store, props) {
-        var node = store.getNode(props.id)
+      storeAttrs: function (store, props) {
         return {
-          node: node,
+          node: store.getNode(props.id),
           isActive: store.isActive(props.id),
           isSelected: store.isSelected(props.id),
           isEditing: store.isEditing(props.id),
+        }
+      },
+
+      initStoreState: function (state, store, props) {
+        var node = state.node
+        return {
           lazyChildren: node.collapsed && node.children.length
         }
       },
 
-      updateStoreState: function (store, props) {
-        var node = store.getNode(props.id)
+      updateStoreState: function (state, store, props) {
+        var node = state.node
         return {
-          node: node,
-          isActive: store.isActive(props.id),
-          isSelected: store.isSelected(props.id),
-          isEditing: store.isEditing(props.id),
           lazyChildren: this.state.lazyChildren && node.collapsed
         }
       },
@@ -74,8 +75,9 @@ var TreeItem = React.createClass({
     for (var i=0; i<this.props.plugins.length; i++) {
       var plugin = this.props.plugins[i].blocks
       if (!plugin || !plugin[part]) continue;
-      items.push(plugin[part](this.state.node, this.props.store.actions, this.state))
+      items.push(plugin[part](this.state.node, this.props.store.actions, this.state, this.props.store))
     }
+    if (!items.length) return null
     return items
   },
 

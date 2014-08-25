@@ -1,33 +1,25 @@
 
 var React = require('react')
 
-window.React = React
+var treed = require('../')
+var data = require('./demo-data')
 
-var TreeView = require('../views/tree')
-var keys = require('../views/tree/keys')
-var keyHandlers = require('../key-handlers')
+window.React = React
 
 var plugins = [
   require('../plugins/collapse'),
-  // require('../plugins/tags'),
+  require('../plugins/tags'),
   require('../plugins/rebase'),
   require('../plugins/done'),
 ]
 
-function pluginType(plugins, type) {
-  return plugins.reduce((list, plugin) => {
-    return plugin[type] ? [plugin[type]].concat(list) : list
-  }, [])
-}
-
-require('./').run({
+var start = Date.now()
+treed.quickstart('#example', {
   plugins: plugins,
-}, function (store) {
-  React.renderComponent(TreeView({
-    plugins: pluginType(plugins, 'view'),
-    nodePlugins: pluginType(plugins, 'node'),
-    keys: keyHandlers(keys, store.actions, pluginType(plugins, 'keys')),
-    store: store,
-  }), document.getElementById('example'))
+  storeOptions: {data: data},
+}, (store) => {
+  console.log((Date.now() - start) + 'ms to render')
+  window.store = store
+  window.actions = store.actions
 })
 

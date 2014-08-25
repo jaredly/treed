@@ -10,7 +10,17 @@
 
 .m_Collapser {
   height: 10px;
+  width: 10px;
+  text-align: center;
+  font-weight: bold;
+
   &:after {
     content: '+';
+  }
+
+  &-collapsed {
+    &:after {
+      content: '-';
+    }
   }
 }

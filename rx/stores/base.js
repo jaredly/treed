@@ -1,4 +1,5 @@
 
+var Promise = require('bluebird')
 var merge = require('react/lib/merge')
 
 module.exports = BaseStore
@@ -37,14 +38,6 @@ BaseStore.prototype = {
     }
   },
 
-  /** not using...
-  listenTo: function (actions) {
-    for (var name in this.actions) {
-      actions[name].listen(this.actions[name])
-    }
-  },
-  */
-
   on: function (changes, listener) {
     for (var i=0; i<changes.length; i++) {
       if (!this._listeners[changes[i]]) {
@@ -79,6 +72,7 @@ BaseStore.prototype = {
 
   emitChanged: function (what) {
     var called = []
+    var promises = []
     for (var i=0; i<what.length; i++) {
       var listeners = this._listeners[what[i]]
       if (!listeners) continue;
@@ -87,9 +81,20 @@ BaseStore.prototype = {
           continue; // each listener should be called at most once per changed
         }
         listeners[j]()
+        var p = listeners[j]()
+        if (p) {
+          promises.push(p)
+        }
         called.push(listeners[j])
       }
     }
+    if (this._done_listener) {
+      Promise.all(promises).then(this._done_listener)
+    }
+  },
+
+  onDone: function (fn) {
+    this._done_listener = fn
   },
 }
 

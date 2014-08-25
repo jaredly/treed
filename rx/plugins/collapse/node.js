@@ -13,7 +13,7 @@ module.exports = {
     left: function (node, actions) {
       return <div className={cx({
         'm_Collapser': true,
-        'm_Collapsed': node.collapsed
+        'm_Collapser-collapsed': node.collapsed
       })} onClick={actions.toggleCollapse.bind(null, node.id)}/>
     }
   },

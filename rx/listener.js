@@ -1,12 +1,12 @@
 
+var Promise = require('bluebird')
 var React = require('react/addons')
 var PT = React.PropTypes
 
 module.exports = function (options) {
   if ('function' === typeof options) {
     options = {
-      initStoreState: options,
-      updateStoreState: options
+      storeAttrs: options,
     }
   }
 
@@ -18,7 +18,13 @@ module.exports = function (options) {
     },
 
     getInitialState: function () {
-      return options.initStoreState.call(this, this.props.store, this.props)
+      var state = options.storeAttrs.call(this, this.props.store, this.props)
+      var extra
+      if (options.initStoreState) {
+        extra = options.initStoreState.call(this, state, this.props.store, this.props)
+        for (var name in extra) state[name] = extra[name]
+      }
+      return state
     },
 
     listen: function () {
@@ -45,14 +51,24 @@ module.exports = function (options) {
 
     _gotChanges: function () {
       // if DEBUG
-      var state = options.updateStoreState.call(this, this.props.store, this.props)
-      var extra
+      var state = options.storeAttrs.call(this, this.props.store, this.props)
+      var extra, name
+      if (options.updateStoreState) {
+        extra = options.updateStoreState.call(this, state, this.props.store, this.props)
+        for (name in extra) state[name] = extra[name]
+      }
       for (var i=0; i<pluginUpdates.length; i++) {
         extra = pluginUpdates.call(this, state)
-        for (var name in extra) state[name] = extra[name]
+        for (name in extra) state[name] = extra[name]
       }
-      console.log('got changes', state)
-      this.setState(state)
+      if (window.DEBUG_CHANGES) {
+        console.log('got changes', state)
+      }
+      var p = Promise.pending()
+      this.setState(state, function () {
+        p.resolve()
+      })
+      return p
     },
 
     componentWillReceiveProps: options.shouldGetNew && function (nextProps) {
@@ -61,7 +77,13 @@ module.exports = function (options) {
           this._stopListening()
           this.listen(options.getListeners(nextProps))
         }
-        this.setState(options.initStoreState.call(this, nextProps.store, nextProps))
+        var state = options.storeAttrs.call(this, nextProps.store, nextProps)
+        var extra
+        if (options.initStoreState) {
+          extra = options.initStoreState.call(this, state, nextProps.store, nextProps)
+          for (var name in extra) state[name] = extra[name]
+        }
+        this.setState(state)
       }
     },
 

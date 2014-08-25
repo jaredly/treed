@@ -1,17 +1,17 @@
 
 var React = require('react')
-var TreeView = require('../views/tree')
-var keys = require('../views/tree/keys')
-var keyHandlers = require('../key-handlers')
+
+var treed = require('../')
+var data = require('./demo-data')
 
 window.React = React
 
-var demo = require('./')
-
-demo.run(function (store) {
-  React.renderComponent(TreeView({
-    store: store,
-    keys: keyHandlers(keys, store.actions),
-  }), document.getElementById('example'))
+var start = Date.now()
+treed.quickstart('#example', {
+  storeOptions: {data: data},
+}, (store) => {
+  console.log((Date.now() - start) + 'ms to render')
+  window.store = store
+  window.actions = store.actions
 })
 

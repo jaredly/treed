@@ -2,15 +2,11 @@
 module.exports = {
   actions: {
     setDone: function (id) {
-      if (!arguments.length) {
-        id = this.active
-      }
+      if (!arguments.length) id = this.active
       this.actions.set(id, 'done', true)
     },
-    setDone: function (id) {
-      if (!arguments.length) {
-        id = this.active
-      }
+    setUndone: function (id) {
+      if (!arguments.length) id = this.active
       this.actions.set(id, 'done', false)
     },
     toggleDone: function () {
