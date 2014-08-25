@@ -143,6 +143,10 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.executeCommands('batchSet', {ids: ids, attr: attr, values: values})
     },
 
+    setContent: function (id, value) {
+      this.actions.set(id, 'content', value)
+    },
+
     // TODO should I verify here that it's displayable? that it's rendered
     // under the current root?
     setActive: function (id) {
@@ -157,11 +161,6 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       var old = this.active
       this.active = id
       this.changed('node:' + old, 'node:' + id, 'mode')
-    },
-
-    stopEditing: function (id) {
-      this.mode = 'normal'
-      this.changed('node:' + id, 'mode')
     },
 
     // TODO: put these in a mixin, b/c they only apply to the treelist view?
@@ -194,17 +193,23 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.selection = [this.active]
       this.changed('node:' + this.active, 'mode') // TODO? , 'selection')
     },
+
     normalMode: function (id) {
+      if (!arguments.length) id = this.active
+      if (this.mode === 'normal' && this.active === id) return
+      this.active = id
       this.mode = 'normal'
       this.changed('node:' + id, 'mode')
     },
 
     edit: function (id) {
+      if (!arguments.length) id = this.active
       this.mode = 'insert'
       var old = this.active
       this.active = id
       this.changed('node:' + old, 'node:' + id, 'mode')
     },
+
     editStart: TODO, // how?
 
     change: TODO,

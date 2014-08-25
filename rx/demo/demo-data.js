@@ -7,14 +7,6 @@ module.exports = [
   }
 ]
 
-/*
-for (var i=0; i<100; i++) {
-  module.exports[1].children.push({
-    content: 'node ' + i
-  })
-}
-*/
-
 for (var i=0; i<10; i++) {
   var x = {content: 'parent ' + i, children: []}
   for (var j=0; j<10; j++) {

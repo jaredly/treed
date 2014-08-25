@@ -3,10 +3,24 @@
 
   &-active {
     > .list_item_head {
+      outline: 1px solid #eee;
+    }
+  }
+
+  &-editing {
+    > .list_item_head {
       background-color: #eee;
     }
   }
 
+}
+
+.list_item_head {
+  display: flex;
+}
+
+.treed_body {
+  flex: 1;
 }
 
 .list_item_children {

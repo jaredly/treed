@@ -1,0 +1,16 @@
+
+.n_Collapse {
+  > .list_item_children {
+    display: none;
+    .list > & {
+      display: block;
+    }
+  }
+}
+
+.m_Collapser {
+  height: 10px;
+  &:after {
+    content: '+';
+  }
+}

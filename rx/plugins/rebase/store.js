@@ -1,14 +1,19 @@
 
 module.exports = {
   actions: {
-    rebase: function () {
-      this.root = this.active
+    rebase: function (id) {
+      if (!arguments.length) {
+        id = this.active
+      }
+
+      this.root = id
+      this.active = id
       this.changed('root')
     },
     rebaseUp: function () {
       if (this.root === this.pl.root) return
-      this.root = this.pl.nodes[this.root].parent
       this.active = this.root
+      this.root = this.pl.nodes[this.root].parent
       this.changed('root', 'active')
     },
   },

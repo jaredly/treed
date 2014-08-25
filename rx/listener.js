@@ -44,12 +44,14 @@ module.exports = function (options) {
     },
 
     _gotChanges: function () {
+      // if DEBUG
       var state = options.updateStoreState.call(this, this.props.store, this.props)
       var extra
       for (var i=0; i<pluginUpdates.length; i++) {
         extra = pluginUpdates.call(this, state)
         for (var name in extra) state[name] = extra[name]
       }
+      console.log('got changes', state)
       this.setState(state)
     },
 

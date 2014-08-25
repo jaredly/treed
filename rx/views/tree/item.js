@@ -49,6 +49,7 @@ var TreeItem = React.createClass({
     id: PT.string.isRequired,
     plugins: PT.array,
     body: PT.oneOfType([PT.object, PT.func]),
+    keys: PT.func,
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
@@ -81,6 +82,7 @@ var TreeItem = React.createClass({
   body: function () {
     return this.props.body({
       node: this.state.node,
+      keys: this.props.keys,
       isActive: this.state.isActive, // do we need this?
       isEditing: this.state.isEditing,
       actions: this.props.store.actions,
@@ -88,11 +90,20 @@ var TreeItem = React.createClass({
   },
 
   render: function () {
-    return <div className={cx({
+    var className = cx({
       'list_item': true,
       'list_item-active': this.state.isActive,
+      'list_item-editing': this.state.isEditing,
       'list_item-selected': this.state.isSelected,
-    })} key={this.props.id}>
+    })
+    if (this.props.plugins) {
+      this.props.plugins.forEach((plugin) => {
+        if (!plugin.classes) return
+        var classes = plugin.classes(this.state.node, this.state)
+        if (classes) className += ' ' + classes
+      })
+    }
+    return <div className={className} key={this.props.id}>
       <div className='list_item_head'>
         {this.fromMix('left')}
         {this.body()}
@@ -104,6 +115,7 @@ var TreeItem = React.createClass({
             plugins: this.props.plugins,
             store: this.props.store,
             body: this.props.body,
+            keys: this.props.keys,
             id: id,
           })
         )}

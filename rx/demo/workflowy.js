@@ -8,7 +8,7 @@ var keys = require('../views/tree/keys')
 var keyHandlers = require('../key-handlers')
 
 var plugins = [
-  // require('../plugins/collapse'),
+  require('../plugins/collapse'),
   // require('../plugins/tags'),
   require('../plugins/rebase'),
   require('../plugins/done'),
@@ -25,7 +25,7 @@ require('./').run({
 }, function (store) {
   React.renderComponent(TreeView({
     plugins: pluginType(plugins, 'view'),
-    nodePlugins: pluginType(plugins, 'view'),
+    nodePlugins: pluginType(plugins, 'node'),
     keys: keyHandlers(keys, store.actions, pluginType(plugins, 'keys')),
     store: store,
   }), document.getElementById('example'))

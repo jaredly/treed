@@ -66,6 +66,18 @@ BaseStore.prototype = {
 
   changed: function () {
     var what = [].slice.call(arguments)
+    if (this._changed) {
+      this._changed = this._changed.concat(what)
+    } else {
+      this._changed = what
+      setTimeout(() => {
+        this.emitChanged(this._changed)
+        this._changed = null
+      }, 0)
+    }
+  },
+
+  emitChanged: function (what) {
     var called = []
     for (var i=0; i<what.length; i++) {
       var listeners = this._listeners[what[i]]
