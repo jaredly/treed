@@ -14,7 +14,7 @@ function run(options, done) {
     options = {}
   }
   options = merge({
-    mixins: [],
+    plugins: [],
     children: require('./demo-data'),
   }, options)
   if (!options.PL) {
@@ -28,10 +28,17 @@ function run(options, done) {
     if (options.children) {
       db.dump(db.root, options.children)
     }
+
+    var plugins = []
+    options.plugins.forEach((plugin) => {
+      if (plugin.store) plugins.push(plugin.store)
+    })
+
     var store = new MainStore({
-      mixins: options.mixins,
+      plugins: plugins,
       pl: db
     })
+
     window.store = store
     window.actions = store.actions
     done(store)

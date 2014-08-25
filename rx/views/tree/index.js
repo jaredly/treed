@@ -1,11 +1,12 @@
+/** @jsx React.DOM */
 
 var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
 
-var Listener = require('../listener')
-var TreeItem = require('./tree-item')
-var SimpleBody = require('./simple-body')
+var Listener = require('../../listener')
+var TreeItem = require('./item')
+var SimpleBody = require('../body/simple')
 
 var TreeView = React.createClass({
   mixins: [
@@ -18,8 +19,11 @@ var TreeView = React.createClass({
   ],
 
   propTypes: {
-    mixins: PT.array,
+    plugins: PT.array,
+    nodePlugins: PT.array,
     body: PT.func,
+
+    keys: PT.object,
   },
 
   componentWillMount: function () {
@@ -34,6 +38,13 @@ var TreeView = React.createClass({
   },
 
   _onKeyDown: function (e) {
+    if (this.state.mode === 'normal') {
+      return this.props.keys.normal(e)
+    }
+    if (this.state.mode === 'visual') {
+      return this.props.keys.visual(e)
+    }
+    /*
     if (this.state.mode !== 'normal') return
     var actions = this.props.store.actions
     switch (e.keyCode) {
@@ -48,15 +59,20 @@ var TreeView = React.createClass({
       default: return
     }
     e.preventDefault()
+    */
   },
 
   render: function () {
-    return TreeItem({
-      store: this.props.store,
-      mixins: this.props.mixins,
-      body: this.props.body,
-      id: this.state.root
-    })
+    var className = 'list list-' + this.state.mode
+    return <div className={className}>
+      {TreeItem({
+        store: this.props.store,
+        plugins: this.props.nodePlugins,
+        keys: this.props.keys.insert,
+        body: this.props.body,
+        id: this.state.root
+      })}
+    </div>
   },
 })
 

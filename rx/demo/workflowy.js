@@ -1,22 +1,32 @@
 
 var React = require('react')
+
+window.React = React
+
 var TreeView = require('../views/tree')
+var keys = require('../views/tree/keys')
+var keyHandlers = require('../key-handlers')
 
-var Rebase = require('../mixins/rebase')
-// var Tags = require('../mixins/tags')
-var Done = require('../mixins/done')
+var plugins = [
+  // require('../plugins/collapse'),
+  // require('../plugins/tags'),
+  require('../plugins/rebase'),
+  require('../plugins/done'),
+]
 
-var demo = require('./')
+function pluginType(plugins, type) {
+  return plugins.reduce((list, plugin) => {
+    return plugin[type] ? [plugin[type]].concat(list) : list
+  }, [])
+}
 
-demo.run({
-  mixins: [
-    Rebase,
-    // Tags,
-    Done
-  ],
+require('./').run({
+  plugins: plugins,
 }, function (store) {
   React.renderComponent(TreeView({
-    mixins: [Rebase, Done],
+    plugins: pluginType(plugins, 'view'),
+    nodePlugins: pluginType(plugins, 'view'),
+    keys: keyHandlers(keys, store.actions, pluginType(plugins, 'keys')),
     store: store,
   }), document.getElementById('example'))
 })

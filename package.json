@@ -30,7 +30,8 @@
     "superagent-browserify": "0.0.2"
   },
   "devDependencies": {
-    "reactify": "~0.13.1"
+    "reactify": "~0.13.1",
+    "broccoli": "~0.12.3"
   },
   "browserify": {
     "transform": [

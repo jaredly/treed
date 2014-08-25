@@ -172,3 +172,31 @@ var demoData = {
   ],
   "collapsed": false
 }
+
+if (location.hash === '#large') {
+
+  var module = {}
+
+  module.exports = [
+    { content: 'one' },
+    {
+      content: 'two',
+      children: [ {content: 'three'} ]
+    }
+  ]
+
+  for (var i=0; i<20; i++) {
+    var x = {content: 'parent ' + i, children: []}
+    for (var j=0; j<20; j++) {
+      x.children.push({content: 'j ' + i + ' : ' + j})
+    }
+    module.exports.push(x)
+  }
+
+  demoData = {
+    meta: {},
+    content: "home",
+    children: module.exports
+  }
+}
+

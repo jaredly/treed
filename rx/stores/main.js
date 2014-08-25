@@ -21,7 +21,7 @@ var extend = require('../util/extend')
 module.exports = MainStore
 
 function MainStore(options) {
-  BaseStore.call(this, arguments)
+  BaseStore.apply(this, arguments)
 
   this.pl = options.pl
   this.history = []
@@ -37,11 +37,12 @@ function MainStore(options) {
 MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   constructor: MainStore,
 
-  // just the `store` part of the mixin
-  addMixin: function (mixin) {
-    BaseStore.prototype.addMixin.call(this, mixin, ['commands'])
-    for (var name in mixin.commands) {
-      this.commands[name] = mixin.commands[name]
+  // just the `store` part of the plugin
+  addPlugin: function (plugin) {
+    BaseStore.prototype.addPlugin.call(this, plugin)
+
+    for (var name in plugin.commands) {
+      this.commands[name] = plugin.commands[name]
     }
   },
 
@@ -183,6 +184,38 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.actions.setActive(movement.right(this.active, this.root, this.pl.nodes))
     },
 
+    cut: TODO,
+    copy: TODO,
+    paste: TODO,
+    pasteAbove: TODO,
+
+    visualMode: function () {
+      this.mode = 'visual'
+      this.selection = [this.active]
+      this.changed('node:' + this.active, 'mode') // TODO? , 'selection')
+    },
+    normalMode: function (id) {
+      this.mode = 'normal'
+      this.changed('node:' + id, 'mode')
+    },
+
+    edit: function (id) {
+      this.mode = 'insert'
+      var old = this.active
+      this.active = id
+      this.changed('node:' + old, 'node:' + id, 'mode')
+    },
+    editStart: TODO, // how?
+
+    change: TODO,
+    toggleSelectionEdge: TODO,
+
+
   }
 })
+
+// TODO
+function TODO() {
+  console.error("TODO not implemented")
+}
 

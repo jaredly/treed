@@ -16,9 +16,11 @@ module.exports = {
   },
 
   down: function (active, root, nodes) {
-    if (nodes[active].children.length && !nodes[active].collapsed) {
+    if (nodes[active].children.length &&
+        (active === root || !nodes[active].collapsed)) {
       return nodes[active].children[0]
     }
+    if (active === root) return false
     var pid = nodes[active].parent
       , parent = nodes[pid]
       , i = parent.children.indexOf(active)

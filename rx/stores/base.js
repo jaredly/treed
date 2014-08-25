@@ -10,38 +10,40 @@ function BaseStore(options) {
     this.actions[name] = this.actions[name].bind(this)
   }
 
-  if (options.mixins) {
-    options.mixins.forEach((mixin) => mixin.store && this.addMixin(mixin.store))
+  if (options.plugins) {
+    options.plugins.forEach(this.addPlugin.bind(this))
   }
 }
 
 BaseStore.prototype = {
   actions: {},
 
-  addMixin: function (mixin, ignore) {
-    var blacklist = ['init', 'actions'].concat(ignore || [])
-    if (mixin.init) {
-      mixin.init(this) // TODO async?
+  addPlugin: function (plugin) {
+    if (plugin.init) {
+      plugin.init(this) // TODO async?
     }
 
     var name
-    if (mixin.actions) {
-      for (name in mixin.actions) {
-        this.actions[name] = mixin.actions[name].bind(this)
+    if (plugin.actions) {
+      for (name in plugin.actions) {
+        this.actions[name] = plugin.actions[name].bind(this)
       }
     }
 
-    for (name in mixin) {
-      if (blacklist.indexOf(name) !== -1) continue;
-      this[name] = mixin[name]
+    if (plugin.extend) {
+      for (name in plugin.extend) {
+        this[name] = plugin.extend[name]
+      }
     }
   },
 
+  /** not using...
   listenTo: function (actions) {
     for (var name in this.actions) {
       actions[name].listen(this.actions[name])
     }
   },
+  */
 
   on: function (changes, listener) {
     for (var i=0; i<changes.length; i++) {

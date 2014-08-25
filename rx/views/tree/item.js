@@ -4,7 +4,7 @@ var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
 
-var Listener = require('../listener')
+var Listener = require('../../listener')
 
 var TreeItem = React.createClass({
   mixins: [
@@ -34,6 +34,10 @@ var TreeItem = React.createClass({
       shouldGetNew: function (nextProps) {
         return nextProps.id !== this.props.id
       },
+
+      getListeners: function (props) {
+        return ['node:' + props.id]
+      },
     })
   ],
 
@@ -43,7 +47,7 @@ var TreeItem = React.createClass({
 
   propTypes: {
     id: PT.string.isRequired,
-    mixins: PT.array,
+    plugins: PT.array,
     body: PT.oneOfType([PT.object, PT.func]),
   },
 
@@ -51,10 +55,6 @@ var TreeItem = React.createClass({
     return (
       nextState !== this.state
     )
-  },
-
-  componenWillMount: function () {
-    this.listen('root')
   },
 
   /** Use to check what things are updating when */
@@ -68,12 +68,12 @@ var TreeItem = React.createClass({
   // **/
 
   fromMix: function (part) {
-    if (!this.props.mixins) return
+    if (!this.props.plugins) return
     var items = []
-    for (var i=0; i<this.props.mixins.length; i++) {
-      var mixin = this.props.mixins[i].blocks
-      if (!mixin || !mixin[part]) continue;
-      items.push(mixin[part](this.state.node, this.props.store.actions, this.state))
+    for (var i=0; i<this.props.plugins.length; i++) {
+      var plugin = this.props.plugins[i].blocks
+      if (!plugin || !plugin[part]) continue;
+      items.push(plugin[part](this.state.node, this.props.store.actions, this.state))
     }
     return items
   },
@@ -101,7 +101,7 @@ var TreeItem = React.createClass({
       <div className='list_item_children'>
         {this.state.node.children.map((id) => 
           TreeItem({
-            mixins: this.props.mixins,
+            plugins: this.props.plugins,
             store: this.props.store,
             body: this.props.body,
             id: id,
