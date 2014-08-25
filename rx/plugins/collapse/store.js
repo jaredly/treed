@@ -8,10 +8,12 @@ module.exports = {
         var pid = this.pl.nodes[id].parent
         if (pid !== this.root) {
           this.actions.set(pid, 'collapsed', true)
+          this.actions.setActive(id)
         }
         return
       }
       this.actions.set(id, 'collapsed', true)
+      this.actions.setActive(id)
     },
 
     expand: function (id) {
@@ -21,6 +23,7 @@ module.exports = {
         return
       }
       this.actions.set(id, 'collapsed', false)
+      this.actions.setActive(id)
     },
 
     toggleCollapse: function (id) {
@@ -34,6 +37,7 @@ module.exports = {
         return
       }
       this.actions.set(id, 'collapsed', !this.pl.nodes[id].collapsed)
+      this.actions.setActive(id)
     },
   },
 }

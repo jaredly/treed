@@ -150,7 +150,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     // TODO should I verify here that it's displayable? that it's rendered
     // under the current root?
     setActive: function (id) {
-      if (!id) return
+      if (!id || id === this.active) return
       var old = this.active
       this.active = id
       this.changed('node:' + old, 'node:' + id)
