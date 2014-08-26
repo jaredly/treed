@@ -18,6 +18,7 @@ module.exports = {
   },
 
   componentDidUpdate: function (prevProps, prevState) {
+    if (this.props.isRoot) return
     var c = this.state.node.collapsed
     if (!this.refs || !this.refs.children) return
     if (this._prev_collapsed === c) return

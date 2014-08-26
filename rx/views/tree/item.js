@@ -129,7 +129,7 @@ var TreeItem = React.createClass({
         {this.fromMix('right')}
       </div>
       <div className='list_item_children' ref='children'>
-        {this.state.node.children.map((id) => 
+        {!this.state.lazyChildren && this.state.node.children.map((id) => 
           TreeItem({
             plugins: this.props.plugins,
             store: this.props.store,
