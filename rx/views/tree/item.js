@@ -122,7 +122,7 @@ var TreeItem = React.createClass({
         if (classes) className += ' ' + classes
       })
     }
-    return <div className={className} key={this.props.id}>
+    return <div className={className}>
       <div className='list_item_head'>
         {this.fromMix('left')}
         {this.body()}
@@ -135,6 +135,7 @@ var TreeItem = React.createClass({
             store: this.props.store,
             body: this.props.body,
             keys: this.props.keys,
+            key: id,
             id: id,
           })
         )}

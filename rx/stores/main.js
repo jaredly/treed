@@ -80,14 +80,25 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
         var node = pl.nodes[this.id]
           , parent = pl.nodes[node.parent]
           , children = parent.children.slice()
-        children.splice(children.indexOf(this.id), 1)
+          , ix = children.indexOf(this.id)
+        if (ix === -1) {
+          throw new Error('node is not a child of its parent')
+        }
+        this.saved = {node: node, ix: ix}
+        children.splice(ix, 1)
         pl.set(node.parent, 'children', children)
         pl.remove(this.id)
-        return ['node:' + this.id, 'node:' + node.parent]
+        return 'node:' + node.parent
       },
       undo: function (pl) {
-        pl.set(this.id, this.attr, this.old)
-        return 'node:' + this.id
+        var node = this.saved.node
+          , parent = pl.nodes[node.parent]
+          , children = parent.children.slice()
+          , ix = this.saved.ix
+        children.splice(ix, 0, this.id)
+        pl.save(this.id, this.saved.node)
+        pl.set(node.parent, 'children', children)
+        return 'node:' + node.parent
       },
     },
 
@@ -226,7 +237,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     remove: function (id) {
       id = id || this.active
       if (id === this.root) return
-      var next = movement.down(this.active, this.root, this.pl.nodes)
+      var next = movement.down(this.active, this.root, this.pl.nodes, true)
       if (!next) {
         next = movement.up(this.active, this.root, this.pl.nodes)
       }

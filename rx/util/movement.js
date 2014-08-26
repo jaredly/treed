@@ -15,8 +15,8 @@ module.exports = {
     return sid
   },
 
-  down: function (active, root, nodes) {
-    if (nodes[active].children.length &&
+  down: function (active, root, nodes, noChildren) {
+    if (nodes[active].children.length && !noChildren &&
         (active === root || !nodes[active].collapsed)) {
       return nodes[active].children[0]
     }

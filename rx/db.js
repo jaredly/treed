@@ -66,6 +66,11 @@ Db.prototype = {
     this.pl.set('node', id, attr, value)
   },
 
+  remove: function (id) {
+    delete this.nodes[id]
+    this.pl.remove('node', id)
+  },
+
   batchSet: function (attr, ids, values) {
     ids.forEach((id, i) => {
       this.nodes[id][attr] = values[i]

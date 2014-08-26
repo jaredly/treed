@@ -38,6 +38,10 @@ module.exports = {
     normal: 'c c, shift+c',
     visual: 'c, shift+c',
   },
+  'remove': {
+    normal: 'd d, shift+d',
+    visual: 'd d, shift+d',
+  },
 
   'toggle selection edge': {
     visual: 'o, shift+o',

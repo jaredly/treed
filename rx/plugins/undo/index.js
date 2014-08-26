@@ -14,7 +14,7 @@ module.exports = {
   },
 
   store: {
-    actions: function () {
+    actions: {
       undo: function () {
         this.undoCommands()
       },

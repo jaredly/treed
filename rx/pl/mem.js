@@ -34,5 +34,8 @@ Mem.prototype = {
       this.data[type][id][name] = update[name]
     }
   },
+  remove: function (type, id) {
+    delete this.data[type][id]
+  },
 }
 

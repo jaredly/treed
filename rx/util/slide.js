@@ -20,7 +20,9 @@ function slideDown(el, speed) {
   el.style.transition = 'height ' + dur + 's ease'
   el.style.height = h
   afterTransition(el, function () {
+    el.style.transition = ''
     el.style.overflow = 'visible'
+    el.style.height = 'auto'
   })
 }
 
@@ -38,6 +40,8 @@ function slideUp(el, speed) {
   el.style.transition = 'height ' + dur + 's ease'
   el.style.height = '0'
   afterTransition(el, function () {
+    el.style.height = '0'
+    el.style.transition = ''
     el.style.overflow = 'hidden'
   })
 }
