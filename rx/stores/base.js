@@ -42,7 +42,7 @@ BaseStore.prototype = {
     for (var i=0; i<changes.length; i++) {
       if (!this._listeners[changes[i]]) {
         this._listeners[changes[i]] = [listener]
-      } else {
+      } else if (this._listeners[changes[i]].indexOf(listener) === -1){
         this._listeners[changes[i]].push(listener)
       }
     }
@@ -64,9 +64,15 @@ BaseStore.prototype = {
     } else {
       this._changed = what
       setTimeout(() => {
+        if (window.DEBUG_CHANGES) {
+          console.log('emitting', this._changed)
+        }
         this.emitChanged(this._changed)
         this._changed = null
       }, 0)
+    }
+    if (window.DEBUG_CHANGES) {
+      console.log('changed', what)
     }
   },
 
@@ -80,7 +86,6 @@ BaseStore.prototype = {
         if (called.indexOf(listeners[j]) !== -1) {
           continue; // each listener should be called at most once per changed
         }
-        listeners[j]()
         var p = listeners[j]()
         if (p) {
           promises.push(p)

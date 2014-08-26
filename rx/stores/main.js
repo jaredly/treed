@@ -74,6 +74,23 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       },
     },
 
+    remove: {
+      args: ['id'],
+      apply: function (pl) {
+        var node = pl.nodes[this.id]
+          , parent = pl.nodes[node.parent]
+          , children = parent.children.slice()
+        children.splice(children.indexOf(this.id), 1)
+        pl.set(node.parent, 'children', children)
+        pl.remove(this.id)
+        return ['node:' + this.id, 'node:' + node.parent]
+      },
+      undo: function (pl) {
+        pl.set(this.id, this.attr, this.old)
+        return 'node:' + this.id
+      },
+    },
+
   },
 
   executeCommands: function () {
@@ -86,8 +103,37 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       changeset.push(command)
       changed = changed.concat(command.changed)
     }
+    this.history = this.history.slice(0, this.histpos)
     this.history.push({time: time, changes: changeset})
     this.histpos = this.history.length
+    this.changed.apply(this, changed)
+  },
+
+  undoCommands: function () {
+    if (this.histpos <= 0) return
+    this.histpos -= 1
+    var last = this.history[this.histpos]
+    var changed = []
+    var time = Date.now()
+    var changes
+    for (var i=0; i<last.changes.length; i++) {
+      changes = this.undoCommand(last.changes[i])
+      changed = changed.concat(changes)
+    }
+    this.changed.apply(this, changed)
+  },
+
+  redoCommands: function () {
+    if (this.histpos >= this.history.length) return
+    var last = this.history[this.histpos]
+    this.histpos += 1
+    var changed = []
+    var time = Date.now()
+    var changes
+    for (var i=0; i<last.changes.length; i++) {
+      changes = this.redoCommand(last.changes[i])
+      changed = changed.concat(changes)
+    }
     this.changed.apply(this, changed)
   },
 
@@ -100,7 +146,17 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   },
 
   undoCommand: function (command) {
-    var changed = this.commands[command.name].undo.call(command, this.pl)
+    var changed = this.commands[command.name].undo.call(command.state, this.pl)
+    if ('string' === typeof changed) {
+      changed = [changed]
+    }
+    return changed
+  },
+
+  redoCommand: function (command) {
+    var cmd = this.commands[command.name]
+    var action = cmd.redo || cmd.apply
+    var changed = action.call(command.state, this.pl)
     if ('string' === typeof changed) {
       changed = [changed]
     }
@@ -109,17 +165,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
 
   getNode: function (id) {
     return this.pl.nodes[id]
-    /*
-    // TODO could optimize?
-    var node = _.cloneDeep(this.pl.nodes[id])
-    if (id === this.active) {
-      node.active = true
-    }
-    if (this.selection && this.selection.indexOf(id) !== -1) {
-      node.selected = true
-    }
-    return node
-    */
+    // return _.cloneDeep(this.pl.nodes[id])
   },
 
   isActive: function (id) {
@@ -130,8 +176,9 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     return this.selection && this.selection.indexOf(id) !== -1
   },
 
-  isEditing: function (id) {
-    return this.mode === 'insert' && id === this.active
+  editState: function (id) {
+    var editing = this.mode === 'insert' && id === this.active
+    return editing && this.editPos
   },
 
   actions: {
@@ -147,20 +194,12 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.actions.set(id, 'content', value)
     },
 
-    // TODO should I verify here that it's displayable? that it's rendered
-    // under the current root?
     setActive: function (id) {
       if (!id || id === this.active) return
       var old = this.active
       this.active = id
+      if (this.mode === 'insert') this.editPos = 'end'
       this.changed('node:' + old, 'node:' + id)
-    },
-
-    startEditing: function (id) {
-      this.mode = 'insert'
-      var old = this.active
-      this.active = id
-      this.changed('node:' + old, 'node:' + id, 'mode')
     },
 
     // TODO: put these in a mixin, b/c they only apply to the treelist view?
@@ -171,8 +210,9 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.actions.setActive(movement.up(this.active, this.root, this.pl.nodes))
     },
 
-    goDown: function () {
+    goDown: function (editStart) {
       this.actions.setActive(movement.down(this.active, this.root, this.pl.nodes))
+      if (editStart) this.editPos = 'start'
     },
 
     goLeft: function () {
@@ -181,6 +221,18 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
 
     goRight: function () {
       this.actions.setActive(movement.right(this.active, this.root, this.pl.nodes))
+    },
+
+    remove: function (id) {
+      id = id || this.active
+      if (id === this.root) return
+      var next = movement.down(this.active, this.root, this.pl.nodes)
+      if (!next) {
+        next = movement.up(this.active, this.root, this.pl.nodes)
+      }
+      this.active = next
+      this.executeCommands('remove', {id: id})
+      this.changed('node:' + next)
     },
 
     cut: TODO,
@@ -207,15 +259,36 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.mode = 'insert'
       var old = this.active
       this.active = id
+      this.editPos = 'end'
       this.changed('node:' + old, 'node:' + id, 'mode')
     },
 
-    editStart: TODO, // how?
+    editStart: function (id) {
+      if (!arguments.length) id = this.active
+      if (id !== this.active) this.actions.setActive(id)
+      if (this.mode !== 'insert') {
+        this.mode = 'insert'
+        this.changed('mode')
+      }
+      this.editPos = 'start'
+      this.changed('node:' + id)
+    },
 
-    change: TODO,
+    change: function (id) {
+      if (!arguments.length) id = this.active
+      if (id !== this.active) {
+        this.actions.setActive(id)
+      } else {
+        this.changed('node:' + id)
+      }
+      if (this.mode !== 'insert') {
+        this.mode = 'insert'
+        this.changed('mode')
+      }
+      this.editPos = 'change'
+    },
+
     toggleSelectionEdge: TODO,
-
-
   }
 })
 

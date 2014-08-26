@@ -9,7 +9,7 @@ var Textarea = require('./textarea-grow')
 // a more complex body would show different things based on the type of node.
 var SimpleBody = React.createClass({
   _onClick: function () {
-    if (this.props.isEditing) {
+    if (this.props.editState) {
       // this.props.actions.normalMode(this.props.node.id)
     } else {
       this.props.actions.edit(this.props.node.id)
@@ -23,7 +23,7 @@ var SimpleBody = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    if (!nextProps.isEditing && this.props.isEditing) {
+    if (!nextProps.editState && this.props.editState) {
       if (this.state.content !== this.props.node.content) {
         this.props.actions.setContent(this.props.node.id, this.state.content)
       }
@@ -56,7 +56,7 @@ var SimpleBody = React.createClass({
     } else if (e.key === 'ArrowRight') {
       pos = text.getCursorPos()
       if (pos === -1 || pos === 1) {
-        this.props.actions.goDown()
+        this.props.actions.goDown(true)
         e.preventDefault()
       }
     } else if (e.key === 'ArrowLeft') {
@@ -73,15 +73,19 @@ var SimpleBody = React.createClass({
   _onBlur: function () {
     if (this.state.content !== this.props.node.content) {
       this.props.actions.setContent(this.props.node.id, this.state.content)
-    } else {
-      console.log('same')
     }
     this.props.actions.normalMode()
   },
 
   componentDidUpdate: function (prevProps) {
-    if (!prevProps.isEditing && this.props.isEditing) {
-      this.refs.text.focus()
+    if (!prevProps.editState && this.props.editState) {
+      if (this.props.editState === 'change') {
+        this.setState({content: ''}, () => {
+          this.refs.text.focus()
+        })
+      } else {
+        this.refs.text.focus(this.props.editState === 'start')
+      }
     }
   },
 
@@ -89,7 +93,7 @@ var SimpleBody = React.createClass({
     return <div className={cx({
       'treed_body': true
     })} onClick={this._onClick}>
-      {this.props.isEditing ?
+      {this.props.editState ?
         <Textarea
           ref="text"
           value={this.state.content}

@@ -7,6 +7,7 @@ var data = require('./demo-data')
 window.React = React
 
 var plugins = [
+  require('../plugins/undo'),
   require('../plugins/tags'),
   require('../plugins/rebase'),
   require('../plugins/collapse'),

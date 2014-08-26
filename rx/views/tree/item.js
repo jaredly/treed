@@ -14,7 +14,7 @@ var TreeItem = React.createClass({
           node: store.getNode(props.id),
           isActive: store.isActive(props.id),
           isSelected: store.isSelected(props.id),
-          isEditing: store.isEditing(props.id),
+          editState: store.editState(props.id),
         }
       },
 
@@ -102,7 +102,7 @@ var TreeItem = React.createClass({
       node: this.state.node,
       keys: this.props.keys,
       isActive: this.state.isActive, // do we need this?
-      isEditing: this.state.isEditing,
+      editState: this.state.editState,
       actions: this.props.store.actions,
     })
   },
@@ -111,7 +111,7 @@ var TreeItem = React.createClass({
     var className = cx({
       'list_item': true,
       'list_item-active': this.state.isActive,
-      'list_item-editing': this.state.isEditing,
+      'list_item-editing': this.state.editState,
       'list_item-selected': this.state.isSelected,
       'list_item-root': this.props.isRoot,
     })
