@@ -44,6 +44,17 @@ var TreeItem = React.createClass({
 
   componentWillMount: function () {
     this.listen('node:' + this.props.id)
+
+    // get plugin update functions
+    this._plugin_updates = null
+    this.props.plugins.forEach((plugin) => {
+      if (!plugin.componentDidUpdate) return
+      if (!this._plugin_updates) {
+        this._plugin_updates = [plugin.componentDidUpdate]
+      } else {
+        this._plugin_updates.push(plugin.componentDidUpdate)
+      }
+    })
   },
 
   propTypes: {
@@ -61,7 +72,11 @@ var TreeItem = React.createClass({
   },
 
   /** Use to check what things are updating when */
-  componentDidUpdate: function () {
+  componentDidUpdate: function (prevProps, prevState) {
+    if (this._plugin_updates) {
+      this._plugin_updates.map((fn) => fn.call(this, prevProps, prevState))
+    }
+    // DEBUG STUFF
     var n = this.getDOMNode()
     n.style.outline = '1px solid red'
     setTimeout(function () {
@@ -113,7 +128,7 @@ var TreeItem = React.createClass({
         {this.body()}
         {this.fromMix('right')}
       </div>
-      <div className='list_item_children'>
+      <div className='list_item_children' ref='children'>
         {this.state.node.children.map((id) => 
           TreeItem({
             plugins: this.props.plugins,
