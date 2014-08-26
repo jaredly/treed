@@ -3,11 +3,6 @@
 var React = require('react')
 
 var Textarea = module.exports = React.createClass({
-  getDefaultProps: function () {
-    return {
-      fontSize: 14
-    }
-  },
 
   /*
   onKeyDown: function (e) {
@@ -56,7 +51,7 @@ var Textarea = module.exports = React.createClass({
   getCursorLine: function () {
     var s = this.refs.shadow.getDOMNode()
       , a = this.refs.area.getDOMNode()
-      , lineHeight = this.props.fontSize / .875
+      , lineHeight = this._fontSize / .875
     if (s.getBoundingClientRect().height <= lineHeight * 1.5) {
       // single line
       return 1
@@ -82,9 +77,14 @@ var Textarea = module.exports = React.createClass({
   },
 
   resize: function () {
-    var h = this.refs.shadow.getDOMNode().getBoundingClientRect().height
-    if (h < this.props.fontSize / .875) h = this.props.fontSize / .875
-    this.refs.area.getDOMNode().style.height = h + 'px'
+    var shadow = this.refs.shadow.getDOMNode()
+      , area = this.refs.area.getDOMNode()
+    var style = window.getComputedStyle(shadow)
+    this._fontSize = parseInt(style.fontSize, 10)
+    area.style.height = style.height
+    // var h = this.refs.shadow.getDOMNode().getBoundingClientRect().height
+    // if (h < this.props.fontSize / .875) h = this.props.fontSize / .875
+    // this.refs.area.getDOMNode().style.height = h + 'px'
   },
 
   componentDidUpdate: function () {
@@ -114,14 +114,12 @@ var Textarea = module.exports = React.createClass({
       {
         this.transferPropsTo(<textarea
           ref='area'
-          style={{
-            fontSize: this.props.fontSize
-          }}/>)
+          className='body_input'
+          />)
       }
       <div
         ref='shadow'
-        className='shadow'
-        style={{fontSize: this.props.fontSize}}>
+        className='shadow'>
         {this.props.value + ' '}
       </div>
     </div>

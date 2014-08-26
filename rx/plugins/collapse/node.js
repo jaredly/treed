@@ -5,10 +5,17 @@ var cx = React.addons.classSet
 
 module.exports = {
   classes: function (node, state) {
+    var cls = []
     if (node.collapsed) {
-      return 'n_Collapse'
+      cls.push('n_Collapse')
     }
+    if (node.children.length) {
+      cls.push('list_item-parent')
+    }
+    return cls.join(' ')
   },
+
+
   blocks: {
     left: function (node, actions) {
       return <div className={cx({

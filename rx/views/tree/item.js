@@ -51,6 +51,7 @@ var TreeItem = React.createClass({
     plugins: PT.array,
     body: PT.oneOfType([PT.object, PT.func]),
     keys: PT.func,
+    isRoot: PT.bool,
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
@@ -97,6 +98,7 @@ var TreeItem = React.createClass({
       'list_item-active': this.state.isActive,
       'list_item-editing': this.state.isEditing,
       'list_item-selected': this.state.isSelected,
+      'list_item-root': this.props.isRoot,
     })
     if (this.props.plugins) {
       this.props.plugins.forEach((plugin) => {

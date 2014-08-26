@@ -70,6 +70,7 @@ var TreeView = React.createClass({
         plugins: this.props.nodePlugins,
         keys: this.props.keys.insert,
         body: this.props.body,
+        isRoot: true,
         id: this.state.root
       })}
     </div>

@@ -1,0 +1,144 @@
+
+/** Rebase **/
+
+.m_RebaseDot {
+  background-color: transparent;
+  width: auto;
+  height: auto;
+  float: none;
+}
+
+.m_RebaseDot::before {
+  content: "\2022";
+  cursor: pointer;
+}
+
+.m_RebaseDot:hover {
+  background-color: #aaa;
+  border-radius: 10px;
+  line-height: 10px;
+  margin-top: 4px;
+}
+
+.m_RebaseDot {
+  position: absolute;
+  padding: 3px;
+  left: 24px;
+  font-size: 25px;
+  line-height: 18px;
+  overflow: hidden;
+
+  .n_Collapse > .list_item_head & {
+    font-size: 40px;
+    line-height: 14px;
+    margin-top: 2px;
+    left: 22px;
+    overflow: hidden;
+    color: #777;
+  }
+}
+
+/** Collapse **/
+
+.m_Collapser {
+  position: relative;
+  display: none;
+  cursor: pointer;
+  width: 0;
+  height: 0;
+
+  .list_item-parent > .list_item_head:hover & {
+    display: block;
+  }
+
+  &:after {
+    content: "-";
+    position: absolute;
+    top: -1px;
+    font-weight: bold;
+    font-family: monospace;
+    cursor: pointer;
+    font-size: 20px;
+    left: 0px;
+    width: 20px;
+  }
+
+  &-collapsed:after {
+    content: "+";
+  }
+}
+
+/** Root node **/
+
+.list_item-root {
+  > .list_item_head {
+    .m_RebaseDot,
+    .m_Collapser {
+      display: none;
+    }
+
+    .treed_body {
+      font-size: 30px;
+      padding-left: 5px;
+      margin-left: 40px;
+
+      .treed_body_rendered,
+      textarea {
+        padding-left :10px;
+        font-size: 30px;
+        border-radius: 10px;
+      }
+    }
+
+  }
+}
+
+/** body **/
+
+.treed_body {
+  margin-left: 20px;
+  padding-left: 20px;
+  border-radius: 10px;
+
+  .list_item_head:hover & {
+    background-color: #ccc;
+  }
+
+  .list_item-selected > .list_item_head & {
+    background-color: #d2f6ff;
+  }
+
+  .list_item-active > .list_item_head & {
+    background-color: #afc;
+  }
+
+
+}
+
+.m_Done {
+  > .list_item_head {
+    text-decoration: line-through;
+    color: #777;
+  }
+}
+
+.treed_body_rendered {
+  border: none;
+  margin: 0;
+  display: block;
+  font-size: 16px;
+  padding: 3px 7px;
+  font-family: sans-serif;
+  border-radius: 10px;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+  background-color: transparent;
+}
+
+.textarea-grow {
+  textarea,
+  .shadow {
+    &:extend(.treed_body_rendered);
+  }
+}
+
