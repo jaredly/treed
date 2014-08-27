@@ -77,6 +77,17 @@ var SimpleBody = React.createClass({
     this.props.actions.normalMode()
   },
 
+  componentDidMount: function () {
+    if (!this.props.editState) return
+    if (this.props.editState === 'change') {
+      this.setState({content: ''}, () => {
+        this.refs.text.focus()
+      })
+    } else {
+      this.refs.text.focus(this.props.editState === 'start')
+    }
+  },
+
   componentDidUpdate: function (prevProps) {
     if (!prevProps.editState && this.props.editState) {
       if (this.props.editState === 'change') {

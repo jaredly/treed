@@ -65,6 +65,9 @@ module.exports = {
 
       pl.insertChild(this.npid, this.id, this.nindex)
       pl.set(this.id, 'parent', this.npid)
+      if (this.opid === this.npid) {
+        return 'node:' + this.npid
+      }
       return ['node:' + this.opid, 'node:' + this.npid]
     },
 
@@ -72,7 +75,28 @@ module.exports = {
       pl.removeChild(this.npid, this.id)
       pl.insertChild(this.opid, this.id, this.oindex)
       pl.set(this.id, 'parent', this.opid)
+      if (this.opid === this.npid) {
+        return 'node:' + this.npid
+      }
       return ['node:' + this.opid, 'node:' + this.npid]
+    },
+  },
+
+  create: {
+    args: ['pid', 'ix', 'content'],
+    apply: function (pl) {
+      this.id = pl.create(this.pid, this.ix, this.content)
+      return 'node:' + this.pid
+    },
+    undo: function (pl) {
+      pl.removeChild(this.pid, this.id)
+      this.saved = pl.nodes[this.id]
+      pl.remove(this.id)
+      return 'node:' + this.pid
+    },
+    redo: function (pl) {
+      pl.save(this.id, this.saved)
+      pl.insertChild(this.pid, this.id, this.ix)
     },
   },
 

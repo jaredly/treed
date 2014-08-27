@@ -62,6 +62,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     this.history.push({time: time, changes: changeset})
     this.histpos = this.history.length
     this.changed.apply(this, changed)
+    return changeset
   },
 
   undoCommands: function () {
@@ -225,10 +226,6 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
         npid: pos.pid,
         nindex: pos.ix,
       })
-      this.changed('node:' + pos.pid)
-      if (pos.opid) {
-        this.changed('node:' + pos.opid)
-      }
     },
 
     moveUp: function (id) {
@@ -240,10 +237,36 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
         npid: pos.pid,
         nindex: pos.ix,
       })
-      this.changed('node:' + pos.pid)
-      if (pos.opid) {
-        this.changed('node:' + pos.opid)
+    },
+
+    createBefore: function (id) {
+      id = id || this.active
+      var node = this.pl.nodes[id]
+      if (id === this.root) return
+      var cmd = this.executeCommands('create', {
+        pid: node.parent,
+        ix: this.pl.nodes[node.parent].children.indexOf(id),
+      })
+      this.actions.edit(cmd[0].state.id)
+    },
+
+    createAfter: function (id) {
+      id = id || this.active
+      var node = this.pl.nodes[id]
+        , pos
+      if (id === this.root || (node.children.length && !node.collapsed)) {
+        pos = {
+          pid: id,
+          ix: 0
+        }
+      } else {
+        pos = {
+          pid: node.parent,
+          ix: this.pl.nodes[node.parent].children.indexOf(id) + 1,
+        }
       }
+      var cmd = this.executeCommands('create', pos)
+      this.actions.edit(cmd[0].state.id)
     },
 
     cut: TODO,

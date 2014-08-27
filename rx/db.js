@@ -25,6 +25,18 @@ Db.prototype = {
     })
   },
 
+  create: function (pid, ix, content) {
+    var id = uuid()
+    this.save(id, {
+      id: id,
+      content: content || '',
+      children: [],
+      parent: pid,
+    })
+    this.insertChild(pid, id, ix)
+    return id
+  },
+
   dump: function (pid, children) {
     var ids = children.map((child) => {
       var id = uuid()
