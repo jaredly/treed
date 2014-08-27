@@ -1,6 +1,33 @@
 // TODO test
 
 module.exports = {
+  indent: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+      , ix = nodes[pid].children.indexOf(id)
+    if (ix === -1) return
+    if (ix === 0) return
+    var npid = nodes[pid].children[ix - 1]
+    return {
+      opid: pid,
+      npid: npid,
+      nindex: nodes[npid].children.length,
+    }
+  },
+
+  dedent: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+      , npid = nodes[pid].parent
+      , ix = nodes[npid].children.indexOf(pid)
+    if (pid === root) return
+    return {
+      opid: pid,
+      npid: npid,
+      nindex: ix + 1,
+    }
+  },
+
   up: function (active, root, nodes) {
     if (active === root) return false
     var pid = nodes[active].parent

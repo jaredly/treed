@@ -46,63 +46,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }
   },
 
-  commands: {
-
-    set: {
-      args: ['id', 'attr', 'value'],
-      apply: function (pl) {
-        this.old = pl.nodes[this.id][this.attr]
-        pl.set(this.id, this.attr, this.value)
-        return 'node:' + this.id
-      },
-      undo: function (pl) {
-        pl.set(this.id, this.attr, this.old)
-        return 'node:' + this.id
-      },
-    },
-
-    batchSet: {
-      args: ['attr', 'ids', 'values'],
-      apply: function (pl) {
-        this.old = this.ids.map((id) => pl.nodes[id][this.attr])
-        pl.batchSet(this.attr, this.ids, this.values)
-        return this.ids.map((id) => 'node:' + id)
-      },
-      undo: function (pl) {
-        pl.batchSet(this.attr, this.ids, this.old)
-        return this.ids.map((id) => 'node:' + id)
-      },
-    },
-
-    remove: {
-      args: ['id'],
-      apply: function (pl) {
-        var node = pl.nodes[this.id]
-          , parent = pl.nodes[node.parent]
-          , children = parent.children.slice()
-          , ix = children.indexOf(this.id)
-        if (ix === -1) {
-          throw new Error('node is not a child of its parent')
-        }
-        this.saved = {node: node, ix: ix}
-        children.splice(ix, 1)
-        pl.set(node.parent, 'children', children)
-        pl.remove(this.id)
-        return 'node:' + node.parent
-      },
-      undo: function (pl) {
-        var node = this.saved.node
-          , parent = pl.nodes[node.parent]
-          , children = parent.children.slice()
-          , ix = this.saved.ix
-        children.splice(ix, 0, this.id)
-        pl.save(this.id, this.saved.node)
-        pl.set(node.parent, 'children', children)
-        return 'node:' + node.parent
-      },
-    },
-
-  },
+  commands: require('./commands'),
 
   executeCommands: function () {
     var changed = []
@@ -153,7 +97,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if ('string' === typeof changed) {
       changed = [changed]
     }
-    return {name: name, state: object, changed: changed}
+    return {name: name, state: object, changed: changed, active: this.active}
   },
 
   undoCommand: function (command) {
@@ -161,6 +105,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if ('string' === typeof changed) {
       changed = [changed]
     }
+    this.actions.setActive(command.active)
     return changed
   },
 
@@ -171,6 +116,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if ('string' === typeof changed) {
       changed = [changed]
     }
+    this.actions.setActive(command.active)
     return changed
   },
 
@@ -244,6 +190,30 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.active = next
       this.executeCommands('remove', {id: id})
       this.changed('node:' + next)
+    },
+
+    indent: function (id) {
+      id = id || this.active
+      var pos = movement.indent(id, this.root, this.pl.nodes)
+      if (!pos) return
+      this.executeCommands('move', {
+        id: id,
+        npid: pos.npid,
+        nindex: pos.nindex,
+      })
+      this.changed('node:' + pos.opid, 'node:' + pos.npid)
+    },
+
+    dedent: function (id) {
+      id = id || this.active
+      var pos = movement.dedent(id, this.root, this.pl.nodes)
+      if (!pos) return
+      this.executeCommands('move', {
+        id: id,
+        npid: pos.npid,
+        nindex: pos.nindex,
+      })
+      this.changed('node:' + pos.opid, 'node:' + pos.npid)
     },
 
     cut: TODO,

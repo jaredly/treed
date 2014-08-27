@@ -71,6 +71,23 @@ Db.prototype = {
     this.pl.remove('node', id)
   },
 
+  // returns the old index
+  removeChild: function (pid, id) {
+    var ix = this.nodes[pid].children.indexOf(id)
+    if (ix === -1) return -1
+    var ch = this.nodes[pid].children.slice()
+    ch.splice(ix, 1)
+    this.set(pid, 'children', ch)
+    return ix
+  },
+
+  insertChild: function (pid, id, ix) {
+    var ch = this.nodes[pid].children.slice()
+    ch.splice(ix, 0, id)
+    this.set(pid, 'children', ch)
+    return ix
+  },
+
   batchSet: function (attr, ids, values) {
     ids.forEach((id, i) => {
       this.nodes[id][attr] = values[i]
