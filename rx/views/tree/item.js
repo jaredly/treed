@@ -6,6 +6,14 @@ var PT = React.PropTypes
 
 var Listener = require('../../listener')
 
+function ensureInView(item) {
+  var bb = item.getBoundingClientRect()
+  if (bb.top < 0) return item.scrollIntoView()
+  if (bb.bottom > window.innerHeight) {
+    item.scrollIntoView(false)
+  }
+}
+
 var TreeItem = React.createClass({
   mixins: [
     Listener({
@@ -82,6 +90,9 @@ var TreeItem = React.createClass({
     setTimeout(function () {
       n.style.outline = ''
     }, 200)
+    if (this.state.isActive) {
+      ensureInView(this.refs.body.getDOMNode())
+    }
   },
   // **/
 
@@ -99,6 +110,7 @@ var TreeItem = React.createClass({
 
   body: function () {
     return this.props.body({
+      ref: 'body',
       node: this.state.node,
       keys: this.props.keys,
       isActive: this.state.isActive, // do we need this?
