@@ -42,6 +42,64 @@ module.exports = {
     return sid
   },
 
+  below: function (active, root, nodes) {
+    if (active === root) return false
+    var pid = nodes[active].parent
+      , parent = nodes[pid]
+      , ix = parent.children.indexOf(active)
+
+    if (ix === parent.children.length - 1) {
+      if (pid === root) return
+      return {
+        opid: pid,
+        pid: parent.parent,
+        ix: nodes[parent.parent].children.indexOf(pid) + 1
+      }
+    }
+    var nid = parent.children[ix + 1]
+      , next = nodes[nid]
+    if (next.children.length && !next.collapsed) {
+      return {
+        opid: pid,
+        pid: nid,
+        ix: 0
+      }
+    }
+    return {
+      pid: pid,
+      ix: ix + 1,
+    }
+  },
+
+  above: function (active, root, nodes) {
+    if (active === root) return false
+    var pid = nodes[active].parent
+      , parent = nodes[pid]
+      , ix = parent.children.indexOf(active)
+
+    if (ix === 0) {
+      if (pid === root) return
+      return {
+        opid: pid,
+        pid: parent.parent,
+        ix: nodes[parent.parent].children.indexOf(pid)
+      }
+    }
+    var nid = parent.children[ix - 1]
+      , next = nodes[nid]
+    if (next.children.length && !next.collapsed) {
+      return {
+        opid: pid,
+        pid: nid,
+        ix: next.children.length
+      }
+    }
+    return {
+      pid: pid,
+      ix: ix - 1,
+    }
+  },
+
   down: function (active, root, nodes, noChildren) {
     if (nodes[active].children.length && !noChildren &&
         (active === root || !nodes[active].collapsed)) {

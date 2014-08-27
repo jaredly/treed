@@ -216,6 +216,36 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.changed('node:' + pos.opid, 'node:' + pos.npid)
     },
 
+    moveDown: function (id) {
+      id = id || this.active
+      var pos = movement.below(id, this.root, this.pl.nodes)
+      if (!pos) return
+      this.executeCommands('move', {
+        id: id,
+        npid: pos.pid,
+        nindex: pos.ix,
+      })
+      this.changed('node:' + pos.pid)
+      if (pos.opid) {
+        this.changed('node:' + pos.opid)
+      }
+    },
+
+    moveUp: function (id) {
+      id = id || this.active
+      var pos = movement.above(id, this.root, this.pl.nodes)
+      if (!pos) return
+      this.executeCommands('move', {
+        id: id,
+        npid: pos.pid,
+        nindex: pos.ix,
+      })
+      this.changed('node:' + pos.pid)
+      if (pos.opid) {
+        this.changed('node:' + pos.opid)
+      }
+    },
+
     cut: TODO,
     copy: TODO,
     paste: TODO,
