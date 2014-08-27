@@ -106,7 +106,9 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if ('string' === typeof changed) {
       changed = [changed]
     }
-    this.actions.setActive(command.active)
+    if (this.pl.nodes[command.active]) {
+      this.actions.setActive(command.active)
+    }
     return changed
   },
 
@@ -157,7 +159,11 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       var old = this.active
       this.active = id
       if (this.mode === 'insert') this.editPos = 'end'
-      this.changed('node:' + old, 'node:' + id)
+      if (!this.pl.nodes[old]) {
+        this.changed('node:' + id)
+      } else {
+        this.changed('node:' + old, 'node:' + id)
+      }
     },
 
     // TODO: put these in a mixin, b/c they only apply to the treelist view?

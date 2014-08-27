@@ -97,6 +97,7 @@ module.exports = {
     redo: function (pl) {
       pl.save(this.id, this.saved)
       pl.insertChild(this.pid, this.id, this.ix)
+      return 'node:' + this.pid
     },
   },
 

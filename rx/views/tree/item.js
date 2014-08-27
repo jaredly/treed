@@ -84,15 +84,15 @@ var TreeItem = React.createClass({
     if (this._plugin_updates) {
       this._plugin_updates.map((fn) => fn.call(this, prevProps, prevState))
     }
+    if (this.state.isActive) {
+      ensureInView(this.refs.body.getDOMNode())
+    }
     // DEBUG STUFF
     var n = this.getDOMNode()
     n.style.outline = '1px solid red'
     setTimeout(function () {
       n.style.outline = ''
     }, 200)
-    if (this.state.isActive) {
-      ensureInView(this.refs.body.getDOMNode())
-    }
   },
   // **/
 
