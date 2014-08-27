@@ -93,9 +93,11 @@ var Textarea = module.exports = React.createClass({
 
   componentDidMount: function () {
     this.resize()
-    window.addEventListener('resize', function () {
-      this.resize()
-    }.bind(this))
+    window.addEventListener('resize', this.resize)
+  },
+
+  componentWillUnmount: function () {
+    window.removeEventListener('resize', this.resize)
   },
 
   focus: function (start) {
