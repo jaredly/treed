@@ -65,6 +65,10 @@ module.exports = {
 
       pl.insertChild(this.npid, this.id, this.nindex)
       pl.set(this.id, 'parent', this.npid)
+      if (pl.nodes[this.npid].collapsed) {
+        pl.set(this.npid, 'collapsed', false)
+        this.wasCollapsed = true
+      }
       if (this.opid === this.npid) {
         return 'node:' + this.npid
       }
@@ -75,6 +79,9 @@ module.exports = {
       pl.removeChild(this.npid, this.id)
       pl.insertChild(this.opid, this.id, this.oindex)
       pl.set(this.id, 'parent', this.opid)
+      if (this.wasCollapsed) {
+        pl.set(this.npid, 'collapsed', true)
+      }
       if (this.opid === this.npid) {
         return 'node:' + this.npid
       }
