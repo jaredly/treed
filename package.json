@@ -27,7 +27,8 @@
     "level-js": "^2.1.6",
     "react": "^0.11.1",
     "reactify": "^0.14.0",
-    "superagent-browserify": "0.0.2"
+    "superagent-browserify": "0.0.2",
+    "jstransform": "~6.1.0"
   },
   "devDependencies": {
     "reactify": "~0.13.1",
