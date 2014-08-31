@@ -17,23 +17,24 @@ function ensureInView(item) {
 var TreeItem = React.createClass({
   mixins: [
     Listener({
-      storeAttrs: function (store, props) {
+      storeAttrs: function (getters, props) {
         return {
-          node: store.getNode(props.id),
-          isActive: store.isActive(props.id),
-          isSelected: store.isSelected(props.id),
-          editState: store.editState(props.id),
+          node: getters.getNode(props.id),
+          isActiveView: getters.isActiveView(),
+          isActive: getters.isActive(props.id),
+          isSelected: getters.isSelected(props.id),
+          editState: getters.editState(props.id),
         }
       },
 
-      initStoreState: function (state, store, props) {
+      initStoreState: function (state, getters, props) {
         var node = state.node
         return {
           lazyChildren: node.collapsed && node.children.length
         }
       },
 
-      updateStoreState: function (state, store, props) {
+      updateStoreState: function (state, getters, props) {
         var node = state.node
         return {
           lazyChildren: this.state.lazyChildren && node.collapsed
@@ -44,15 +45,13 @@ var TreeItem = React.createClass({
         return nextProps.id !== this.props.id
       },
 
-      getListeners: function (props) {
-        return ['node:' + props.id]
+      getListeners: function (props, events) {
+        return [events.nodeChanged(props.id), events.nodeViewChanged(props.id)]
       },
     })
   ],
 
   componentWillMount: function () {
-    this.listen('node:' + this.props.id)
-
     // get plugin update functions
     this._plugin_updates = null
     this.props.plugins.forEach((plugin) => {
@@ -75,8 +74,15 @@ var TreeItem = React.createClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     return (
-      nextState !== this.state
+      nextState !== this.state ||
+      (nextProps.index !== this.props.index && nextState.isActive)
     )
+  },
+
+  componentDidMount: function () {
+    if (this.state.isActive && this.state.isActiveView) {
+      ensureInView(this.refs.body.getDOMNode())
+    }
   },
 
   /** Use to check what things are updating when */
@@ -84,7 +90,7 @@ var TreeItem = React.createClass({
     if (this._plugin_updates) {
       this._plugin_updates.map((fn) => fn.call(this, prevProps, prevState))
     }
-    if (this.state.isActive) {
+    if (this.state.isActive && this.state.isActiveView) {
       ensureInView(this.refs.body.getDOMNode())
     }
     // DEBUG STUFF
@@ -141,12 +147,13 @@ var TreeItem = React.createClass({
         {this.fromMix('right')}
       </div>
       <div className='list_item_children' ref='children'>
-        {!this.state.lazyChildren && this.state.node.children.map((id) => 
+        {!this.state.lazyChildren && this.state.node.children.map((id, i) => 
           TreeItem({
             plugins: this.props.plugins,
             store: this.props.store,
             body: this.props.body,
             keys: this.props.keys,
+            index: i,
             key: id,
             id: id,
           })

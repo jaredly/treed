@@ -7,10 +7,6 @@ module.exports = BaseStore
 function BaseStore(options) {
   this._listeners = {}
 
-  for (var name in this.actions) {
-    this.actions[name] = this.actions[name].bind(this)
-  }
-
   if (options.plugins) {
     options.plugins.forEach(this.addPlugin.bind(this))
   }
@@ -27,7 +23,7 @@ BaseStore.prototype = {
     var name
     if (plugin.actions) {
       for (name in plugin.actions) {
-        this.actions[name] = plugin.actions[name].bind(this)
+        this.actions[name] = plugin.actions[name]
       }
     }
 
@@ -67,8 +63,9 @@ BaseStore.prototype = {
         if (window.DEBUG_CHANGES) {
           console.log('emitting', this._changed)
         }
-        this.emitChanged(this._changed)
+        var changes = this._changed
         this._changed = null
+        this.emitChanged(changes)
       }, 0)
     }
     if (window.DEBUG_CHANGES) {

@@ -15,10 +15,22 @@
  */
 
 var BaseStore = require('./base')
-var movement = require('../util/movement')
 var extend = require('../util/extend')
+var Commandeger = require('./commandeger')
 
 module.exports = MainStore
+
+/** don't need this atm actually
+function bindExtend(base, other) {
+  for (var name in other) {
+    if ('function' !== typeof other[name]) {
+      base[name] = other[name]
+      continue
+    }
+    base[name] = other[name].bind(base)
+  }
+}
+*/
 
 function MainStore(options) {
   BaseStore.apply(this, arguments)
@@ -26,12 +38,24 @@ function MainStore(options) {
   this.pl = options.pl
 
   this.views = {}
+  this._actions = {}
+  this._events = {}
+  this._getters = {}
   this._nextViewId = 0
+  this.activeView = 0
+
+  this.cmd = new Commandeger(
+    this.changed.bind(this),
+    (id, vid) => this.viewActive('setActive', {id}, vid),
+    this.pl,
+    this._events
+  )
 }
 
 MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   constructor: MainStore,
 
+  // create a proxy object for the store that is specific to a single view
   registerView: function () {
     var id = this._nextViewId++
     this.views[id] = {
@@ -42,7 +66,38 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       editPos: null,
       mode: 'normal',
     }
-    return id
+    this._events[id] = extend({vid: id}, this.events)
+    this._actions[id] = extend({
+      view: this.views[id],
+      nodes: this.pl.nodes,
+      events: this._events[id],
+      changed: this.changed.bind(this),
+      parent: this,
+      executeCommand: (cmd, state) =>
+        this.cmd.execute({
+          cmd,
+          state,
+          view: id,
+          active: this.views[id].active
+        })
+    }, this.actions)
+    this._getters[id] = extend({
+      parent: this,
+      view: this.views[id],
+      nodes: this.pl.nodes,
+    }, this.getters)
+
+    this.activeView = id
+
+    return {
+      id,
+      view: this.views[id],
+      actions: this._actions[id],
+      getters: this._getters[id],
+      events: this._events[id],
+      on: this.on.bind(this),
+      off: this.off.bind(this),
+    }
   },
 
   // just the `store` part of the plugin
@@ -54,49 +109,42 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }
   },
 
-  viewActions: function (id) {
-    var actions = {}
-    Object.keys(this.actions).forEach(name => {
-      var action = this.actions[name]
-      actions[name] = (args) =>
-        action.call(this, args, this.views[id], (cmd, state) =>
-          this.cmd.execute({
-            cmd,
-            state,
-            view: id,
-            active: this.views[id].active
-          }, this.events)
-        )
-    })
-    return actions
+  viewAction: function (name, args, id) {
+    return this._actions[id][name](args)
   },
 
   events: {
     nodeChanged: (id) => 'node:' + id,
-    nodeViewChanged: (vid, id) => 'node:' + id + ':view:' + vid,
+    nodeViewChanged: function (id) { return this.nodeChanged(id) + ':view:' + this.vid },
 
-    rootChanged: (vid) => 'root:' + vid,
-    modeChanged: (vid) => 'mode:' + vid,
+    activeViewChanged: () => 'active-view',
+    rootChanged: function () { return 'root:' + this.vid },
+    modeChanged: function () { return 'mode:' + this.vid },
   },
 
   actions: require('./actions'),
 
+  // same deal as actions
   getters: {
     getNode: function (id) {
-      return this.pl.nodes[id]
+      return this.nodes[id]
+    },
+
+    isActiveView: function () {
+      return this.view.id === this.parent.activeView
     },
 
     isActive: function (id) {
-      return id === this.active
+      return id === this.view.active
     },
 
     isSelected: function (id) {
-      return this.selection && this.selection.indexOf(id) !== -1
+      return this.view.selection && this.view.selection.indexOf(id) !== -1
     },
 
     editState: function (id) {
-      var editing = this.mode === 'insert' && id === this.active
-      return editing && this.editPos
+      var editing = this.view.mode === 'insert' && id === this.view.active
+      return editing && this.view.editPos
     },
   }
 })

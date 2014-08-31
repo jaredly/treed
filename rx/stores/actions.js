@@ -1,133 +1,140 @@
 
 /**
  * These functions need access to:
- * - pl.nodes
+ * - nodes
  * - actions
  * - changed()
  * - events.{}
  */
 
+var movement = require('../util/movement')
+
 module.exports = {
-  set: function ({id, attr, value}, view, execCmd) {
-    execCmd('set', {id, attr, value})
+  set: function ({id, attr, value}) {
+    this.executeCommand('set', {id, attr, value})
   },
 
-  batchSet: function ({attr, ids, values}, view, execCmd) {
-    execCmd('batchSet', {ids: ids, attr: attr, values: values})
+  batchSet: function ({attr, ids, values}) {
+    this.executeCommand('batchSet', {ids: ids, attr: attr, values: values})
   },
 
-  setContent: function ({id, value}, view, execCmd) {
-    this.actions.set({id, attr: 'content', value}, view, execCmd, events)
+  setContent: function ({id, value}) {
+    this.set({id, attr: 'content', value})
   },
 
-  setActive: function ({id}, view) {
-    if (!id || id === view.active) return
-    var old = view.active
-    view.active = id
-    if (view.mode === 'insert') view.editPos = 'end'
-    if (!this.pl.nodes[old]) {
-      this.changed(this.events.nodeViewChanged(view.id, id))
-    } else {
-      this.changed(
-        this.events.nodeViewChanged(view.id, old),
-        this.events.nodeViewChanged(view.id, id)
-      )
+  setActive: function ({id}) {
+    if (!id || id === this.view.active || !this.nodes[id]) return
+    var old = this.view.active
+    this.view.active = id
+    if (this.view.id !== this.parent.activeView) {
+      console.log('changing active view', this.view.id)
+      this.parent.activeView = this.view.id
+      this.changed(this.events.activeViewChanged())
     }
+    if (this.view.mode === 'insert') this.view.editPos = 'end'
+    if (!this.nodes[old]) {
+      this.changed(this.events.nodeViewChanged(id))
+    }
+    this.changed(
+      this.events.nodeViewChanged(old),
+      this.events.nodeViewChanged(id)
+    )
+    return true
   },
 
-  // TODO: put these in a mixin, b/c they only apply to the treelist view?
+  // TODO: put these in a mixin, b/c they only apply to the treelist this.view?
   // this would be the same mixin that does collapsability? Or maybe there
   // would be a simplified one that doesn't know about collapsibility. Seems
   // like there would be some duplication
-  goUp: function (_, view) {
-    this.actions.setActive(movement.up(view.active, view.root, this.pl.nodes))
+  goUp: function () {
+    this.setActive({id: movement.up(this.view.active, this.view.root, this.nodes)})
   },
 
-  goDown: function ({editStart}, view) {
-    this.actions.setActive(movement.down(view.active, view.root, this.pl.nodes))
-    if (editStart) view.editPos = 'start'
+  goDown: function ({editStart}) {
+    this.setActive({id: movement.down(this.view.active, this.view.root, this.nodes)})
+    if (editStart) this.view.editPos = 'start'
   },
 
-  goLeft: function (_, view) {
-    this.actions.setActive(movement.left(view.active, view.root, this.pl.nodes))
+  goLeft: function () {
+    this.setActive(movement.left(this.view.active, this.view.root, this.nodes))
   },
 
-  goRight: function (_, view) {
-    this.actions.setActive(movement.right(view.active, view.root, this.pl.nodes))
+  goRight: function () {
+    this.setActive(movement.right(this.view.active, this.view.root, this.nodes))
   },
 
-  remove: function ({id}, view, execCmd) {
-    id = id || view.active
-    if (id === view.root) return
-    var next = movement.down(id, view.root, this.pl.nodes, true)
+  remove: function ({id}) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.down(id, this.view.root, this.nodes, true)
     if (!next) {
-      next = movement.up(id, view.root, this.pl.nodes)
+      next = movement.up(id, this.view.root, this.nodes)
     }
-    view.active = next
-    execCmd('remove', {id})
+    this.view.active = next
+    this.executeCommand('remove', {id})
     this.changed(this.events.nodeChanged(next))
   },
 
-  indent: function ({id}, view, execCmd) {
-    id = id || view.active
-    var pos = movement.indent(id, view.root, this.pl.nodes)
+  indent: function ({id}) {
+    id = id || this.view.active
+    var pos = movement.indent(id, this.view.root, this.nodes)
     if (!pos) return
-    execCmd('move', {
+    this.executeCommand('move', {
       id,
       npid: pos.npid,
       nindex: pos.nindex,
     })
   },
 
-  dedent: function ({id}, view, execCmd) {
-    id = id || view.active
-    var pos = movement.dedent(id, view.root, this.pl.nodes)
+  dedent: function ({id}) {
+    id = id || this.view.active
+    var pos = movement.dedent(id, this.view.root, this.nodes)
     if (!pos) return
-    execCmd('move', {
+    this.executeCommand('move', {
       id: id,
       npid: pos.npid,
       nindex: pos.nindex,
     })
   },
 
-  moveDown: function ({id}, view, execCmd) {
-    id = id || view.active
-    var pos = movement.below(id, view.root, this.pl.nodes)
+  moveDown: function ({id}) {
+    id = id || this.view.active
+    var pos = movement.below(id, this.view.root, this.nodes)
     if (!pos) return
-    execCmd('move', {
+    this.executeCommand('move', {
       id,
       npid: pos.pid,
       nindex: pos.ix,
     })
   },
 
-  moveUp: function ({id}, view, execCmd) {
-    id = id || view.active
-    var pos = movement.above(id, view.root, this.pl.nodes)
+  moveUp: function ({id}) {
+    id = id || this.view.active
+    var pos = movement.above(id, this.view.root, this.nodes)
     if (!pos) return
-    execCmd('move', {
+    this.executeCommand('move', {
       id,
       npid: pos.pid,
       nindex: pos.ix,
     })
   },
 
-  createBefore: function ({id}, view, execCmd) {
-    id = id || view.active
-    var node = this.pl.nodes[id]
-    if (id === view.root) return
-    var cmd = execCmd('create', {
+  createBefore: function ({id}) {
+    id = id || this.view.active
+    var node = this.nodes[id]
+    if (id === this.view.root) return
+    var cmd = this.executeCommand('create', {
       pid: node.parent,
-      ix: this.pl.nodes[node.parent].children.indexOf(id),
+      ix: this.nodes[node.parent].children.indexOf(id),
     })
-    this.actions.edit(cmd.id, view, execCmd)
+    this.edit(cmd.id)
   },
 
-  createAfter: function ({id}, view, execCmd) {
-    id = id || view.active
-    var node = this.pl.nodes[id]
+  createAfter: function ({id}) {
+    id = id || this.view.active
+    var node = this.nodes[id]
       , pos
-    if (id === view.root || (node.children.length && !node.collapsed)) {
+    if (id === this.view.root || (node.children.length && !node.collapsed)) {
       pos = {
         pid: id,
         ix: 0
@@ -135,11 +142,11 @@ module.exports = {
     } else {
       pos = {
         pid: node.parent,
-        ix: this.pl.nodes[node.parent].children.indexOf(id) + 1,
+        ix: this.nodes[node.parent].children.indexOf(id) + 1,
       }
     }
-    var cmd = execCmd('create', pos)
-    this.actions.edit(cmd.id, view, execCmd)
+    var cmd = this.executeCommand('create', pos)
+    this.edit(cmd.id)
   },
 
   cut: TODO,
@@ -147,58 +154,58 @@ module.exports = {
   paste: TODO,
   pasteAbove: TODO,
 
-  visualMode: function (_, view) {
-    view.mode = 'visual'
-    view.selection = [this.active]
+  visualMode: function () {
+    this.view.mode = 'visual'
+    this.view.selection = [this.active]
     this.changed(
-      this.events.nodeViewChanged(view.active), 
-      this.events.modeChanged(view.id),
+      this.events.nodeViewChanged(this.view.active), 
+      this.events.modeChanged(this.view.id)
     )
   },
 
-  setMode: function ({mode}, view) {
-    if (view.mode === mode) return
-    view.mode = mode
-    this.changed(this.events.modeChanged(view.id))
+  setMode: function ({mode}) {
+    if (this.view.mode === mode) return
+    this.view.mode = mode
+    this.changed(this.events.modeChanged(this.view.id))
   },
 
-  normalMode: function ({id}, view) {
-    id = id || view.active
-    if (view.mode === 'normal' && view.active === id) return
-    if (!this.setActive({id}, view)) {
-      this.changed(this.events.nodeViewChanged(view.active))
+  normalMode: function ({id}) {
+    id = id || this.view.active
+    if (this.view.mode === 'normal' && this.view.active === id) return
+    if (!this.setActive({id})) {
+      this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    this.actions.setMode({'normal'}, view)
+    this.setMode({mode: 'normal'})
   },
 
-  edit: function ({id}, view) {
-    id = id || view.active
-    if (view.mode === 'edit' && view.active === id) return
-    if (!this.setActive({id}, view)) {
-      this.changed(this.events.nodeViewChanged(view.active))
+  edit: function ({id}) {
+    id = id || this.view.active
+    if (this.view.mode === 'edit' && this.view.active === id) return
+    if (!this.setActive({id})) {
+      this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    view.editPos = 'end'
-    this.actions.setMode({'insert'}, view)
+    this.view.editPos = 'end'
+    this.setMode({mode: 'insert'})
   },
 
   editStart: function ({id}) {
-    id = id || view.active
-    if (view.mode === 'edit' && view.active === id) return
-    if (!this.setActive({id}, view)) {
-      this.changed(this.events.nodeViewChanged(view.active))
+    id = id || this.view.active
+    if (this.view.mode === 'edit' && this.view.active === id) return
+    if (!this.setActive({id})) {
+      this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    view.editPos = 'start'
-    this.actions.setMode({'insert'}, view)
+    this.view.editPos = 'start'
+    this.setMode({mode: 'insert'})
   },
 
-  change: function ({id}, view) {
-    id = id || view.active
-    if (view.mode === 'edit' && view.active === id) return
-    if (!this.setActive({id}, view)) {
-      this.changed(this.events.nodeViewChanged(view.active))
+  change: function ({id}) {
+    id = id || this.view.active
+    if (this.view.mode === 'edit' && this.view.active === id) return
+    if (!this.setActive({id})) {
+      this.changed(this.events.nodeViewChanged(this.view.active))
     }
     this.editPos = 'change'
-    this.actions.setMode({'insert'}, view)
+    this.setMode({mode: 'insert'})
   },
 
   toggleSelectionEdge: TODO,

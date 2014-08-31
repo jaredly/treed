@@ -7,9 +7,13 @@ module.exports = Commandeger
  * - pl
  */
 
-function Commandeger(commands) {
+function Commandeger(changed, setActive, pl, events) {
   this.history = []
   this.histpos = 0
+  this.changed = changed
+  this.setActive = setActive
+  this.events = events
+  this.pl = pl
 }
 
 Commandeger.prototype = {
@@ -34,7 +38,7 @@ Commandeger.prototype = {
       return command.state
     })
     this.history = this.history.slice(0, this.histpos)
-    this.history.push({time: time, changes: changeset})
+    this.history.push({time: time, changes: commands})
     this.histpos = this.history.length
     this.changed.apply(this, changed)
     return states
@@ -66,12 +70,11 @@ Commandeger.prototype = {
       changes = this.redoCommand(last.changes[i])
       changed = changed.concat(changes)
     }
-    // XXX
     this.changed.apply(this, changed)
   },
 
   doCommand: function (command) {
-    var changed = this.commands[name].apply.call(command.state, this.pl)
+    var changed = this.commands[command.cmd].apply.call(command.state, this.pl, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
@@ -79,26 +82,22 @@ Commandeger.prototype = {
   },
 
   undoCommand: function (command) {
-    var changed = this.commands[command.name].undo.call(command.state, this.pl)
+    var changed = this.commands[command.cmd].undo.call(command.state, this.pl, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
-    if (this.pl.nodes[command.active]) {
-      // XXX
-      this.actions.setActive({id: command.active}, this.views[command.view])
-    }
+    this.setActive(command.active, command.view)
     return changed
   },
 
   redoCommand: function (command) {
-    var cmd = this.commands[command.name]
+    var cmd = this.commands[command.cmd]
     var action = cmd.redo || cmd.apply
-    var changed = action.call(command.state, this.pl)
+    var changed = action.call(command.state, this.pl, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
-    // XXX
-    this.actions.setActive({id: command.active}, this.views[command.view])
+    this.setActive(command.active, command.view)
     return changed
   },
 }

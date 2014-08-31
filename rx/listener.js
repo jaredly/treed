@@ -18,10 +18,10 @@ module.exports = function (options) {
     },
 
     getInitialState: function () {
-      var state = options.storeAttrs.call(this, this.props.store, this.props)
+      var state = options.storeAttrs.call(this, this.props.store.getters, this.props)
       var extra
       if (options.initStoreState) {
-        extra = options.initStoreState.call(this, state, this.props.store, this.props)
+        extra = options.initStoreState.call(this, state, this.props.store.getters, this.props)
         for (var name in extra) state[name] = extra[name]
       }
       return state
@@ -29,6 +29,9 @@ module.exports = function (options) {
 
     listen: function () {
       var changes = [].slice.call(arguments)
+      if (arguments.length === 1 && Array.isArray(arguments[0])) {
+          changes = arguments[0]
+      }
 
       pluginUpdates = []
       if (this.props.plugins) {
@@ -51,10 +54,10 @@ module.exports = function (options) {
 
     _gotChanges: function () {
       // if DEBUG
-      var state = options.storeAttrs.call(this, this.props.store, this.props)
+      var state = options.storeAttrs.call(this, this.props.store.getters, this.props)
       var extra, name
       if (options.updateStoreState) {
-        extra = options.updateStoreState.call(this, state, this.props.store, this.props)
+        extra = options.updateStoreState.call(this, state, this.props.store.getters, this.props)
         for (name in extra) state[name] = extra[name]
       }
       for (var i=0; i<pluginUpdates.length; i++) {
@@ -75,12 +78,12 @@ module.exports = function (options) {
       if (options.shouldGetNew.call(this, nextProps)) {
         if (options.getListeners) {
           this._stopListening()
-          this.listen(options.getListeners(nextProps))
+          this.listen(options.getListeners(nextProps, nextProps.store.events))
         }
-        var state = options.storeAttrs.call(this, nextProps.store, nextProps)
+        var state = options.storeAttrs.call(this, nextProps.store.getters, nextProps)
         var extra
         if (options.initStoreState) {
-          extra = options.initStoreState.call(this, state, nextProps.store, nextProps)
+          extra = options.initStoreState.call(this, state, nextProps.store.getters, nextProps)
           for (var name in extra) state[name] = extra[name]
         }
         this.setState(state)
@@ -101,7 +104,7 @@ module.exports = function (options) {
   }
   if (options.getListeners) {
     plugin.componentWillMount = function () {
-      this.listen(options.getListeners(this.props))
+      this.listen(options.getListeners(this.props, this.props.store.events))
     }
   }
   return plugin

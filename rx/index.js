@@ -34,8 +34,8 @@ function quickstart(el, options, done) {
   }
 
   initStore(options.plugins, options.storeOptions, (store) => {
-    initView(el, store, options.plugins, options.viewOptions, () => {
-      done && done(store)
+    initView(el, store, options.plugins, options.viewOptions, (storeView) => {
+      done && done(store, storeView)
     })
   })
 }
@@ -68,13 +68,19 @@ function initView(el, store, plugins, options, done) {
     defaultKeys: keys,
   }, options)
 
+  var storeView = store.registerView()
+
   React.renderComponent(options.View({
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
-    keys: keyHandlers(options.defaultKeys, store.actions, pluginType(plugins, 'keys')),
-    store: store,
+    keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys')),
+    // actions (for doing things)
+    // getters (for getting things)
+    // events  (for listening)
+    // id      (for fun)
+    store: storeView,
   }), el, function () {
-    done()
+    done(storeView)
   })
 }
 

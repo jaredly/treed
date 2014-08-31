@@ -12,8 +12,9 @@ var TreeView = React.createClass({
   mixins: [
     Listener(function (store, props) {
       return {
-        root: store.root,
-        mode: store.mode
+        root: store.view.root,
+        mode: store.view.mode,
+        isActive: store.isActiveView(),
       }
     })
   ],
@@ -27,7 +28,8 @@ var TreeView = React.createClass({
   },
 
   componentWillMount: function () {
-    this.listen('root', 'mode')
+    var e = this.props.store.events
+    this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
     window.addEventListener('keydown', this._onKeyDown)
   },
 
@@ -38,6 +40,7 @@ var TreeView = React.createClass({
   },
 
   _onKeyDown: function (e) {
+    if (!this.state.isActive) return
     if (this.state.mode === 'normal') {
       return this.props.keys.normal(e)
     }
@@ -48,6 +51,7 @@ var TreeView = React.createClass({
 
   render: function () {
     var className = 'list list-' + this.state.mode
+    if (this.state.isActive) className += ' list-active'
     return <div className={className}>
       {TreeItem({
         store: this.props.store,
