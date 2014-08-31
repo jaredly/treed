@@ -2,35 +2,32 @@
 module.exports = {
   actions: {
     rebase: function (id) {
-      if (!arguments.length) {
-        id = this.active
-      }
-
-      this.root = id
-      this.active = id
-      this.changed('root')
+      id = id || this.view.active
+      this.view.root = id
+      this.setActive(this.view.root)
+      this.changed(this.events.rootChanged())
     },
     rebaseUp: function () {
-      if (this.root === this.pl.root) return
-      this.active = this.root
-      this.root = this.pl.nodes[this.root].parent
-      this.changed('root', 'active')
+      if (this.view.root === this.parent.pl.root) return
+      this.setActive(this.view.root)
+      this.view.root = this.nodes[this.view.root].parent
+      this.changed(this.events.rootChanged())
     },
   },
 
   extend: {
     getPedigree: function (id, last) {
       var items = []
-      var node = this.ids[id]
+      var node = this.nodes[id]
       if (!last) {
-        node = this.ids[node.parent]
+        node = this.nodes[node.parent]
       }
       while (node) {
         items.push({
           id: node.id,
           content: node.content
         })
-        node = this.ids[node.parent]
+        node = this.nodes[node.parent]
       }
     },
   },

@@ -73,7 +73,8 @@
 .list_item-root {
   > .list_item_head {
     .m_RebaseDot,
-    .m_Collapser {
+    .m_Collapser,
+    .m_Collapser:after {
       display: none;
     }
 
@@ -83,7 +84,8 @@
       margin-left: 40px;
 
       .treed_body_rendered,
-      textarea {
+      textarea,
+      .shadow {
         padding-left :10px;
         font-size: 30px;
         border-radius: 10px;

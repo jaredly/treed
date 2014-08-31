@@ -23,7 +23,7 @@ var TreeItem = React.createClass({
       initStoreState: function (state, getters, props) {
         var node = state.node
         return {
-          lazyChildren: node.collapsed && node.children.length
+          lazyChildren: !props.isRoot && node.collapsed && node.children.length
         }
       },
 

@@ -61,7 +61,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     this.views[id] = {
       id: id,
       root: this.pl.root,
-      active: this.root,
+      active: this.pl.root,
       selected: null,
       editPos: null,
       mode: 'normal',

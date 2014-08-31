@@ -12,7 +12,7 @@ module.exports = {
         'm_RebaseDot-full': node.collapsed && node.children.length,
       })}
       key='rebase'
-      onClick={actions.rebase.bind(null, node.id)}/>
+      onClick={actions.rebase.bind(actions, node.id)}/>
     }
   }
 }
