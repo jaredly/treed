@@ -51,7 +51,7 @@ module.exports = {
     this.setActive(movement.up(this.view.active, this.view.root, this.nodes))
   },
 
-  goDown: function ({editStart}) {
+  goDown: function (editStart) {
     this.setActive(movement.down(this.view.active, this.view.root, this.nodes))
     if (editStart) this.view.editPos = 'start'
   },
