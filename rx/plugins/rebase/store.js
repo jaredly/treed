@@ -8,7 +8,7 @@ module.exports = {
       this.changed(this.events.rootChanged())
     },
     rebaseUp: function () {
-      if (this.view.root === this.parent.pl.root) return
+      if (this.view.root === this.db.root) return
       this.setActive(this.view.root)
       this.view.root = this.db.nodes[this.view.root].parent
       this.changed(this.events.rootChanged())
