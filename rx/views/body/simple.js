@@ -3,6 +3,7 @@
 var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
+var ensureInView = require('../../util/ensure-in-view')
 
 var Textarea = require('./textarea-grow')
 
@@ -79,6 +80,7 @@ var SimpleBody = React.createClass({
 
   componentDidMount: function () {
     if (!this.props.editState) return
+    ensureInView(this.refs.text.getDOMNode())
     if (this.props.editState === 'change') {
       this.setState({content: ''}, () => {
         this.refs.text.focus()
@@ -90,6 +92,7 @@ var SimpleBody = React.createClass({
 
   componentDidUpdate: function (prevProps) {
     if (!prevProps.editState && this.props.editState) {
+      ensureInView(this.refs.text.getDOMNode())
       if (this.props.editState === 'change') {
         this.setState({content: ''}, () => {
           this.refs.text.focus()

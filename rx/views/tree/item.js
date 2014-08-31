@@ -3,16 +3,9 @@
 var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
+var ensureInView = require('../../util/ensure-in-view')
 
 var Listener = require('../../listener')
-
-function ensureInView(item) {
-  var bb = item.getBoundingClientRect()
-  if (bb.top < 0) return item.scrollIntoView()
-  if (bb.bottom > window.innerHeight) {
-    item.scrollIntoView(false)
-  }
-}
 
 var TreeItem = React.createClass({
   mixins: [
