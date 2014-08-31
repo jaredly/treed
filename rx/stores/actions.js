@@ -10,19 +10,19 @@
 var movement = require('../util/movement')
 
 module.exports = {
-  set: function ({id, attr, value}) {
+  set: function (id, attr, value) {
     this.executeCommand('set', {id, attr, value})
   },
 
-  batchSet: function ({attr, ids, values}) {
+  batchSet: function (attr, ids, values) {
     this.executeCommand('batchSet', {ids: ids, attr: attr, values: values})
   },
 
-  setContent: function ({id, value}) {
-    this.set({id, attr: 'content', value})
+  setContent: function (id, value) {
+    this.set(id, 'content', value)
   },
 
-  setActive: function ({id}) {
+  setActive: function (id) {
     if (!id || id === this.view.active || !this.nodes[id]) return
     var old = this.view.active
     this.view.active = id
@@ -47,11 +47,11 @@ module.exports = {
   // would be a simplified one that doesn't know about collapsibility. Seems
   // like there would be some duplication
   goUp: function () {
-    this.setActive({id: movement.up(this.view.active, this.view.root, this.nodes)})
+    this.setActive(movement.up(this.view.active, this.view.root, this.nodes))
   },
 
   goDown: function ({editStart}) {
-    this.setActive({id: movement.down(this.view.active, this.view.root, this.nodes)})
+    this.setActive(movement.down(this.view.active, this.view.root, this.nodes))
     if (editStart) this.view.editPos = 'start'
   },
 
@@ -63,7 +63,7 @@ module.exports = {
     this.setActive(movement.right(this.view.active, this.view.root, this.nodes))
   },
 
-  remove: function ({id}) {
+  remove: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
     var next = movement.down(id, this.view.root, this.nodes, true)
@@ -75,7 +75,7 @@ module.exports = {
     this.changed(this.events.nodeChanged(next))
   },
 
-  indent: function ({id}) {
+  indent: function (id) {
     id = id || this.view.active
     var pos = movement.indent(id, this.view.root, this.nodes)
     if (!pos) return
@@ -86,7 +86,7 @@ module.exports = {
     })
   },
 
-  dedent: function ({id}) {
+  dedent: function (id) {
     id = id || this.view.active
     var pos = movement.dedent(id, this.view.root, this.nodes)
     if (!pos) return
@@ -97,7 +97,7 @@ module.exports = {
     })
   },
 
-  moveDown: function ({id}) {
+  moveDown: function (id) {
     id = id || this.view.active
     var pos = movement.below(id, this.view.root, this.nodes)
     if (!pos) return
@@ -108,7 +108,7 @@ module.exports = {
     })
   },
 
-  moveUp: function ({id}) {
+  moveUp: function (id) {
     id = id || this.view.active
     var pos = movement.above(id, this.view.root, this.nodes)
     if (!pos) return
@@ -119,7 +119,7 @@ module.exports = {
     })
   },
 
-  createBefore: function ({id}) {
+  createBefore: function (id) {
     id = id || this.view.active
     var node = this.nodes[id]
     if (id === this.view.root) return
@@ -130,7 +130,7 @@ module.exports = {
     this.edit(cmd.id)
   },
 
-  createAfter: function ({id}) {
+  createAfter: function (id) {
     id = id || this.view.active
     var node = this.nodes[id]
       , pos
@@ -163,49 +163,49 @@ module.exports = {
     )
   },
 
-  setMode: function ({mode}) {
+  setMode: function (mode) {
     if (this.view.mode === mode) return
     this.view.mode = mode
     this.changed(this.events.modeChanged(this.view.id))
   },
 
-  normalMode: function ({id}) {
+  normalMode: function (id) {
     id = id || this.view.active
     if (this.view.mode === 'normal' && this.view.active === id) return
-    if (!this.setActive({id})) {
+    if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    this.setMode({mode: 'normal'})
+    this.setMode('normal')
   },
 
-  edit: function ({id}) {
+  edit: function (id) {
     id = id || this.view.active
     if (this.view.mode === 'edit' && this.view.active === id) return
-    if (!this.setActive({id})) {
+    if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
     this.view.editPos = 'end'
-    this.setMode({mode: 'insert'})
+    this.setMode('insert')
   },
 
-  editStart: function ({id}) {
+  editStart: function (id) {
     id = id || this.view.active
     if (this.view.mode === 'edit' && this.view.active === id) return
-    if (!this.setActive({id})) {
+    if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
     this.view.editPos = 'start'
-    this.setMode({mode: 'insert'})
+    this.setMode('insert')
   },
 
-  change: function ({id}) {
+  change: function (id) {
     id = id || this.view.active
     if (this.view.mode === 'edit' && this.view.active === id) return
-    if (!this.setActive({id})) {
+    if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
     this.editPos = 'change'
-    this.setMode({mode: 'insert'})
+    this.setMode('insert')
   },
 
   toggleSelectionEdge: TODO,

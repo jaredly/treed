@@ -13,7 +13,7 @@ var SimpleBody = React.createClass({
     if (this.props.editState) {
       // this.props.actions.normalMode(this.props.node.id)
     } else {
-      this.props.actions.edit({id: this.props.node.id})
+      this.props.actions.edit(this.props.node.id)
     }
   },
 
@@ -26,7 +26,7 @@ var SimpleBody = React.createClass({
   componentWillReceiveProps: function (nextProps) {
     if (!nextProps.editState && this.props.editState) {
       if (this.state.content !== this.props.node.content) {
-        this.props.actions.setContent({id: this.props.node.id, value: this.state.content})
+        this.props.actions.setContent(this.props.node.id, this.state.content)
       }
     }
     this.setState({
@@ -57,7 +57,7 @@ var SimpleBody = React.createClass({
     } else if (e.key === 'ArrowRight') {
       pos = text.getCursorPos()
       if (pos === -1 || pos === 1) {
-        this.props.actions.goDown({editStart: true})
+        this.props.actions.goDown(true)
         e.preventDefault()
       }
     } else if (e.key === 'ArrowLeft') {
@@ -73,7 +73,7 @@ var SimpleBody = React.createClass({
 
   _onBlur: function () {
     if (this.state.content !== this.props.node.content) {
-      this.props.actions.setContent({id: this.props.node.id, value: this.state.content})
+      this.props.actions.setContent(this.props.node.id, this.state.content)
     }
     this.props.actions.normalMode()
   },

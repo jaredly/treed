@@ -36,7 +36,7 @@ module.exports = {
       return <div className={cx({
         'm_Collapser': true,
         'm_Collapser-collapsed': node.collapsed
-      })} onClick={actions.toggleCollapse.bind(null, node.id)}/>
+      })} onClick={actions.toggleCollapse.bind(actions, node.id)}/>
     }
   },
 }
