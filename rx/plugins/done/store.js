@@ -2,23 +2,21 @@
 module.exports = {
   actions: {
     setDone: function (id) {
-      if (!arguments.length) id = this.active
-      this.actions.set(id, 'done', true)
+      if (!arguments.length) id = this.view.active
+      this.set(id, 'done', true)
     },
     setUndone: function (id) {
-      if (!arguments.length) id = this.active
-      this.actions.set(id, 'done', false)
+      if (!arguments.length) id = this.view.active
+      this.set(id, 'done', false)
     },
     toggleDone: function () {
-      if (this.mode === 'visual') {
-        this.actions.batchSet('done', this.selected,
-                              this.selected.map((id) => !this.pl.nodes[id].done))
+      if (this.view.mode === 'visual') {
+        this.batchSet('done', this.view.selected,
+                              this.view.selected.map((id) => !this.nodes[id].done))
       } else {
-        var done = this.pl.nodes[this.active].done
-        this.actions.set(this.active, 'done', !done)
-        if (!done) {
-          this.actions.goDown()
-        }
+        var done = this.nodes[this.view.active].done
+        this.set(this.view.active, 'done', !done)
+        this.goDown()
       }
     },
   },

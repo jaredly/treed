@@ -40,8 +40,7 @@ var ShowTags = React.createClass({
         onClick={(node) => this.props.store.actions
                             .rebase(node.id)}/>
       <i className="ShowTags-icon"
-        onClick={this.props.store.actions
-                  .taggingMode.bind(null, this.props.id)}/>
+        onClick={() => this.props.store.actions.taggingMode(this.props.id)}/>
     </div>
   },
 })

@@ -34,11 +34,12 @@ module.exports = {
     if (this.view.mode === 'insert') this.view.editPos = 'end'
     if (!this.nodes[old]) {
       this.changed(this.events.nodeViewChanged(id))
+    } else {
+      this.changed(
+        this.events.nodeViewChanged(old),
+        this.events.nodeViewChanged(id)
+      )
     }
-    this.changed(
-      this.events.nodeViewChanged(old),
-      this.events.nodeViewChanged(id)
-    )
     return true
   },
 

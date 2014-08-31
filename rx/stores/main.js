@@ -46,7 +46,7 @@ function MainStore(options) {
 
   this.cmd = new Commandeger(
     this.changed.bind(this),
-    (id, vid) => this.viewActive('setActive', {id}, vid),
+    (id, vid) => this.viewAction('setActive', vid, id),
     this.pl,
     this._events
   )
@@ -109,8 +109,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }
   },
 
-  viewAction: function (name, args, id) {
-    return this._actions[id][name](args)
+  viewAction: function (name, id, ...args) {
+    return this._actions[id][name].apply(this._actions[id], args)
   },
 
   events: {

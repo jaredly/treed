@@ -16,10 +16,10 @@ module.exports = {
   store: {
     actions: {
       undo: function () {
-        this.undoCommands()
+        this.parent.cmd.undoCommands()
       },
       redo: function () {
-        this.redoCommands()
+        this.parent.cmd.redoCommands()
       },
     },
   }
