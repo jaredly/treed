@@ -35,7 +35,7 @@ function bindExtend(base, other) {
 function MainStore(options) {
   BaseStore.apply(this, arguments)
 
-  this.pl = options.pl
+  this.db = options.db
 
   this.views = {}
   this._actions = {}
@@ -47,7 +47,7 @@ function MainStore(options) {
   this.cmd = new Commandeger(
     this.changed.bind(this),
     (id, vid) => this.viewAction('setActive', vid, id),
-    this.pl,
+    this.db,
     this._events
   )
 }
@@ -60,8 +60,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     var id = this._nextViewId++
     this.views[id] = {
       id: id,
-      root: this.pl.root,
-      active: this.pl.root,
+      root: this.db.root,
+      active: this.db.root,
       selected: null,
       editPos: null,
       mode: 'normal',
@@ -69,7 +69,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     this._events[id] = extend({vid: id}, this.events)
     this._actions[id] = extend({
       view: this.views[id],
-      nodes: this.pl.nodes,
+      db: this.db,
       events: this._events[id],
       changed: this.changed.bind(this),
       parent: this,
@@ -82,9 +82,9 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
         })
     }, this.actions)
     this._getters[id] = extend({
-      parent: this,
       view: this.views[id],
-      nodes: this.pl.nodes,
+      parent: this,
+      db: this.db,
     }, this.getters)
 
     this.activeView = id
@@ -127,7 +127,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   // same deal as actions
   getters: {
     getNode: function (id) {
-      return this.nodes[id]
+      return this.db.nodes[id]
     },
 
     isActiveView: function () {

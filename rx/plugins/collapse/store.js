@@ -4,8 +4,8 @@ module.exports = {
     collapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (!this.nodes[id].children.length) {
-        var pid = this.nodes[id].parent
+      if (!this.db.nodes[id].children.length) {
+        var pid = this.db.nodes[id].parent
         if (pid !== this.view.root) {
           this.set(pid, 'collapsed', true)
           this.setActive(id)
@@ -19,7 +19,7 @@ module.exports = {
     expand: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (!this.nodes[id].children.length) {
+      if (!this.db.nodes[id].children.length) {
         return
       }
       this.set(id, 'collapsed', false)
@@ -29,14 +29,14 @@ module.exports = {
     toggleCollapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (!this.nodes[id].children.length) {
-        var pid = this.nodes[id].parent
+      if (!this.db.nodes[id].children.length) {
+        var pid = this.db.nodes[id].parent
         if (pid === this.view.root) return
         this.setActive(pid)
         this.set(pid, 'collapsed', true)
         return
       }
-      this.set(id, 'collapsed', !this.nodes[id].collapsed)
+      this.set(id, 'collapsed', !this.db.nodes[id].collapsed)
       this.setActive(id)
     },
   },

@@ -23,7 +23,7 @@ module.exports = {
   },
 
   setActive: function (id) {
-    if (!id || id === this.view.active || !this.nodes[id]) return
+    if (!id || id === this.view.active || !this.db.nodes[id]) return
     var old = this.view.active
     this.view.active = id
     if (this.view.id !== this.parent.activeView) {
@@ -32,7 +32,7 @@ module.exports = {
       this.changed(this.events.activeViewChanged())
     }
     if (this.view.mode === 'insert') this.view.editPos = 'end'
-    if (!this.nodes[old]) {
+    if (!this.db.nodes[old]) {
       this.changed(this.events.nodeViewChanged(id))
     } else {
       this.changed(
@@ -48,28 +48,28 @@ module.exports = {
   // would be a simplified one that doesn't know about collapsibility. Seems
   // like there would be some duplication
   goUp: function () {
-    this.setActive(movement.up(this.view.active, this.view.root, this.nodes))
+    this.setActive(movement.up(this.view.active, this.view.root, this.db.nodes))
   },
 
   goDown: function (editStart) {
-    this.setActive(movement.down(this.view.active, this.view.root, this.nodes))
+    this.setActive(movement.down(this.view.active, this.view.root, this.db.nodes))
     if (editStart) this.view.editPos = 'start'
   },
 
   goLeft: function () {
-    this.setActive(movement.left(this.view.active, this.view.root, this.nodes))
+    this.setActive(movement.left(this.view.active, this.view.root, this.db.nodes))
   },
 
   goRight: function () {
-    this.setActive(movement.right(this.view.active, this.view.root, this.nodes))
+    this.setActive(movement.right(this.view.active, this.view.root, this.db.nodes))
   },
 
   remove: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
-    var next = movement.down(id, this.view.root, this.nodes, true)
+    var next = movement.down(id, this.view.root, this.db.nodes, true)
     if (!next) {
-      next = movement.up(id, this.view.root, this.nodes)
+      next = movement.up(id, this.view.root, this.db.nodes)
     }
     this.view.active = next
     this.executeCommand('remove', {id})
@@ -78,7 +78,7 @@ module.exports = {
 
   indent: function (id) {
     id = id || this.view.active
-    var pos = movement.indent(id, this.view.root, this.nodes)
+    var pos = movement.indent(id, this.view.root, this.db.nodes)
     if (!pos) return
     this.executeCommand('move', {
       id,
@@ -89,7 +89,7 @@ module.exports = {
 
   dedent: function (id) {
     id = id || this.view.active
-    var pos = movement.dedent(id, this.view.root, this.nodes)
+    var pos = movement.dedent(id, this.view.root, this.db.nodes)
     if (!pos) return
     this.executeCommand('move', {
       id: id,
@@ -100,7 +100,7 @@ module.exports = {
 
   moveDown: function (id) {
     id = id || this.view.active
-    var pos = movement.below(id, this.view.root, this.nodes)
+    var pos = movement.below(id, this.view.root, this.db.nodes)
     if (!pos) return
     this.executeCommand('move', {
       id,
@@ -111,7 +111,7 @@ module.exports = {
 
   moveUp: function (id) {
     id = id || this.view.active
-    var pos = movement.above(id, this.view.root, this.nodes)
+    var pos = movement.above(id, this.view.root, this.db.nodes)
     if (!pos) return
     this.executeCommand('move', {
       id,
@@ -122,18 +122,18 @@ module.exports = {
 
   createBefore: function (id) {
     id = id || this.view.active
-    var node = this.nodes[id]
+    var node = this.db.nodes[id]
     if (id === this.view.root) return
     var cmd = this.executeCommand('create', {
       pid: node.parent,
-      ix: this.nodes[node.parent].children.indexOf(id),
+      ix: this.db.nodes[node.parent].children.indexOf(id),
     })
     this.edit(cmd.id)
   },
 
   createAfter: function (id) {
     id = id || this.view.active
-    var node = this.nodes[id]
+    var node = this.db.nodes[id]
       , pos
     if (id === this.view.root || (node.children.length && !node.collapsed)) {
       pos = {
@@ -143,7 +143,7 @@ module.exports = {
     } else {
       pos = {
         pid: node.parent,
-        ix: this.nodes[node.parent].children.indexOf(id) + 1,
+        ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
       }
     }
     var cmd = this.executeCommand('create', pos)

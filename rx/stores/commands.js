@@ -1,7 +1,7 @@
 
 /**
  * Commands get:
- * - pl
+ * - db
  * - events
  * Commands need access to:
  * - 
@@ -11,35 +11,35 @@ module.exports = {
 
   set: {
     args: ['id', 'attr', 'value'],
-    apply: function (pl, events) {
-      this.old = pl.nodes[this.id][this.attr]
-      pl.set(this.id, this.attr, this.value)
+    apply: function (db, events) {
+      this.old = db.nodes[this.id][this.attr]
+      db.set(this.id, this.attr, this.value)
       return events.nodeChanged(this.id)
     },
-    undo: function (pl, events) {
-      pl.set(this.id, this.attr, this.old)
+    undo: function (db, events) {
+      db.set(this.id, this.attr, this.old)
       return events.nodeChanged(this.id)
     },
   },
 
   batchSet: {
     args: ['attr', 'ids', 'values'],
-    apply: function (pl, events) {
-      this.old = this.ids.map((id) => pl.nodes[id][this.attr])
-      pl.batchSet(this.attr, this.ids, this.values)
+    apply: function (db, events) {
+      this.old = this.ids.map((id) => db.nodes[id][this.attr])
+      db.batchSet(this.attr, this.ids, this.values)
       return this.ids.map((id) => events.nodeChanged(id))
     },
-    undo: function (pl, events) {
-      pl.batchSet(this.attr, this.ids, this.old)
+    undo: function (db, events) {
+      db.batchSet(this.attr, this.ids, this.old)
       return this.ids.map((id) => events.nodeChanged(id))
     },
   },
 
   remove: {
     args: ['id'],
-    apply: function (pl, events) {
-      var node = pl.nodes[this.id]
-        , parent = pl.nodes[node.parent]
+    apply: function (db, events) {
+      var node = db.nodes[this.id]
+        , parent = db.nodes[node.parent]
         , children = parent.children.slice()
         , ix = children.indexOf(this.id)
       if (ix === -1) {
@@ -47,35 +47,35 @@ module.exports = {
       }
       this.saved = {node: node, ix: ix}
       children.splice(ix, 1)
-      pl.set(node.parent, 'children', children)
-      pl.remove(this.id)
+      db.set(node.parent, 'children', children)
+      db.remove(this.id)
       return events.nodeChanged(node.parent)
     },
-    undo: function (pl, events) {
+    undo: function (db, events) {
       var node = this.saved.node
-        , parent = pl.nodes[node.parent]
+        , parent = db.nodes[node.parent]
         , children = parent.children.slice()
         , ix = this.saved.ix
       children.splice(ix, 0, this.id)
-      pl.save(this.id, this.saved.node)
-      pl.set(node.parent, 'children', children)
+      db.save(this.id, this.saved.node)
+      db.set(node.parent, 'children', children)
       return events.nodeChanged(node.parent)
     },
   },
 
   move: {
     args: ['id', 'npid', 'nindex'],
-    apply: function (pl, events) {
-      this.opid = pl.nodes[this.id].parent
-      this.oindex = pl.removeChild(this.opid, this.id)
+    apply: function (db, events) {
+      this.opid = db.nodes[this.id].parent
+      this.oindex = db.removeChild(this.opid, this.id)
       if (this.oindex === -1) {
         throw new Error('node is not a child of its parent')
       }
 
-      pl.insertChild(this.npid, this.id, this.nindex)
-      pl.set(this.id, 'parent', this.npid)
-      if (pl.nodes[this.npid].collapsed) {
-        pl.set(this.npid, 'collapsed', false)
+      db.insertChild(this.npid, this.id, this.nindex)
+      db.set(this.id, 'parent', this.npid)
+      if (db.nodes[this.npid].collapsed) {
+        db.set(this.npid, 'collapsed', false)
         this.wasCollapsed = true
       }
       if (this.opid === this.npid) {
@@ -84,12 +84,12 @@ module.exports = {
       return ['node:' + this.opid, 'node:' + this.npid]
     },
 
-    undo: function (pl, events) {
-      pl.removeChild(this.npid, this.id)
-      pl.insertChild(this.opid, this.id, this.oindex)
-      pl.set(this.id, 'parent', this.opid)
+    undo: function (db, events) {
+      db.removeChild(this.npid, this.id)
+      db.insertChild(this.opid, this.id, this.oindex)
+      db.set(this.id, 'parent', this.opid)
       if (this.wasCollapsed) {
-        pl.set(this.npid, 'collapsed', true)
+        db.set(this.npid, 'collapsed', true)
       }
       if (this.opid === this.npid) {
         return 'node:' + this.npid
@@ -100,19 +100,19 @@ module.exports = {
 
   create: {
     args: ['pid', 'ix', 'content'],
-    apply: function (pl) {
-      this.id = pl.create(this.pid, this.ix, this.content)
+    apply: function (db) {
+      this.id = db.create(this.pid, this.ix, this.content)
       return 'node:' + this.pid
     },
-    undo: function (pl) {
-      pl.removeChild(this.pid, this.id)
-      this.saved = pl.nodes[this.id]
-      pl.remove(this.id)
+    undo: function (db) {
+      db.removeChild(this.pid, this.id)
+      this.saved = db.nodes[this.id]
+      db.remove(this.id)
       return 'node:' + this.pid
     },
-    redo: function (pl) {
-      pl.save(this.id, this.saved)
-      pl.insertChild(this.pid, this.id, this.ix)
+    redo: function (db) {
+      db.save(this.id, this.saved)
+      db.insertChild(this.pid, this.id, this.ix)
       return 'node:' + this.pid
     },
   },
