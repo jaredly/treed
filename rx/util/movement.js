@@ -28,6 +28,46 @@ module.exports = {
     }
   },
 
+  nextSibling: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+      , ch = nodes[pid].children
+      , ix = ch.indexOf(id)
+    if (ix === ch.length - 1) return
+    return ch[ix + 1]
+  },
+
+  prevSibling: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+      , ch = nodes[pid].children
+      , ix = ch.indexOf(id)
+    if (ix === 0) return
+    return ch[ix - 1]
+  },
+
+  firstSibling: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+    return nodes[pid].children[0]
+  },
+
+  lastSibling: function (id, root, nodes) {
+    if (id === root) return
+    var pid = nodes[id].parent
+    return nodes[pid].children[nodes[pid].children.length - 1]
+  },
+
+  bottom: function (root, nodes) {
+    var node = nodes[root]
+    if (!node.children.length) return
+    node = nodes[node.children[node.children.length - 1]]
+    while (node.children.length && !node.collapsed) {
+      node = nodes[node.children[node.children.length - 1]]
+    }
+    return node.id
+  },
+
   up: function (active, root, nodes) {
     if (active === root) return false
     var pid = nodes[active].parent

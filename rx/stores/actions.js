@@ -210,6 +210,70 @@ module.exports = {
   },
 
   toggleSelectionEdge: TODO,
+
+  // just for the tree view, pretty much
+  goToFirstSibling: function (id) {
+    id = id || this.view.active
+    var first = movement.firstSibling(id, this.view.root, this.db.nodes)
+    if (first === id) {
+      first = movement.up(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(first)
+  },
+
+  moveToFirstSibling: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var pid = this.db.nodes[id].parent
+      , ch = this.db.nodes[pid].children
+      , cix = ch.indexOf(id)
+    if (cix === 0) return
+    this.executeCommand('move', {
+      id,
+      nindex: 0,
+    })
+  },
+
+  moveToLastSibling: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var pid = this.db.nodes[id].parent
+      , ch = this.db.nodes[pid].children
+      , cix = ch.indexOf(id)
+    if (cix === ch.length - 1) return
+    this.executeCommand('move', {
+      id,
+      nindex: ch.length,
+    })
+  },
+
+  goToLastSibling: function (id) {
+    id = id || this.view.active
+    var last = movement.lastSibling(id, this.view.root, this.db.nodes)
+    if (last === id) {
+      last = movement.down(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(last)
+  },
+
+  goToBottom: function () {
+    this.setActive(movement.bottom(this.view.root, this.db.nodes))
+  },
+
+  goToTop: function () {
+    this.setActive(this.view.root)
+  },
+
+  goToNextSibling: function (id) {
+    id = id || this.view.active
+    this.setActive(movement.nextSibling(id, this.view.root, this.db.nodes))
+  },
+
+  goToPreviousSibling: function (id) {
+    id = id || this.view.active
+    this.setActive(movement.prevSibling(id, this.view.root, this.db.nodes))
+  },
+
 }
 
 // TODO

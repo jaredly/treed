@@ -72,6 +72,13 @@ module.exports = {
         throw new Error('node is not a child of its parent')
       }
 
+      if (!this.npid) {
+        this.npid = this.opid
+        if (this.oindex < this.nindex) {
+          this.nindex -= 1
+        }
+      }
+
       db.insertChild(this.npid, this.id, this.nindex)
       db.set(this.id, 'parent', this.npid)
       if (db.nodes[this.npid].collapsed) {

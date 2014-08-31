@@ -67,7 +67,7 @@ module.exports = {
   'go to bottom': {
     normal: 'shift+g',
   },
-  'got to top': {
+  'go to top': {
     normal: 'g g',
   },
   'go up': {

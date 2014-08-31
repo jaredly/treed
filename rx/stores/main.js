@@ -20,18 +20,6 @@ var Commandeger = require('./commandeger')
 
 module.exports = MainStore
 
-/** don't need this atm actually
-function bindExtend(base, other) {
-  for (var name in other) {
-    if ('function' !== typeof other[name]) {
-      base[name] = other[name]
-      continue
-    }
-    base[name] = other[name].bind(base)
-  }
-}
-*/
-
 function MainStore(options) {
   BaseStore.apply(this, arguments)
 
