@@ -25,7 +25,7 @@ module.exports = {
   },
   'normal mode': {
     insert: 'escape',
-    visual: 'escape',
+    visual: 'escape, v, shift+v',
   },
   // switch to insert mode
   'edit': {
@@ -77,6 +77,14 @@ module.exports = {
     normal: 'down, j',
   },
 
+  // visual mode stuff
+  'extend selection down': {
+    visual: 'down, j',
+  },
+  'extend selection up': {
+    visual: 'up, k',
+  },
+
   // TODO allow visual mode to span parents/children?
   'go left': {
     normal: 'left, h',
@@ -86,11 +94,9 @@ module.exports = {
   },
   'go to next sibling': {
     normal: 'alt+j, alt+down',
-    visual: 'down, j',
   },
   'go to previous sibling': {
     normal: 'alt+k, alt+up',
-    visual: 'up, k',
   },
 
   // move stuff

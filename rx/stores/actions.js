@@ -64,6 +64,37 @@ module.exports = {
     this.setActive(movement.right(this.view.active, this.view.root, this.db.nodes))
   },
 
+  // Selection mode
+  extendSelectionUp: function () {
+    if (this.view.active === this.view.root) return
+    var pid = this.db.nodes[this.view.active].parent
+      , parent = this.db.nodes[pid]
+      , i = parent.children.indexOf(this.view.active)
+    if (i === 0) return
+    var prev = parent.children[i-1]
+    if (this.view.selection[0] === this.view.active) {
+      this.view.selection.unshift(prev)
+    } else {
+      this.view.selection.pop()
+    }
+    this.setActive(prev)
+  },
+
+  extendSelectionDown: function () {
+    if (this.view.active === this.view.root) return
+    var pid = this.db.nodes[this.view.active].parent
+      , parent = this.db.nodes[pid]
+      , i = parent.children.indexOf(this.view.active)
+    if (i === parent.children.length - 1) return
+    var next = parent.children[i+1]
+    if (this.view.selection[this.view.selection.length - 1] === this.view.active) {
+      this.view.selection.push(next)
+    } else {
+      this.view.selection.shift()
+    }
+    this.setActive(next)
+  },
+
   remove: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
@@ -156,16 +187,19 @@ module.exports = {
   pasteAbove: TODO,
 
   visualMode: function () {
-    this.view.mode = 'visual'
-    this.view.selection = [this.active]
-    this.changed(
-      this.events.nodeViewChanged(this.view.active), 
-      this.events.modeChanged(this.view.id)
-    )
+    this.view.selection = [this.view.active]
+    this.changed(this.events.nodeViewChanged(this.view.active))
+    this.setMode('visual')
   },
 
   setMode: function (mode) {
     if (this.view.mode === mode) return
+    if (this.view.mode === 'visual') {
+      this.changed(
+        this.view.selection.map((id) => this.events.nodeViewChanged(id))
+      )
+      this.view.selection = null
+    }
     this.view.mode = mode
     this.changed(this.events.modeChanged(this.view.id))
   },

@@ -55,6 +55,9 @@ BaseStore.prototype = {
 
   changed: function () {
     var what = [].slice.call(arguments)
+    if (what.length === 1 && Array.isArray(what[0])) {
+      what = what[0]
+    }
     if (this._changed) {
       this._changed = this._changed.concat(what)
     } else {
