@@ -126,6 +126,30 @@ module.exports = {
     })
   },
 
+  indentMany: function () {
+    if (this.view.mode !== 'visual') return
+    var ids = this.view.selection
+    var pos = movement.indent(ids[0], this.view.root, this.db.nodes)
+    if (!pos) return
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.npid,
+      nindex: pos.nindex,
+    })
+  },
+
+  dedentMany: function () {
+    if (this.view.mode !== 'visual') return
+    var ids = this.view.selection
+    var pos = movement.dedent(ids[0], this.view.root, this.db.nodes)
+    if (!pos) return
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.npid,
+      nindex: pos.nindex,
+    })
+  },
+
   dedent: function (id) {
     id = id || this.view.active
     var pos = movement.dedent(id, this.view.root, this.db.nodes)

@@ -92,11 +92,12 @@ Db.prototype = {
   },
 
   // returns the old index
-  removeChild: function (pid, id) {
+  removeChild: function (pid, id, count) {
+    count = count || 1
     var ix = this.nodes[pid].children.indexOf(id)
     if (ix === -1) return -1
     var ch = this.nodes[pid].children.slice()
-    ch.splice(ix, 1)
+    ch.splice(ix, count)
     this.set(pid, 'children', ch)
     return ix
   },
@@ -108,7 +109,14 @@ Db.prototype = {
     return ix
   },
 
-  batchSet: function (attr, ids, values) {
+  insertChildren: function (pid, ids, ix) {
+    var ch = this.nodes[pid].children.slice()
+    ch.splice.apply(ch, [ix, 0].concat(ids))
+    this.set(pid, 'children', ch)
+    return ix
+  },
+
+  setMany: function (attr, ids, values) {
     ids.forEach((id, i) => {
       this.nodes[id][attr] = values[i]
     })

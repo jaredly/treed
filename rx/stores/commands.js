@@ -91,9 +91,60 @@ module.exports = {
         this.wasCollapsed = true
       }
       if (this.opid === this.npid) {
-        return 'node:' + this.npid
+        return events.nodeChanged(this.npid)
       }
-      return ['node:' + this.opid, 'node:' + this.npid]
+      return [
+        events.nodeChanged(this.opid),
+        events.nodeChanged(this.npid)
+      ]
+    },
+
+    undo: function (db, events) {
+      db.removeChild(this.npid, this.id)
+      db.insertChild(this.opid, this.id, this.oindex)
+      db.set(this.id, 'parent', this.opid)
+      if (this.wasCollapsed) {
+        db.set(this.npid, 'collapsed', true)
+      }
+      if (this.opid === this.npid) {
+        return events.nodeChanged(this.npid)
+      }
+      return [
+        events.nodeChanged(this.opid),
+        events.nodeChanged(this.npid)
+      ]
+    },
+  },
+
+  moveMany: {
+    args: ['ids', 'npid', 'nindex'],
+    apply: function (db, events) {
+      this.opid = db.nodes[this.ids[0]].parent
+      this.oindex = db.removeChild(this.opid, this.ids[0], this.ids.length)
+      if (this.oindex === -1) {
+        throw new Error('node is not a child of its parent')
+      }
+
+      if (!this.npid) {
+        this.npid = this.opid
+        if (this.oindex < this.nindex) {
+          this.nindex -= 1
+        }
+      }
+
+      db.insertChildren(this.npid, this.ids, this.nindex)
+      db.setMany('parent', this.ids, this.ids.map(() => this.npid))
+      if (db.nodes[this.npid].collapsed) {
+        db.set(this.npid, 'collapsed', false)
+        this.wasCollapsed = true
+      }
+      if (this.opid === this.npid) {
+        return events.nodeChanged(this.npid)
+      }
+      return [
+        events.nodeChanged(this.opid),
+        events.nodeChanged(this.npid)
+      ]
     },
 
     undo: function (db, events) {
