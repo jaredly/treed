@@ -1,5 +1,6 @@
 
 module.exports = {
+  /*
   'cut': {
     insert: 'ctrl+x',
     normal: 'd d, shift+d, ctrl+x',
@@ -18,6 +19,7 @@ module.exports = {
   'paste above': {
     normal: 'shift+p, ctrl+shift+v',
   },
+  */
 
   // switch modes
   'visual mode': {
@@ -40,7 +42,7 @@ module.exports = {
   },
   'remove': {
     normal: 'd d, shift+d',
-    visual: 'd d, shift+d',
+    visual: 'd, shift+d',
   },
 
   'toggle selection edge': {

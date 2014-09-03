@@ -83,6 +83,14 @@ Db.prototype = {
     this.pl.remove('node', id)
   },
 
+  removeMany: function (ids) {
+    ids.forEach(this.remove.bind(this))
+  },
+
+  saveMany: function (nodes) {
+    nodes.forEach((node) => this.save(node.id, node))
+  },
+
   // returns the old index
   removeChild: function (pid, id) {
     var ix = this.nodes[pid].children.indexOf(id)

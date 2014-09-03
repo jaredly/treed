@@ -98,12 +98,20 @@ module.exports = {
   remove: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
-    var next = movement.down(id, this.view.root, this.db.nodes, true)
+    var next, ids
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+      next = movement.down(ids[ids.length - 1], this.view.root, this.db.nodes, true)
+      this.setMode('normal', true)
+    } else {
+      ids = [id]
+      next = movement.down(id, this.view.root, this.db.nodes, true)
+    }
     if (!next) {
       next = movement.up(id, this.view.root, this.db.nodes)
     }
     this.view.active = next
-    this.executeCommand('remove', {id})
+    this.executeCommand('remove', {ids: ids})
     this.changed(this.events.nodeChanged(next))
   },
 
@@ -192,12 +200,14 @@ module.exports = {
     this.setMode('visual')
   },
 
-  setMode: function (mode) {
+  setMode: function (mode, quiet) {
     if (this.view.mode === mode) return
     if (this.view.mode === 'visual') {
-      this.changed(
-        this.view.selection.map((id) => this.events.nodeViewChanged(id))
-      )
+      if (!quiet) {
+        this.changed(
+          this.view.selection.map((id) => this.events.nodeViewChanged(id))
+        )
+      }
       this.view.selection = null
     }
     this.view.mode = mode

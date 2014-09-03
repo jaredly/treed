@@ -36,28 +36,33 @@ module.exports = {
   },
 
   remove: {
-    args: ['id'],
+    args: ['ids'],
     apply: function (db, events) {
-      var node = db.nodes[this.id]
+      var node = db.nodes[this.ids[0]]
         , parent = db.nodes[node.parent]
         , children = parent.children.slice()
-        , ix = children.indexOf(this.id)
+        , ix = children.indexOf(this.ids[0])
       if (ix === -1) {
         throw new Error('node is not a child of its parent')
       }
-      this.saved = {node: node, ix: ix}
-      children.splice(ix, 1)
+      // TODO: this assumes that ids are contiguous children. I think I can
+      // rely on that, but I should be careful.
+      this.saved = {
+        nodes: this.ids.map((id) => db.nodes[id]),
+        ix: ix
+      }
+      children.splice(ix, this.ids.length)
       db.set(node.parent, 'children', children)
-      db.remove(this.id)
+      db.removeMany(this.ids)
       return events.nodeChanged(node.parent)
     },
     undo: function (db, events) {
-      var node = this.saved.node
+      var node = this.saved.nodes[0]
         , parent = db.nodes[node.parent]
         , children = parent.children.slice()
         , ix = this.saved.ix
-      children.splice(ix, 0, this.id)
-      db.save(this.id, this.saved.node)
+      children.splice.apply(children, [ix, 0].concat(this.ids))
+      db.saveMany(this.saved.nodes)
       db.set(node.parent, 'children', children)
       return events.nodeChanged(node.parent)
     },
