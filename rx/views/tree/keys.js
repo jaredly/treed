@@ -1,5 +1,6 @@
 
 module.exports = {
+  /*
   'cut': {
     insert: 'ctrl+x',
     normal: 'd d, shift+d, ctrl+x',
@@ -18,6 +19,7 @@ module.exports = {
   'paste above': {
     normal: 'shift+p, ctrl+shift+v',
   },
+  */
 
   // switch modes
   'visual mode': {
@@ -25,7 +27,7 @@ module.exports = {
   },
   'normal mode': {
     insert: 'escape',
-    visual: 'escape',
+    visual: 'escape, v, shift+v',
   },
   // switch to insert mode
   'edit': {
@@ -40,7 +42,7 @@ module.exports = {
   },
   'remove': {
     normal: 'd d, shift+d',
-    visual: 'd d, shift+d',
+    visual: 'd, shift+d',
   },
 
   'toggle selection edge': {
@@ -67,7 +69,7 @@ module.exports = {
   'go to bottom': {
     normal: 'shift+g',
   },
-  'got to top': {
+  'go to top': {
     normal: 'g g',
   },
   'go up': {
@@ -75,6 +77,14 @@ module.exports = {
   },
   'go down': {
     normal: 'down, j',
+  },
+
+  // visual mode stuff
+  'extend selection down': {
+    visual: 'down, j',
+  },
+  'extend selection up': {
+    visual: 'up, k',
   },
 
   // TODO allow visual mode to span parents/children?
@@ -86,20 +96,22 @@ module.exports = {
   },
   'go to next sibling': {
     normal: 'alt+j, alt+down',
-    visual: 'down, j',
   },
   'go to previous sibling': {
     normal: 'alt+k, alt+up',
-    visual: 'up, k',
   },
 
   // move stuff
   'indent': {
     normal: 'tab, shift+alt+l, shift+alt+right',
+  },
+  'indent many': {
     visual: 'tab, shift+alt+l, shift+alt+right',
   },
   'dedent': {
     normal: 'shift+tab, shift+alt+h, shift+alt+left',
+  },
+  'dedent many': {
     visual: 'shift+tab, shift+alt+h, shift+alt+left',
   },
 

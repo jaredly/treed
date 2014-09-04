@@ -56,7 +56,7 @@ function initStore(plugins, options, done) {
 
     var store = new MainStore({
       plugins: pluginType(plugins, 'store'),
-      pl: db
+      db: db
     })
     done(store)
   })

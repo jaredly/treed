@@ -8,9 +8,9 @@ module.exports = {
       this.changed(this.events.rootChanged())
     },
     rebaseUp: function () {
-      if (this.view.root === this.parent.pl.root) return
+      if (this.view.root === this.db.root) return
       this.setActive(this.view.root)
-      this.view.root = this.nodes[this.view.root].parent
+      this.view.root = this.db.nodes[this.view.root].parent
       this.changed(this.events.rootChanged())
     },
   },
@@ -18,16 +18,16 @@ module.exports = {
   extend: {
     getPedigree: function (id, last) {
       var items = []
-      var node = this.nodes[id]
+      var node = this.db.nodes[id]
       if (!last) {
-        node = this.nodes[node.parent]
+        node = this.db.nodes[node.parent]
       }
       while (node) {
         items.push({
           id: node.id,
           content: node.content
         })
-        node = this.nodes[node.parent]
+        node = this.db.nodes[node.parent]
       }
     },
   },

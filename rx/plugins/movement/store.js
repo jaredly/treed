@@ -13,7 +13,7 @@ module.exports = {
 
     doneMoving: function (pid, index) {
       if (!this.moving) return // TODO error?
-      var opid = this.nodes[this.moving].parent
+      var opid = this.db.nodes[this.moving].parent
       this.executeCommand('move', {
         id: this.moving,
         npid: pid,

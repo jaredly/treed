@@ -12,9 +12,9 @@ module.exports = {
     toggleDone: function () {
       if (this.view.mode === 'visual') {
         this.batchSet('done', this.view.selected,
-                              this.view.selected.map((id) => !this.nodes[id].done))
+                              this.view.selected.map((id) => !this.db.nodes[id].done))
       } else {
-        var done = this.nodes[this.view.active].done
+        var done = this.db.nodes[this.view.active].done
         this.set(this.view.active, 'done', !done)
         this.goDown()
       }

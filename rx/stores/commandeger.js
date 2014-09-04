@@ -4,16 +4,16 @@ module.exports = Commandeger
 /**
  * Things we need
  * - view
- * - pl
+ * - db
  */
 
-function Commandeger(changed, setActive, pl, events) {
+function Commandeger(changed, setActive, db, events) {
   this.history = []
   this.histpos = 0
   this.changed = changed
   this.setActive = setActive
   this.events = events
-  this.pl = pl
+  this.db = db
 }
 
 Commandeger.prototype = {
@@ -74,7 +74,7 @@ Commandeger.prototype = {
   },
 
   doCommand: function (command) {
-    var changed = this.commands[command.cmd].apply.call(command.state, this.pl, this.events[command.view])
+    var changed = this.commands[command.cmd].apply.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
@@ -82,7 +82,7 @@ Commandeger.prototype = {
   },
 
   undoCommand: function (command) {
-    var changed = this.commands[command.cmd].undo.call(command.state, this.pl, this.events[command.view])
+    var changed = this.commands[command.cmd].undo.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
@@ -93,7 +93,7 @@ Commandeger.prototype = {
   redoCommand: function (command) {
     var cmd = this.commands[command.cmd]
     var action = cmd.redo || cmd.apply
-    var changed = action.call(command.state, this.pl, this.events[command.view])
+    var changed = action.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
