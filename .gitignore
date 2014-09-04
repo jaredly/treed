@@ -4,3 +4,5 @@
 /demo/tpl/demo-bundle.js
 /build
 *.swo
+rx/demo/dual/index.css
+rx/demo/dual/index.js
