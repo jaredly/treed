@@ -34,6 +34,13 @@ var SimpleBody = React.createClass({
     }
   },
 
+  getDefaultProps: function () {
+    return {
+      renderer: null,
+      editor: null,
+    }
+  },
+
   getInitialState: function () {
     return {
       content: this.props.node.content
@@ -120,24 +127,37 @@ var SimpleBody = React.createClass({
     }
   },
 
+  editor: function () {
+    if (!this.props.editor) {
+      return <Textarea
+        ref="text"
+        value={this.state.content}
+        onChange={this._onChange}
+        onBlur={this._onBlur}
+        onKeyDown={this._onKeyDown}/>
+
+    }
+    return this.props.editor.call(this)
+  },
+
+  renderer: function () {
+    if (!this.props.renderer) {
+      return <span className="treed_body_rendered"
+        dangerouslySetInnerHTML={{
+          __html: this.props.node.content ?
+                    marked(this.props.node.content + '') : ''
+        }}/>
+    }
+    return this.props.renderer.call(this)
+  },
+
   render: function () {
     var className = cx({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
     return <div className={className} onClick={this._onClick}>
-      {this.props.editState ?
-        <Textarea
-          ref="text"
-          value={this.state.content}
-          onChange={this._onChange}
-          onBlur={this._onBlur}
-          onKeyDown={this._onKeyDown}/>
-        : <span className="treed_body_rendered"
-            dangerouslySetInnerHTML={{
-              __html: this.props.node.content ? marked(this.props.node.content + '') : ''
-            }}/>
-      }
+      {this.props.editState ? this.editor() : this.renderer()}
     </div>
   }
 

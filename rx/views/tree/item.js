@@ -4,6 +4,7 @@ var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
+var SimpleBody = require('../body/simple')
 
 var Listener = require('../../listener')
 
@@ -109,8 +110,10 @@ var TreeItem = React.createClass({
 
   body: function () {
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
-    return body({
+    return SimpleBody({
       ref: 'body',
+      editor: body.editor,
+      renderer: body.renderer,
       node: this.state.node,
       keys: this.props.keys,
       isActive: this.state.isActive, // do we need this?

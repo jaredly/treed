@@ -47,12 +47,12 @@ var TreeView = React.createClass({
     var className = 'list list-' + this.state.mode
     if (this.state.isActive) className += ' list-active'
     var bodies = {
-      default: SimpleBody
+      default: {editor: null, renderer: null}
     }
-    if (this.props.plugins) {
-      for (var i=0; i<this.props.plugins.length; i++) {
-        if (this.props.plugins[i].bodies) {
-          bodies = extend(bodies, this.props.plugins[i].bodies)
+    if (this.props.nodePlugins) {
+      for (var i=0; i<this.props.nodePlugins.length; i++) {
+        if (this.props.nodePlugins[i].bodies) {
+          bodies = extend(bodies, this.props.nodePlugins[i].bodies)
         }
       }
     }
