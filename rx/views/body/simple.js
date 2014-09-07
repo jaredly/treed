@@ -4,6 +4,23 @@ var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
+var marked = require('marked')
+
+var renderer = new marked.Renderer()
+renderer.link = function (href, title, text) {
+  return '<a href="' + href + '" target="_blank" title="' + title + '">' + text + '</a>';
+}
+marked.setOptions({
+  gfm: true,
+  sanitize: true,
+  tables: true,
+  breaks: true,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: true,
+  renderer: renderer
+})
 
 var Textarea = require('./textarea-grow')
 
@@ -116,7 +133,10 @@ var SimpleBody = React.createClass({
           onChange={this._onChange}
           onBlur={this._onBlur}
           onKeyDown={this._onKeyDown}/>
-        : <span className="treed_body_rendered">{this.props.node.content}</span>
+        : <span className="treed_body_rendered"
+            dangerouslySetInnerHTML={{
+              __html: this.props.node.content ? marked(this.props.node.content + '') : ''
+            }}/>
       }
     </div>
   }

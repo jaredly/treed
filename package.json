@@ -29,7 +29,8 @@
     "reactify": "^0.14.0",
     "superagent-browserify": "0.0.2",
     "jstransform": "~6.1.0",
-    "envify": "~3.0.0"
+    "envify": "~3.0.0",
+    "marked": "~0.3.2"
   },
   "devDependencies": {
     "reactify": "~0.13.1",
@@ -37,7 +38,16 @@
   },
   "browserify": {
     "transform": [
-      ["reactify", {"es6": true, "everything": true, "visitors": ["jstransform/visitors/es6-destructuring-visitors"]}]
+      [
+        "reactify",
+        {
+          "es6": true,
+          "everything": true,
+          "visitors": [
+            "jstransform/visitors/es6-destructuring-visitors"
+          ]
+        }
+      ]
     ]
   },
   "atomify": {
