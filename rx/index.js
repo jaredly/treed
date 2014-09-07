@@ -66,11 +66,12 @@ function initView(el, store, plugins, options, done) {
   options = extend({
     View: TreeView,
     defaultKeys: keys,
+    React: React,
   }, options)
 
   var storeView = store.registerView()
 
-  React.renderComponent(options.View({
+  options.React.renderComponent(options.View({
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
     keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys')),

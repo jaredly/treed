@@ -11,8 +11,8 @@ function slideDown(el, speed) {
   el.style.transition = 'none'
   el.style.height = 'auto'
   var h = window.getComputedStyle(el).height
-  el.style.height = curh
   if (curh === h) return
+  el.style.height = curh
   el.style.overflow = 'hidden'
   var dur = parseInt(h, 10) * speed / 100
   // trigger reflow

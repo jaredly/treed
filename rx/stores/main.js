@@ -26,6 +26,7 @@ function MainStore(options) {
   this.db = options.db
 
   this.views = {}
+  this._globals = {}
   this._actions = {}
   this._events = {}
   this._getters = {}
@@ -61,6 +62,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       events: this._events[id],
       changed: this.changed.bind(this),
       parent: this,
+      globals: this._globals,
       executeCommand: (cmd, state) =>
         this.cmd.execute({
           cmd,

@@ -104,12 +104,14 @@ module.exports = {
   // move stuff
   'indent': {
     normal: 'tab, shift+alt+l, shift+alt+right',
+    insert: 'tab, shift+alt+l, shift+alt+right',
   },
   'indent many': {
     visual: 'tab, shift+alt+l, shift+alt+right',
   },
   'dedent': {
     normal: 'shift+tab, shift+alt+h, shift+alt+left',
+    insert: 'shift+tab, shift+alt+h, shift+alt+left',
   },
   'dedent many': {
     visual: 'shift+tab, shift+alt+h, shift+alt+left',

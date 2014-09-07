@@ -4,6 +4,7 @@ var React = require('react/addons')
 var cx = React.addons.classSet
 var PT = React.PropTypes
 
+var extend = require('../../util/extend')
 var Listener = require('../../listener')
 var TreeItem = require('./item')
 var SimpleBody = require('../body/simple')
@@ -22,7 +23,6 @@ var TreeView = React.createClass({
   propTypes: {
     plugins: PT.array,
     nodePlugins: PT.array,
-    body: PT.func,
 
     keys: PT.object,
   },
@@ -31,12 +31,6 @@ var TreeView = React.createClass({
     var e = this.props.store.events
     this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
     window.addEventListener('keydown', this._onKeyDown)
-  },
-
-  getDefaultProps: function () {
-    return {
-      body: SimpleBody
-    }
   },
 
   _onKeyDown: function (e) {
@@ -52,12 +46,22 @@ var TreeView = React.createClass({
   render: function () {
     var className = 'list list-' + this.state.mode
     if (this.state.isActive) className += ' list-active'
+    var bodies = {
+      default: SimpleBody
+    }
+    if (this.props.plugins) {
+      for (var i=0; i<this.props.plugins.length; i++) {
+        if (this.props.plugins[i].bodies) {
+          bodies = extend(bodies, this.props.plugins[i].bodies)
+        }
+      }
+    }
     return <div className={className}>
       {TreeItem({
         store: this.props.store,
         plugins: this.props.nodePlugins,
         keys: this.props.keys.insert,
-        body: this.props.body,
+        bodies: bodies,
         isRoot: true,
         id: this.state.root
       })}

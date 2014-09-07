@@ -9,6 +9,22 @@
 
 module.exports = {
 
+  update: {
+    args: ['id', 'update'],
+    apply: function (db, events) {
+      this.old = {}
+      for (var name in this.update) {
+        this.old[name] = db.nodes[this.id][name]
+      }
+      db.update(this.id, this.update)
+      return events.nodeChanged(this.id)
+    },
+    undo: function (db, events) {
+      db.update(this.id, this.old)
+      return events.nodeChanged(this.id)
+    },
+  },
+
   set: {
     args: ['id', 'attr', 'value'],
     apply: function (db, events) {
@@ -162,9 +178,9 @@ module.exports = {
   },
 
   create: {
-    args: ['pid', 'ix', 'content'],
+    args: ['pid', 'ix', 'type', 'content'],
     apply: function (db) {
-      this.id = db.create(this.pid, this.ix, this.content)
+      this.id = db.create(this.pid, this.ix, this.content, this.type)
       return 'node:' + this.pid
     },
     undo: function (db) {

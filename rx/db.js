@@ -25,11 +25,12 @@ Db.prototype = {
     })
   },
 
-  create: function (pid, ix, content) {
+  create: function (pid, ix, content, type) {
     var id = uuid()
     this.save(id, {
       id: id,
       content: content || '',
+      type: type || 'base',
       children: [],
       parent: pid,
     })
@@ -40,12 +41,17 @@ Db.prototype = {
   dump: function (pid, children) {
     var ids = children.map((child) => {
       var id = uuid()
-      this.save(id, {
+      var node = {
         id: id,
         content: child.content,
         children: [],
         parent: pid,
-      })
+      }
+      for (var name in child) {
+        if (['content', 'children'].indexOf(name) !== -1) continue;
+        node[name] = child[name]
+      }
+      this.save(id, node)
       if (child.children && child.children.length) {
         this.dump(id, child.children)
       }

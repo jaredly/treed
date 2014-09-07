@@ -18,7 +18,8 @@ module.exports = {
   dedent: function (id, root, nodes) {
     if (id === root) return
     var pid = nodes[id].parent
-      , npid = nodes[pid].parent
+    if (pid === root) return
+    var npid = nodes[pid].parent
       , ix = nodes[npid].children.indexOf(pid)
     if (pid === root) return
     return {

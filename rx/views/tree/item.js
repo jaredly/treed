@@ -60,7 +60,7 @@ var TreeItem = React.createClass({
   propTypes: {
     id: PT.string.isRequired,
     plugins: PT.array,
-    body: PT.oneOfType([PT.object, PT.func]),
+    bodies: PT.object,
     keys: PT.func,
     isRoot: PT.bool,
   },
@@ -108,7 +108,8 @@ var TreeItem = React.createClass({
   },
 
   body: function () {
-    return this.props.body({
+    var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
+    return body({
       ref: 'body',
       node: this.state.node,
       keys: this.props.keys,
@@ -139,19 +140,21 @@ var TreeItem = React.createClass({
         {this.body()}
         {this.fromMix('right')}
       </div>
+      {this.fromMix('prechildren')}
+      {this.state.node.children.length ?
       <div className='list_item_children' ref='children'>
         {!this.state.lazyChildren && this.state.node.children.map((id, i) => 
           TreeItem({
             plugins: this.props.plugins,
             store: this.props.store,
-            body: this.props.body,
+            bodies: this.props.bodies,
             keys: this.props.keys,
             index: i,
             key: id,
             id: id,
           })
         )}
-      </div>
+      </div> : null}
       {this.fromMix('bottom')}
     </div>
   }

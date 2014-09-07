@@ -14,6 +14,10 @@ module.exports = {
     this.executeCommand('set', {id, attr, value})
   },
 
+  update: function (id, update) {
+    this.executeCommand('update', {id, update})
+  },
+
   batchSet: function (attr, ids, values) {
     this.executeCommand('batchSet', {ids: ids, attr: attr, values: values})
   },
@@ -119,11 +123,19 @@ module.exports = {
     id = id || this.view.active
     var pos = movement.indent(id, this.view.root, this.db.nodes)
     if (!pos) return
+    var wasEditing = false
+    if (this.view.mode === 'insert') {
+      document.activeElement.blur()
+      wasEditing = true
+    }
     this.executeCommand('move', {
       id,
       npid: pos.npid,
       nindex: pos.nindex,
     })
+    if (wasEditing) {
+      this.edit()
+    }
   },
 
   indentMany: function () {
@@ -154,11 +166,19 @@ module.exports = {
     id = id || this.view.active
     var pos = movement.dedent(id, this.view.root, this.db.nodes)
     if (!pos) return
+    var wasEditing = false
+    if (this.view.mode === 'insert') {
+      document.activeElement.blur()
+      wasEditing = true
+    }
     this.executeCommand('move', {
       id: id,
       npid: pos.npid,
       nindex: pos.nindex,
     })
+    if (wasEditing) {
+      this.edit()
+    }
   },
 
   moveDown: function (id) {
@@ -189,6 +209,7 @@ module.exports = {
     if (id === this.view.root) return
     var cmd = this.executeCommand('create', {
       pid: node.parent,
+      type: node.type,
       ix: this.db.nodes[node.parent].children.indexOf(id),
     })
     this.edit(cmd.id)
@@ -201,11 +222,13 @@ module.exports = {
     if (id === this.view.root || (node.children.length && !node.collapsed)) {
       pos = {
         pid: id,
+        type: node.type,
         ix: 0
       }
     } else {
       pos = {
         pid: node.parent,
+        type: node.type,
         ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
       }
     }

@@ -104,9 +104,11 @@ var SimpleBody = React.createClass({
   },
 
   render: function () {
-    return <div className={cx({
+    var className = cx({
       'treed_body': true
-    })} onClick={this._onClick}>
+    })
+    className += ' treed_body-type-' + this.props.node.type
+    return <div className={className} onClick={this._onClick}>
       {this.props.editState ?
         <Textarea
           ref="text"

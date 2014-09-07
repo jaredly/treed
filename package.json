@@ -37,7 +37,7 @@
   },
   "browserify": {
     "transform": [
-      "reactify"
+      ["reactify", {"es6": true, "everything": true, "visitors": ["jstransform/visitors/es6-destructuring-visitors"]}]
     ]
   },
   "atomify": {
