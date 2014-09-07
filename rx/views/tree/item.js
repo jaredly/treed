@@ -87,12 +87,14 @@ var TreeItem = React.createClass({
     if (this.state.isActive && this.state.isActiveView && !prevState.isActive) {
       ensureInView(this.refs.body.getDOMNode())
     }
-    // DEBUG STUFF
-    var n = this.getDOMNode()
-    n.style.outline = '1px solid red'
-    setTimeout(function () {
-      n.style.outline = ''
-    }, 200)
+    if (window.DEBUG_UPDATE) {
+      // DEBUG STUFF
+      var n = this.getDOMNode()
+      n.style.outline = '1px solid red'
+      setTimeout(function () {
+        n.style.outline = ''
+      }, 200)
+    }
   },
   // **/
 
