@@ -5,8 +5,9 @@ module.exports = {
 }
 
 // speed: time to slide 100px
-function slideDown(el, speed) {
+function slideDown(el, speed, maxtime) {
   speed = speed || .2
+  maxtime = maxtime || 1
   var curh = window.getComputedStyle(el).height
   el.style.transition = 'none'
   el.style.height = 'auto'
@@ -15,6 +16,7 @@ function slideDown(el, speed) {
   el.style.height = curh
   el.style.overflow = 'hidden'
   var dur = parseInt(h, 10) * speed / 100
+  if (dur > maxtime) dur = maxtime
   // trigger reflow
   window.getComputedStyle(el).height
   el.style.transition = 'height ' + dur + 's ease'
@@ -27,13 +29,15 @@ function slideDown(el, speed) {
 }
 
 // speed: time to slide 100px
-function slideUp(el, speed) {
+function slideUp(el, speed, maxtime) {
   speed = speed || .2;
+  maxtime = maxtime || 1
   var curh = window.getComputedStyle(el).height
   if (curh === '0') return
   el.style.transition = 'none'
   el.style.height = curh
   var dur = parseInt(curh, 10) * speed / 100
+  if (dur > maxtime) dur = maxtime
   el.style.overflow = 'hidden'
   // trigger reflow
   window.getComputedStyle(el).height

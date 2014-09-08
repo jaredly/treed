@@ -60,6 +60,19 @@ Db.prototype = {
     this.set(pid, 'children', ids)
   },
 
+  exportTree: function (pid) {
+    pid = pid || this.root
+    var node = this.nodes[pid]
+      , out = {}
+    for (var name in node) {
+      out[name] = node[name]
+    }
+    out.children = node.children.map(this.exportTree.bind(this))
+    delete out.id
+    delete out.parent
+    return out
+  },
+
   makeRoot: function (defaultData, done) {
     this.root = uuid()
     this.pl.save('root', this.root, {id: this.root})
