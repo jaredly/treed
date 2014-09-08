@@ -24,6 +24,10 @@ module.exports = function (options) {
         extra = options.initStoreState.call(this, state, this.props.store.getters, this.props)
         for (var name in extra) state[name] = extra[name]
       }
+      for (var i=0; i<pluginUpdates.length; i++) {
+        extra = pluginUpdates[i].call(this, state, this.props.store.getters, this.props)
+        for (name in extra) state[name] = extra[name]
+      }
       return state
     },
 

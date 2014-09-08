@@ -79,12 +79,12 @@ Db.prototype = {
     this.nodes = {}
     this.nodes[this.root] = {
       id: this.root,
-      content: 'Home',
+      content: defaultData.content || 'Home',
       parent: null,
       children: []
     }
     this.pl.save('node', this.root, this.nodes[this.root])
-    this.dump(this.root, defaultData)
+    this.dump(this.root, defaultData.children)
     done()
   },
 

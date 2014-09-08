@@ -21,8 +21,6 @@ var Commandeger = require('./commandeger')
 module.exports = MainStore
 
 function MainStore(options) {
-  BaseStore.apply(this, arguments)
-
   this.db = options.db
 
   this.views = {}
@@ -32,6 +30,8 @@ function MainStore(options) {
   this._getters = {}
   this._nextViewId = 0
   this.activeView = 0
+
+  BaseStore.apply(this, arguments)
 
   this.cmd = new Commandeger(
     this.changed.bind(this),
