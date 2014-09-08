@@ -86,6 +86,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       actions: this._actions[id],
       getters: this._getters[id],
       events: this._events[id],
+      globals: this._globals,
       on: this.on.bind(this),
       off: this.off.bind(this),
     }
@@ -98,6 +99,11 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if (plugin.getters) {
       for (var name in plugin.getters) {
         this.getters[name] = plugin.getters[name]
+      }
+    }
+    if (plugin.events) {
+      for (var name in plugin.events) {
+        this.events[name] = plugin.events[name]
       }
     }
     if (plugin.commands) {

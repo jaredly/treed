@@ -43,6 +43,18 @@ var TreeView = React.createClass({
     }
   },
 
+  fromMix: function (part) {
+    if (!this.props.plugins) return
+    var items = []
+    for (var i=0; i<this.props.plugins.length; i++) {
+      var plugin = this.props.plugins[i].blocks
+      if (!plugin || !plugin[part]) continue;
+      items.push(plugin[part](this.props.store.actions, this.state, this.props.store))
+    }
+    if (!items.length) return null
+    return items
+  },
+
   render: function () {
     var className = 'list list-' + this.state.mode
     if (this.state.isActive) className += ' list-active'
@@ -57,6 +69,7 @@ var TreeView = React.createClass({
       }
     }
     return <div className={className}>
+      {this.fromMix('top')}
       {TreeItem({
         store: this.props.store,
         plugins: this.props.nodePlugins,
@@ -65,6 +78,7 @@ var TreeView = React.createClass({
         isRoot: true,
         id: this.state.root
       })}
+      {this.fromMix('bottom')}
     </div>
   },
 })
