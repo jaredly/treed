@@ -112,16 +112,21 @@ var TreeItem = React.createClass({
 
   body: function () {
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
-    return SimpleBody({
-      ref: 'body',
-      editor: body.editor,
-      renderer: body.renderer,
-      node: this.state.node,
-      keys: this.props.keys,
-      isActive: this.state.isActive, // do we need this?
-      editState: this.state.editState,
-      actions: this.props.store.actions,
-    })
+    var abovebody = this.fromMix('abovebody')
+    var belowbody = this.fromMix('belowbody')
+    return <div ref='body' className='list_item_body'>
+      {abovebody}
+      {SimpleBody({
+        editor: body.editor,
+        renderer: body.renderer,
+        node: this.state.node,
+        keys: this.props.keys,
+        isActive: this.state.isActive, // do we need this?
+        editState: this.state.editState,
+        actions: this.props.store.actions,
+      })}
+      {belowbody}
+    </div>
   },
 
   render: function () {
@@ -132,6 +137,7 @@ var TreeItem = React.createClass({
       'list_item-selected': this.state.isSelected,
       'list_item-root': this.props.isRoot,
     })
+    className += ' list_item-type-' + this.state.node.type
     if (this.props.plugins) {
       this.props.plugins.forEach((plugin) => {
         if (!plugin.classes) return

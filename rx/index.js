@@ -43,16 +43,14 @@ function quickstart(el, options, done) {
 function initStore(plugins, options, done) {
   options = extend({
     PL: require('./pl/mem'),
+    pl: null,
     data: null,
   }, options)
 
-  var pl = new options.PL()
+  var pl = options.pl || new options.PL()
   var db = new Db(pl)
-  db.init(function (err) {
+  db.init(options.data, function (err) {
     if (err) return console.error('Failed to start db', err);
-    if (options.data) {
-      db.dump(db.root, options.data)
-    }
 
     var store = new MainStore({
       plugins: pluginType(plugins, 'store'),

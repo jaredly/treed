@@ -9,10 +9,10 @@ function Db(pl) {
 }
 
 Db.prototype = {
-  init: function (done) {
+  init: function (defaultData, done) {
     this.pl.findAll('root', (err, roots) => {
       if (err) return done(err)
-      if (!roots.length) return this.makeRoot(done)
+      if (!roots.length) return this.makeRoot(defaultData, done)
       this.root = roots[0].id
       this.pl.findAll('node', (err, nodes) => {
         if (err) return done(err)
@@ -60,7 +60,7 @@ Db.prototype = {
     this.set(pid, 'children', ids)
   },
 
-  makeRoot: function (done) {
+  makeRoot: function (defaultData, done) {
     this.root = uuid()
     this.pl.save('root', this.root, {id: this.root})
     this.nodes = {}
@@ -71,6 +71,7 @@ Db.prototype = {
       children: []
     }
     this.pl.save('node', this.root, this.nodes[this.root])
+    this.dump(this.root, defaultData)
     done()
   },
 

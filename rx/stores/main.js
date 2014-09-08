@@ -73,6 +73,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }, this.actions)
     this._getters[id] = extend({
       view: this.views[id],
+      globals: this._globals,
       parent: this,
       db: this.db,
     }, this.getters)
@@ -94,6 +95,11 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   addPlugin: function (plugin) {
     BaseStore.prototype.addPlugin.call(this, plugin)
 
+    if (plugin.getters) {
+      for (var name in plugin.getters) {
+        this.getters[name] = plugin.getters[name]
+      }
+    }
     if (plugin.commands) {
       this.cmds.addCommands(plugin.commands)
     }

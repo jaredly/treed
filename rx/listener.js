@@ -61,7 +61,7 @@ module.exports = function (options) {
         for (name in extra) state[name] = extra[name]
       }
       for (var i=0; i<pluginUpdates.length; i++) {
-        extra = pluginUpdates.call(this, state)
+        extra = pluginUpdates[i].call(this, state, this.props.store.getters, this.props)
         for (name in extra) state[name] = extra[name]
       }
       if (window.DEBUG_CHANGES) {

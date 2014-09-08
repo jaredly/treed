@@ -30,7 +30,8 @@
     "superagent-browserify": "0.0.2",
     "jstransform": "~6.1.0",
     "envify": "~3.0.0",
-    "marked": "~0.3.2"
+    "marked": "~0.3.2",
+    "localforage": "~0.9.2"
   },
   "devDependencies": {
     "reactify": "~0.13.1",
