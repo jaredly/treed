@@ -26,9 +26,15 @@ Local.prototype = {
     val[attr] = value
     this.save(type, id, val)
   },
-  batchSet: function (type, attr, ids, values) {
-    for (var i=0; i<ids.length; i++) {
-      this.set(type, ids[i], attr, values[i])
+  batchSet: function (type, attr, ids, value) {
+    if (Array.isArray(value)) {
+      for (var i=0; i<ids.length; i++) {
+        this.set(type, ids[i], attr, value[i])
+      }
+    } else {
+      for (var i=0; i<ids.length; i++) {
+        this.set(type, ids[i], attr, value)
+      }
     }
   },
   update: function (type, id, update) {

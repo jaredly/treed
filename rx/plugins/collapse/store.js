@@ -4,6 +4,12 @@ module.exports = {
     collapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
+      if (this.view.mode === 'visual') {
+        var ids = this.view.selection.filter((id) => 
+          !!this.db.nodes[id].children.length)
+        if (!ids.length) return
+        return this.setMany(ids, 'collapsed', true)
+      }
       if (!this.db.nodes[id].children.length) {
         var pid = this.db.nodes[id].parent
         if (pid !== this.view.root) {
@@ -19,6 +25,12 @@ module.exports = {
     expand: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
+      if (this.view.mode === 'visual') {
+        var ids = this.view.selection.filter((id) => 
+          !!this.db.nodes[id].children.length)
+        if (!ids.length) return
+        return this.setMany(ids, 'collapsed', true)
+      }
       if (!this.db.nodes[id].children.length) {
         return
       }

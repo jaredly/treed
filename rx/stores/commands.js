@@ -155,7 +155,6 @@ module.exports = {
         throw new Error('node is not a child of its parent')
       }
 
-
       if (!this.npid) {
         this.npid = this.opid
       }
@@ -166,7 +165,7 @@ module.exports = {
       }
 
       db.insertChildren(this.npid, this.ids, this.nindex)
-      db.setMany('parent', this.ids, this.ids.map(() => this.npid))
+      db.setMany('parent', this.ids, this.npid)
       if (db.nodes[this.npid].collapsed) {
         db.set(this.npid, 'collapsed', false)
         this.wasCollapsed = true
@@ -183,7 +182,7 @@ module.exports = {
     undo: function (db, events) {
       db.removeChild(this.npid, this.ids[0], this.ids.length)
       db.insertChildren(this.opid, this.ids, this.oindex)
-      db.setMany('parent', this.ids, this.ids.map(() => this.opid))
+      db.setMany('parent', this.ids, this.opid)
       if (this.wasCollapsed) {
         db.set(this.npid, 'collapsed', true)
       }

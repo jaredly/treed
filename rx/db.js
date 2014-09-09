@@ -148,11 +148,17 @@ Db.prototype = {
     return ix
   },
 
-  setMany: function (attr, ids, values) {
-    ids.forEach((id, i) => {
-      this.nodes[id][attr] = values[i]
-    })
-    this.pl.batchSet('node', attr, ids, values)
+  setMany: function (attr, ids, value) {
+    if (Array.isArray(values)) {
+      ids.forEach((id, i) => {
+        this.nodes[id][attr] = value[i]
+      })
+    } else {
+      ids.forEach((id, i) => {
+        this.nodes[id][attr] = value
+      })
+    }
+    this.pl.batchSet('node', attr, ids, value)
   },
 
   update: function (id, update) {

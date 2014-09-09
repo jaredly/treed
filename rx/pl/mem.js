@@ -24,9 +24,15 @@ Mem.prototype = {
   set: function (type, id, attr, value) {
     this.data[type][id][attr] = value
   },
-  batchSet: function (type, attr, ids, values) {
-    for (var i=0; i<ids.length; i++) {
-      this.data[type][ids[i]][attr] = values[i]
+  batchSet: function (type, attr, ids, value) {
+    if (Array.isArray(value)) {
+      for (var i=0; i<ids.length; i++) {
+        this.data[type][ids[i]][attr] = value[i]
+      }
+    } else {
+      for (var i=0; i<ids.length; i++) {
+        this.data[type][ids[i]][attr] = value
+      }
     }
   },
   update: function (type, id, update) {
