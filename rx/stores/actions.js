@@ -18,8 +18,8 @@ module.exports = {
     this.executeCommand('update', {id, update})
   },
 
-  batchSet: function (attr, ids, values) {
-    this.executeCommand('batchSet', {ids: ids, attr: attr, values: values})
+  setMany: function (attr, ids, values) {
+    this.executeCommand('setMany', {ids: ids, attr: attr, values: values})
   },
 
   setContent: function (id, value) {
@@ -66,6 +66,24 @@ module.exports = {
 
   goRight: function () {
     this.setActive(movement.right(this.view.active, this.view.root, this.db.nodes))
+  },
+
+  setSelection: function (ids) {
+    var changed = ids
+    if (this.view.selection) {
+      changed = this.view.selection.concat(ids)
+    }
+    this.view.selection = ids
+    this.changed.apply(this, changed.map((id) => this.events.nodeViewChanged(id)))
+  },
+
+  toggleSelectionEdge: function () {
+    if (this.view.mode !== 'visual' || this.view.selection.length <= 1) return
+    if (this.view.active === this.view.selection[0]) {
+      this.setActive(this.view.selection[this.view.selection.length - 1])
+    } else {
+      this.setActive(this.view.selection[0])
+    }
   },
 
   // Selection mode
@@ -304,8 +322,6 @@ module.exports = {
     this.editPos = 'change'
     this.setMode('insert')
   },
-
-  toggleSelectionEdge: TODO,
 
   // just for the tree view, pretty much
   goToFirstSibling: function (id) {

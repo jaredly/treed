@@ -149,7 +149,7 @@ Db.prototype = {
   },
 
   setMany: function (attr, ids, value) {
-    if (Array.isArray(values)) {
+    if (Array.isArray(value)) {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value[i]
       })

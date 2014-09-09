@@ -38,15 +38,15 @@ module.exports = {
     },
   },
 
-  batchSet: {
+  setMany: {
     args: ['attr', 'ids', 'values'],
     apply: function (db, events) {
       this.old = this.ids.map((id) => db.nodes[id][this.attr])
-      db.batchSet(this.attr, this.ids, this.values)
+      db.setMany(this.attr, this.ids, this.values)
       return this.ids.map((id) => events.nodeChanged(id))
     },
     undo: function (db, events) {
-      db.batchSet(this.attr, this.ids, this.old)
+      db.setMany(this.attr, this.ids, this.old)
       return this.ids.map((id) => events.nodeChanged(id))
     },
   },

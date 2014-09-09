@@ -8,7 +8,7 @@ module.exports = {
         var ids = this.view.selection.filter((id) => 
           !!this.db.nodes[id].children.length)
         if (!ids.length) return
-        return this.setMany(ids, 'collapsed', true)
+        return this.setMany('collapsed', ids, true)
       }
       if (!this.db.nodes[id].children.length) {
         var pid = this.db.nodes[id].parent
@@ -29,7 +29,7 @@ module.exports = {
         var ids = this.view.selection.filter((id) => 
           !!this.db.nodes[id].children.length)
         if (!ids.length) return
-        return this.setMany(ids, 'collapsed', true)
+        return this.setMany('collapsed', ids, true)
       }
       if (!this.db.nodes[id].children.length) {
         return
@@ -38,9 +38,36 @@ module.exports = {
       this.setActive(id)
     },
 
+    toggleCollapseDeep: function (id) {
+      if (!arguments.length) id = this.view.active
+      if (this.view.mode === 'visual') {
+        ids = this.view.selection
+      } else {
+        ids = [id]
+      }
+      var allParents = (id) => {
+        var node = this.db.nodes[id]
+        if (!node.children.length) return []
+        return [].concat.apply([id], node.children.map(allParents))
+      }
+      pedigrees = ids.map(allParents)
+      var commands = pedigrees.map((ids) => {
+        return ['setMany', {ids: ids, attr: 'collapsed', values: !this.db.nodes[ids[0]].collapsed}]
+      })
+      this.executeCommands.apply(this, [].concat.apply([], commands))
+    },
+
     toggleCollapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
+      if (this.view.mode === 'visual') {
+        var ids = this.view.selection.filter((id) =>
+          !!this.db.nodes[id].children.length)
+        if (!ids.length) return
+        return this.setMany('collapsed', ids, ids.map(id => {
+          return !this.db.nodes[id].collapsed
+        }))
+      }
       if (!this.db.nodes[id].children.length) {
         var pid = this.db.nodes[id].parent
         if (pid === this.view.root) return

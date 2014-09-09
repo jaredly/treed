@@ -72,6 +72,10 @@ module.exports = {
           index: ix,
           data: this.globals.clipboard
         })
+        if (cState.created.ids.length > 1) {
+          this.setMode('visual')
+          this.setSelection(cState.created.ids)
+        }
         this.setActive(cState.created.ids[0])
       },
 
@@ -86,6 +90,10 @@ module.exports = {
           index: ix,
           data: this.globals.clipboard
         })
+        if (cState.created.ids.length > 1) {
+          this.setMode('visual')
+          this.setSelection(cState.created.ids)
+        }
         this.setActive(cState.created.ids[0])
       },
     },

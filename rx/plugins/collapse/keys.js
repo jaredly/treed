@@ -1,5 +1,10 @@
 
 module.exports = {
+  'toggle collapse deep': {
+    description: 'Toggle the collapse of the current item and all children',
+    normal: 'shift+z',
+    visual: 'shift+z',
+  },
   'toggle collapse': {
     description: 'Toggle the collapse of the current item',
     normal: 'z',
