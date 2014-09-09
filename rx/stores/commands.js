@@ -87,13 +87,13 @@ module.exports = {
   importTrees: {
     args: ['pid', 'index', 'data'],
     apply: function (db, events) {
-      this.saved = db.dump(this.pid, this.data, this.index)
+      this.created = db.dump(this.pid, this.data, this.index)
       return events.nodeChanged(this.pid)
     },
 
     undo: function (db, events) {
-      db.set(this.pid, 'children', this.saved.oldChildren)
-      db.removeMany(this.saved.ids)
+      db.set(this.pid, 'children', this.created.oldChildren)
+      db.removeMany(this.created.ids)
       return events.nodeChanged(this.pid)
     }
   },

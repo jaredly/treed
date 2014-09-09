@@ -60,15 +60,33 @@ module.exports = {
         var node = this.db.nodes[id]
           , pid
           , ix
-        if (node.children.length || id === this.view.root) {
+        if ((node.children.length && !node.collapsed) || id === this.view.root) {
           pid = id
           ix = 0
         } else {
           pid = node.parent
           ix = this.db.nodes[pid].children.indexOf(id) + 1
         }
-        this.executeCommand('importTrees', {pid: pid, index: ix, data: this.globals.clipboard})
-        // this.db.dump(pid, this.globals.clipboard, ix)
+        var cState = this.executeCommand('importTrees', {
+          pid: pid,
+          index: ix,
+          data: this.globals.clipboard
+        })
+        this.setActive(cState.created.ids[0])
+      },
+
+      pasteAbove: function (id) {
+        if (!this.globals.clipboard) return
+        id = id || this.view.active
+        var node = this.db.nodes[id]
+          , pid = node.parent
+          , ix = this.db.nodes[pid].children.indexOf(id)
+        var cState = this.executeCommand('importTrees', {
+          pid: pid,
+          index: ix,
+          data: this.globals.clipboard
+        })
+        this.setActive(cState.created.ids[0])
       },
     },
   },

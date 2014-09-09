@@ -69,7 +69,19 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
           state,
           view: id,
           active: this.views[id].active
-        })
+        }),
+      executeCommands: () => {
+        var commands = []
+        for (var i=0; i<arguments.length; i+=2) {
+          commands.push({
+            cmd: arguments[i],
+            state: arguments[i+1],
+            view: id,
+            active: this.views[id].active
+          })
+        }
+        this.cmd.executeCommands.apply(this.cmd, commands)
+      },
     }, this.actions)
     this._getters[id] = extend({
       view: this.views[id],
