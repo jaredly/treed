@@ -11,6 +11,7 @@ var plugins = [
   require('../plugins/tags'),
   require('../plugins/rebase'),
   require('../plugins/collapse'),
+  require('../plugins/clipboard'),
   require('../plugins/done'),
 ]
 

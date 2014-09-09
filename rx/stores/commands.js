@@ -84,6 +84,20 @@ module.exports = {
     },
   },
 
+  importTrees: {
+    args: ['pid', 'index', 'data'],
+    apply: function (db, events) {
+      this.saved = db.dump(this.pid, this.data, this.index)
+      return events.nodeChanged(this.pid)
+    },
+
+    undo: function (db, events) {
+      db.set(this.pid, 'children', this.saved.oldChildren)
+      db.removeMany(this.saved.ids)
+      return events.nodeChanged(this.pid)
+    }
+  },
+
   move: {
     args: ['id', 'npid', 'nindex'],
     apply: function (db, events) {
@@ -164,9 +178,9 @@ module.exports = {
     },
 
     undo: function (db, events) {
-      db.removeChild(this.npid, this.id)
-      db.insertChild(this.opid, this.id, this.oindex)
-      db.set(this.id, 'parent', this.opid)
+      db.removeChild(this.npid, this.ids[0], this.ids.length)
+      db.insertChildren(this.opid, this.ids, this.oindex)
+      db.setMany('parent', this.ids, this.ids.map(() => this.opid))
       if (this.wasCollapsed) {
         db.set(this.npid, 'collapsed', true)
       }

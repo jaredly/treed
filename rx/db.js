@@ -38,7 +38,7 @@ Db.prototype = {
     return id
   },
 
-  dump: function (pid, children) {
+  dump: function (pid, children, ix) {
     var ids = children.map((child) => {
       var id = uuid()
       var node = {
@@ -57,7 +57,15 @@ Db.prototype = {
       }
       return id
     })
-    this.set(pid, 'children', ids)
+    var oldChildren = this.nodes[pid].children
+    if (!ix && ix !== 0) {
+      children = oldChildren.concat(ids)
+    } else {
+      children = oldChildren.slice()
+      ;[].splice.apply(children, [ix, 0].concat(ids))
+    }
+    this.set(pid, 'children', children)
+    return {ids: ids, oldChildren: oldChildren}
   },
 
   exportTree: function (pid) {
@@ -71,6 +79,10 @@ Db.prototype = {
     delete out.id
     delete out.parent
     return out
+  },
+
+  exportMany: function (ids) {
+    return ids.map(this.exportTree.bind(this))
   },
 
   makeRoot: function (defaultData, done) {

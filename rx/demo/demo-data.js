@@ -1,18 +1,21 @@
 
-module.exports = [
-  { content: 'one' },
-  {
-    content: 'two',
-    children: [ {content: 'three'} ]
-  }
-]
+module.exports = {
+  content: 'Example',
+  children: [
+    { content: 'one' },
+    {
+      content: 'two',
+      children: [ {content: 'three'} ]
+    }
+  ]
+}
 
 for (var i=0; i<10; i++) {
   var x = {content: 'parent ' + i, children: []}
   for (var j=0; j<10; j++) {
     x.children.push({content: 'j ' + i + ' : ' + j})
   }
-  module.exports.push(x)
+  module.exports.children.push(x)
 }
 
 var demoData = {
@@ -191,6 +194,6 @@ var demoData = {
 }
 
 if (location.hash === '#real') {
-  module.exports = demoData.children
+  module.exports = demoData
 }
 

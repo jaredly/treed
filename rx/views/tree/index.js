@@ -35,6 +35,9 @@ var TreeView = React.createClass({
 
   _onKeyDown: function (e) {
     if (!this.state.isActive) return
+    if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') {
+      return
+    }
     if (this.state.mode === 'normal') {
       return this.props.keys.normal(e)
     }
