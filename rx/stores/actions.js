@@ -183,10 +183,15 @@ module.exports = {
 
   moveDown: function (id) {
     id = id || this.view.active
-    var pos = movement.below(id, this.view.root, this.db.nodes)
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var pos = movement.below(ids[ids.length - 1], this.view.root, this.db.nodes)
     if (!pos) return
-    this.executeCommand('move', {
-      id,
+    this.executeCommand('moveMany', {
+      ids,
       npid: pos.pid,
       nindex: pos.ix,
     })
@@ -194,10 +199,15 @@ module.exports = {
 
   moveUp: function (id) {
     id = id || this.view.active
-    var pos = movement.above(id, this.view.root, this.db.nodes)
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var pos = movement.above(ids[0], this.view.root, this.db.nodes)
     if (!pos) return
-    this.executeCommand('move', {
-      id,
+    this.executeCommand('moveMany', {
+      ids,
       npid: pos.pid,
       nindex: pos.ix,
     })
@@ -235,11 +245,6 @@ module.exports = {
     var cmd = this.executeCommand('create', pos)
     this.edit(cmd.id)
   },
-
-  cut: TODO,
-  copy: TODO,
-  paste: TODO,
-  pasteAbove: TODO,
 
   visualMode: function () {
     this.view.selection = [this.view.active]

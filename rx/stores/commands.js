@@ -155,10 +155,13 @@ module.exports = {
         throw new Error('node is not a child of its parent')
       }
 
+
       if (!this.npid) {
         this.npid = this.opid
+      }
+      if (this.npid === this.opid) {
         if (this.oindex < this.nindex) {
-          this.nindex -= 1
+          this.nindex -= this.ids.length - 1
         }
       }
 
