@@ -4,6 +4,10 @@ var React = require('react')
 
 var Textarea = require('./textarea-grow')
 
+/**
+ * The required interface, in addition to the shown props, is
+ * : focus(bool atStart)
+ */
 var Editor = React.createClass({
   propTypes: {
     value: PT.string,
@@ -44,6 +48,11 @@ var Editor = React.createClass({
       pos = text.getCursorPos()
       if (pos === 0 || pos === 1) {
         this.props.goUp()
+        e.preventDefault()
+      }
+    } else if (e.key === 'Backspace') {
+      if (!this.props.value.length) {
+        this.props.removeEmpty()
         e.preventDefault()
       }
     } else {

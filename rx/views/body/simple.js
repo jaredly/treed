@@ -98,15 +98,16 @@ var SimpleBody = React.createClass({
   },
 
   editor: function () {
-    if (!this.props.editor) {
-      return <Editor
-        ref="text"
-        value={this.state.content}
-        goDown={this.props.actions.goDown.bind(this.props.actions)}
-        goUp={this.props.actions.goUp.bind(this.props.actions)}
-        onChange={this._onChange}
-        onBlur={this._onBlur}
-        onKeyDown={this._onKeyDown}/>
+    var Ctrl = this.props.editor || Editor
+    return <Ctrl
+      ref="text"
+      value={this.state.content}
+      goDown={this.props.actions.goDown.bind(this.props.actions)}
+      goUp={this.props.actions.goUp.bind(this.props.actions)}
+      removeEmpty={this.props.actions.removeEmpty.bind(this.props.actions)}
+      onChange={this._onChange}
+      onBlur={this._onBlur}
+      onKeyDown={this._onKeyDown}/>
         /*
       return <Textarea
         ref="text"
@@ -115,9 +116,6 @@ var SimpleBody = React.createClass({
         onBlur={this._onBlur}
         onKeyDown={this._onKeyDown}/>
         */
-
-    }
-    return this.props.editor.call(this)
   },
 
   renderer: function () {

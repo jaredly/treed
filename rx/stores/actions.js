@@ -117,6 +117,15 @@ module.exports = {
     this.setActive(next)
   },
 
+  removeEmpty: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.up(id, this.view.root, this.db.nodes)
+    this.view.active = next
+    this.executeCommand('remove', {ids: [id]})
+    this.changed(this.events.nodeChanged(next))
+  },
+
   remove: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
