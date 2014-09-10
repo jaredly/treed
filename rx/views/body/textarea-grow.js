@@ -51,8 +51,9 @@ var Textarea = module.exports = React.createClass({
   getCursorLine: function () {
     var s = this.refs.shadow.getDOMNode()
       , a = this.refs.area.getDOMNode()
+      , style = window.getComputedStyle(s)
       , lineHeight = this._fontSize / .875
-    if (s.getBoundingClientRect().height <= lineHeight * 1.5) {
+    if (s.getBoundingClientRect().height - parseInt(style.paddingTop) - parseInt(style.paddingBottom) <= lineHeight * 1.5) {
       // single line
       return 1
     }

@@ -299,6 +299,7 @@ module.exports = {
     if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
+    document.activeElement.blur()
     this.setMode('normal')
   },
 

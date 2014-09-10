@@ -57,8 +57,8 @@ var SimpleBody = React.createClass({
     })
   },
 
-  _onChange: function (e) {
-    this.setState({content: e.target.value})
+  _onChange: function (value) {
+    this.setState({content: value})
   },
 
   _onKeyDown: function (e) {
@@ -102,6 +102,7 @@ var SimpleBody = React.createClass({
     return <Ctrl
       ref="text"
       value={this.state.content}
+      node={this.props.node}
       goDown={this.props.actions.goDown.bind(this.props.actions)}
       goUp={this.props.actions.goUp.bind(this.props.actions)}
       removeEmpty={this.props.actions.removeEmpty.bind(this.props.actions)}
@@ -121,6 +122,7 @@ var SimpleBody = React.createClass({
   renderer: function () {
     if (!this.props.renderer) {
       return <span className="treed_body_rendered"
+        onClick={this._onClick}
         dangerouslySetInnerHTML={{
           __html: this.props.node.content ?
                     marked(this.props.node.content + '') : ''
@@ -134,7 +136,7 @@ var SimpleBody = React.createClass({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
-    return <div className={className} onClick={this._onClick}>
+    return <div className={className}>
       {this.props.editState ? this.editor() : this.renderer()}
     </div>
   }

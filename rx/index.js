@@ -48,7 +48,7 @@ function initStore(plugins, options, done) {
   }, options)
 
   var pl = options.pl || new options.PL()
-  var db = new Db(pl)
+  var db = new Db(pl, pluginType(plugins, 'db'))
   db.init(options.data, function (err) {
     if (err) return console.error('Failed to start db', err);
 

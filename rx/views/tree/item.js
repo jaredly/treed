@@ -124,6 +124,7 @@ var TreeItem = React.createClass({
         isActive: this.state.isActive, // do we need this?
         editState: this.state.editState,
         actions: this.props.store.actions,
+        store: this.props.store,
       })}
       {belowbody}
     </div>

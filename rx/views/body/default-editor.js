@@ -22,6 +22,10 @@ var Editor = React.createClass({
     this.refs.text.focus.apply(this.refs.text, arguments)
   },
 
+  _onChange: function (e) {
+    this.props.onChange(e.target.value)
+  },
+
   _onKeyDown: function (e) {
     var text = this.refs.text
       , line
@@ -64,7 +68,7 @@ var Editor = React.createClass({
     return <Textarea
       ref="text"
       value={this.props.value}
-      onChange={this.props.onChange}
+      onChange={this._onChange}
       onBlur={this.props.onBlur}
       onKeyDown={this._onKeyDown}/>
   }

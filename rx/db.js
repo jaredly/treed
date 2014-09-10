@@ -3,9 +3,19 @@ var uuid = require('../lib/uuid')
 
 module.exports = Db
 
-function Db(pl) {
+function Db(pl, plugins) {
   this.nodes = {}
   this.pl = pl
+  this.plugins = plugins || []
+  this.addNewNodeAttrs = []
+  plugins.forEach((plugin) => {
+    if (plugin.addNewNodeAttrs) {
+      this.addNewNodeAttrs.push(plugin.addNewNodeAttrs)
+    }
+  })
+  if (!this.addNewNodeAttrs.length) {
+    this.addNewNodeAttrs = false
+  }
 }
 
 Db.prototype = {
@@ -27,13 +37,17 @@ Db.prototype = {
 
   create: function (pid, ix, content, type) {
     var id = uuid()
-    this.save(id, {
+    var node = {
       id: id,
       content: content || '',
       type: type || 'base',
       children: [],
       parent: pid,
-    })
+    }
+    if (this.addNewNodeAttrs) {
+      this.addNewNodeAttrs.map(fn => fn(node))
+    }
+    this.save(id, node)
     this.insertChild(pid, id, ix)
     return id
   },
