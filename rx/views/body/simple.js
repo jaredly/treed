@@ -5,6 +5,7 @@ var cx = React.addons.classSet
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var marked = require('marked')
+var Editor = require('./default-editor')
 
 var renderer = new marked.Renderer()
 renderer.link = function (href, title, text) {
@@ -21,8 +22,6 @@ marked.setOptions({
   smartypants: true,
   renderer: renderer
 })
-
-var Textarea = require('./textarea-grow')
 
 // a more complex body would show different things based on the type of node.
 var SimpleBody = React.createClass({
@@ -63,36 +62,7 @@ var SimpleBody = React.createClass({
   },
 
   _onKeyDown: function (e) {
-    var text = this.refs.text
-      , line
-      , pos
-    if (e.key === 'ArrowDown') {
-      line = text.getCursorLine()
-      if (line === -1 || line === 1) {
-        this.props.actions.goDown()
-        e.preventDefault()
-      }
-    } else if (e.key === 'ArrowUp') {
-      line = text.getCursorLine()
-      if (line === 0 || line === 1) {
-        this.props.actions.goUp()
-        e.preventDefault()
-      }
-    } else if (e.key === 'ArrowRight') {
-      pos = text.getCursorPos()
-      if (pos === -1 || pos === 1) {
-        this.props.actions.goDown(true)
-        e.preventDefault()
-      }
-    } else if (e.key === 'ArrowLeft') {
-      pos = text.getCursorPos()
-      if (pos === 0 || pos === 1) {
-        this.props.actions.goUp()
-        e.preventDefault()
-      }
-    } else {
-      this.props.keys(e)
-    }
+    this.props.keys(e)
   },
 
   _onBlur: function () {
@@ -129,12 +99,22 @@ var SimpleBody = React.createClass({
 
   editor: function () {
     if (!this.props.editor) {
+      return <Editor
+        ref="text"
+        value={this.state.content}
+        goDown={this.props.actions.goDown.bind(this.props.actions)}
+        goUp={this.props.actions.goUp.bind(this.props.actions)}
+        onChange={this._onChange}
+        onBlur={this._onBlur}
+        onKeyDown={this._onKeyDown}/>
+        /*
       return <Textarea
         ref="text"
         value={this.state.content}
         onChange={this._onChange}
         onBlur={this._onBlur}
         onKeyDown={this._onKeyDown}/>
+        */
 
     }
     return this.props.editor.call(this)
