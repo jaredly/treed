@@ -18,6 +18,10 @@ var Editor = React.createClass({
     goUp: PT.func,
   },
 
+  componentDidMount: function () {
+    this.focus()
+  },
+
   focus: function () {
     this.refs.text.focus.apply(this.refs.text, arguments)
   },

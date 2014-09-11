@@ -43,6 +43,8 @@ module.exports = {
       if (this.view.mode === 'visual') {
         ids = this.view.selection
       } else {
+        var node = this.db.nodes[id]
+        if (!node.children.length) return
         ids = [id]
       }
       var allParents = (id) => {

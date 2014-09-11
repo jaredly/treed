@@ -18,6 +18,7 @@ module.exports = {
   quickstart: quickstart,
   initView: initView,
   initStore: initStore,
+  pluginType: pluginType,
 }
 
 function quickstart(el, options, done) {
@@ -64,21 +65,22 @@ function initView(el, store, plugins, options, done) {
   options = extend({
     View: TreeView,
     defaultKeys: keys,
-    React: React,
   }, options)
 
   var storeView = store.registerView()
 
-  options.React.renderComponent(options.View({
+  var props = {
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
     keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys')),
-    // actions (for doing things)
-    // getters (for getting things)
-    // events  (for listening)
-    // id      (for fun)
     store: storeView,
-  }), el, function () {
+  }
+
+  if (!el) {
+    return done(storeView, props)
+  }
+
+  React.renderComponent(options.View(props), el, function () {
     done(storeView)
   })
 }

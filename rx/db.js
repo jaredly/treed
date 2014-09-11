@@ -52,6 +52,7 @@ Db.prototype = {
     return id
   },
 
+  // dump children INTO the pid at index ix
   dump: function (pid, children, ix) {
     var ids = children.map((child) => {
       var id = uuid()
