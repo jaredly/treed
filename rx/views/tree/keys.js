@@ -41,8 +41,8 @@ module.exports = {
     visual: 'c, shift+c',
   },
   'remove': {
-    normal: 'd d, shift+d',
-    visual: 'd, shift+d',
+    normal: 'd d, shift+d, delete',
+    visual: 'd, shift+d, delete',
   },
 
   'toggle selection edge': {
@@ -71,6 +71,9 @@ module.exports = {
   },
   'go to top': {
     normal: 'g g',
+  },
+  'go to last edited': {
+    normal: 'g i',
   },
   'go up': {
     normal: 'up, k',
@@ -103,18 +106,18 @@ module.exports = {
 
   // move stuff
   'indent': {
-    normal: 'tab, shift+alt+l, shift+alt+right',
-    insert: 'tab, shift+alt+l, shift+alt+right',
+    normal: 'tab, shift+alt+l, shift+alt+right, shift+.',
+    insert: 'tab, shift+alt+right',
   },
   'indent many': {
-    visual: 'tab, shift+alt+l, shift+alt+right',
+    visual: 'tab, shift+alt+l, shift+alt+right, shift+.',
   },
   'dedent': {
-    normal: 'shift+tab, shift+alt+h, shift+alt+left',
-    insert: 'shift+tab, shift+alt+h, shift+alt+left',
+    normal: 'shift+tab, shift+alt+h, shift+alt+left, shift+comma',
+    insert: 'shift+tab, shift+alt+left',
   },
   'dedent many': {
-    visual: 'shift+tab, shift+alt+h, shift+alt+left',
+    visual: 'shift+tab, shift+alt+h, shift+alt+left, shift+comma',
   },
 
   'move down': {

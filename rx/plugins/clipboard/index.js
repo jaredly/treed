@@ -5,8 +5,8 @@ module.exports = {
   keys: {
     'remove': {}, // not using this
     'cut': {
-      'normal': 'd d, shift+d, ctrl+x',
-      'visual': 'd, shift+d, ctrl+x',
+      'normal': 'd d, shift+d, ctrl+x, delete',
+      'visual': 'd, shift+d, ctrl+x, delete',
       // 'insert': 'ctrl+x',
     },
     'copy': {

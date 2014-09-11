@@ -29,6 +29,11 @@ Db.prototype = {
         nodes.forEach((node) => {
           this.nodes[node.id] = node
         })
+        
+        if (!this.nodes[this.root]) {
+          console.error('Database corruption! Root has no node')
+          done(new Error('Root has no node'))
+        }
 
         done()
       })
@@ -102,17 +107,21 @@ Db.prototype = {
 
   makeRoot: function (defaultData, done) {
     this.root = uuid()
-    this.pl.save('root', this.root, {id: this.root})
-    this.nodes = {}
-    this.nodes[this.root] = {
-      id: this.root,
-      content: defaultData.content || 'Home',
-      parent: null,
-      children: []
-    }
-    this.pl.save('node', this.root, this.nodes[this.root])
-    this.dump(this.root, defaultData.children)
-    done()
+    this.pl.save('root', this.root, {id: this.root}, (err) => {
+      if (err) return done(err)
+      this.nodes = {}
+      this.nodes[this.root] = {
+        id: this.root,
+        content: defaultData.content || 'Home',
+        parent: null,
+        children: []
+      }
+      this.pl.save('node', this.root, this.nodes[this.root], (err) => {
+        if (err) return done(err)
+        this.dump(this.root, defaultData.children)
+        done(err)
+      })
+    })
   },
 
   save: function (id, value) {

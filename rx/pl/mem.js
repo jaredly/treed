@@ -15,11 +15,12 @@ Mem.prototype = {
     }
     done(null, res)
   },
-  save: function (type, id, value) {
+  save: function (type, id, value, done) {
     if (!this.data[type]) {
       this.data[type] = {}
     }
     this.data[type][id] = value
+    done && done()
   },
   set: function (type, id, attr, value) {
     this.data[type][id][attr] = value

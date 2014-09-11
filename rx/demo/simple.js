@@ -8,7 +8,9 @@ window.React = React
 
 var start = Date.now()
 treed.quickstart('#example', {
-  storeOptions: {data: data},
+  storeOptions: {
+    data: data
+  },
 }, (store) => {
   console.log((Date.now() - start) + 'ms to render')
   window.store = store

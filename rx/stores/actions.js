@@ -309,6 +309,7 @@ module.exports = {
     if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
+    this.view.lastEdited = id
     this.view.editPos = 'end'
     this.setMode('insert')
   },
@@ -384,6 +385,11 @@ module.exports = {
 
   goToTop: function () {
     this.setActive(this.view.root)
+  },
+
+  goToLastEdited: function () {
+    var id = this.view.lastEdited || this.view.root
+    this.edit(id)
   },
 
   goToNextSibling: function (id) {

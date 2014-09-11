@@ -15,8 +15,9 @@ Local.prototype = {
     }
     done(null, found)
   },
-  save: function (type, id, value) {
+  save: function (type, id, value, done) {
     localStorage.setItem(this.prefix + type + ':' + id, JSON.stringify(value))
+    done && done()
   },
   load: function (type, id) {
     return JSON.parse(localStorage[this.prefix + type + ':' + id])
