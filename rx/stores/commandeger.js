@@ -33,13 +33,24 @@ Commandeger.prototype = {
   executeCommands: function (...commands) {
     var time = Date.now()
     var changed = []
+    var squash = false
     var states = commands.map((command) => {
       changed = changed.concat(this.doCommand(command))
+      squash = squash || command.squash
       return command.state
     })
-    this.history = this.history.slice(0, this.histpos)
-    this.history.push({time: time, changes: commands})
-    this.histpos = this.history.length
+    if (squash) {
+      console.log('squashing', this.histpos)
+      if (this.histpos > 0) {
+        var past = this.history[this.histpos - 1]
+        past.changes = past.changes.concat(commands)
+      }
+    } else {
+      console.log('adding to history', this.histpos)
+      this.history = this.history.slice(0, this.histpos)
+      this.history.push({time: time, changes: commands})
+      this.histpos = this.history.length
+    }
     this.changed.apply(this, changed)
     return states
   },
@@ -51,7 +62,7 @@ Commandeger.prototype = {
     var changed = []
     var time = Date.now()
     var changes
-    for (var i=0; i<last.changes.length; i++) {
+    for (var i=last.changes.length-1; i >= 0; i--) {
       changes = this.undoCommand(last.changes[i])
       changed = changed.concat(changes)
     }

@@ -10,12 +10,12 @@
 var movement = require('../util/movement')
 
 module.exports = {
-  set: function (id, attr, value) {
-    this.executeCommand('set', {id, attr, value})
+  set: function (id, attr, value, squash) {
+    this.executeCommand('set', {id, attr, value}, squash)
   },
 
-  update: function (id, update) {
-    this.executeCommand('update', {id, update})
+  update: function (id, update, squash) {
+    this.executeCommand('update', {id, update}, squash)
   },
 
   setMany: function (attr, ids, values) {

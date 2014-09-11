@@ -63,12 +63,13 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       changed: this.changed.bind(this),
       parent: this,
       globals: this._globals,
-      executeCommand: (cmd, state) =>
+      executeCommand: (cmd, state, squash) =>
         this.cmd.execute({
           cmd,
           state,
           view: id,
-          active: this.views[id].active
+          active: this.views[id].active,
+          squash: squash,
         }),
       executeCommands: () => {
         var commands = []

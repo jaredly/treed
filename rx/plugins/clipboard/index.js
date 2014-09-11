@@ -7,17 +7,17 @@ module.exports = {
     'cut': {
       'normal': 'd d, shift+d, ctrl+x',
       'visual': 'd, shift+d, ctrl+x',
-      'insert': 'ctrl+x',
+      // 'insert': 'ctrl+x',
     },
     'copy': {
       'normal': 'y y, shift+y, ctrl+c',
       'visual': 'y, shift+y, ctrl+c',
-      'insert': 'ctrl+c',
+      // 'insert': 'ctrl+c',
     },
     'paste': {
       'normal': 'p, ctrl+v',
       'visual': 'p, ctrl+v',
-      'insert': 'ctrl+v',
+      // 'insert': 'ctrl+v',
     },
     'paste above': {
       'normal': 'shift+p',
@@ -31,6 +31,17 @@ module.exports = {
     },
 
     actions: {
+      copy: function (id) {
+        id = id || this.view.active
+        if (this.view.mode === 'visual') {
+          ids = this.view.selection
+          this.setMode('normal', true)
+        } else {
+          ids = [id]
+        }
+        this.globals.clipboard = this.db.exportMany(ids)
+      },
+
       cut: function (id) {
         id = id || this.view.active
         if (id === this.view.root) return
