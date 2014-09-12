@@ -67,27 +67,7 @@ module.exports = {
 
       paste: function (id) {
         if (!this.globals.clipboard) return
-        id = id || this.view.active
-        var node = this.db.nodes[id]
-          , pid
-          , ix
-        if ((node.children.length && !node.collapsed) || id === this.view.root) {
-          pid = id
-          ix = 0
-        } else {
-          pid = node.parent
-          ix = this.db.nodes[pid].children.indexOf(id) + 1
-        }
-        var cState = this.executeCommand('importTrees', {
-          pid: pid,
-          index: ix,
-          data: this.globals.clipboard
-        })
-        if (cState.created.ids.length > 1) {
-          this.setMode('visual')
-          this.setSelection(cState.created.ids)
-        }
-        this.setActive(cState.created.ids[0])
+        this.importTrees(id, this.globals.clipboard)
       },
 
       pasteAbove: function (id) {

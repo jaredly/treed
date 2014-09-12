@@ -18,6 +18,30 @@ module.exports = {
     this.executeCommand('update', {id, update}, squash)
   },
 
+  importTrees: function (id, trees) {
+    id = id || this.view.active
+    var node = this.db.nodes[id]
+      , pid
+      , ix
+    if ((node.children.length && !node.collapsed) || id === this.view.root) {
+      pid = id
+      ix = 0
+    } else {
+      pid = node.parent
+      ix = this.db.nodes[pid].children.indexOf(id) + 1
+    }
+    var cState = this.executeCommand('importTrees', {
+      pid: pid,
+      index: ix,
+      data: trees,
+    })
+    if (cState.created.ids.length > 1) {
+      this.setMode('visual')
+      this.setSelection(cState.created.ids)
+    }
+    this.setActive(cState.created.ids[0])
+  },
+
   setMany: function (attr, ids, values) {
     this.executeCommand('setMany', {ids: ids, attr: attr, values: values})
   },
