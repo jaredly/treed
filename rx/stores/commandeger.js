@@ -40,13 +40,11 @@ Commandeger.prototype = {
       return command.state
     })
     if (squash) {
-      console.log('squashing', this.histpos)
       if (this.histpos > 0) {
         var past = this.history[this.histpos - 1]
         past.changes = past.changes.concat(commands)
       }
     } else {
-      console.log('adding to history', this.histpos)
       this.history = this.history.slice(0, this.histpos)
       this.history.push({time: time, changes: commands})
       this.histpos = this.history.length
