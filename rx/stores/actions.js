@@ -58,14 +58,15 @@ module.exports = {
   },
 
   setActive: function (id) {
-    if (!id || id === this.view.active || !this.db.nodes[id]) return
+    if (!id || !this.db.nodes[id]) return
     var old = this.view.active
-    this.view.active = id
     if (this.view.id !== this.parent.activeView) {
       console.log('changing active view', this.view.id)
       this.parent.activeView = this.view.id
       this.changed(this.events.activeViewChanged())
     }
+    if (id === this.view.active) return
+    this.view.active = id
     if (this.view.mode === 'insert') this.view.editPos = 'end'
     if (!this.db.nodes[old]) {
       this.changed(this.events.nodeViewChanged(id))
