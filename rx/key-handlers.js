@@ -3,20 +3,23 @@ var keyHandler = require('../lib/keys')
 
 module.exports = keyHandlers
 
-function keyHandlers(keys, actions, plugins) {
+function keyHandlers(keys, actions, plugins, allPlugins) {
   var modes = ['visual', 'normal', 'insert']
 
   var collected = {}
   modes.forEach((mode) => collected[mode] = {})
 
   var collect = function (keys) {
-    Object.keys(keys).forEach((name) => {
+    if ('function' === typeof keys) {
+      keys = keys(allPlugins)
+    }
+    for (var name in keys) {
       modes.forEach((mode) => {
         if (keys[name][mode]) {
           collected[mode][name] = keys[name][mode]
         }
       })
-    })
+    }
   }
 
   collect(keys)

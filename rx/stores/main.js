@@ -112,8 +112,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   },
 
   // just the `store` part of the plugin
-  addPlugin: function (plugin) {
-    BaseStore.prototype.addPlugin.call(this, plugin)
+  addPlugin: function (plugin, allPlugins) {
+    BaseStore.prototype.addPlugin.call(this, plugin, allPlugins)
 
     if (plugin.getters) {
       for (var name in plugin.getters) {

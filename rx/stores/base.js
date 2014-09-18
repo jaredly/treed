@@ -8,22 +8,28 @@ function BaseStore(options) {
   this._listeners = {}
 
   if (options.plugins) {
-    options.plugins.forEach(this.addPlugin.bind(this))
+    options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
   }
 }
 
 BaseStore.prototype = {
   actions: {},
 
-  addPlugin: function (plugin) {
+  addPlugin: function (plugin, allPlugins) {
     if (plugin.init) {
       plugin.init(this) // TODO async?
     }
 
     var name
+      , actions
     if (plugin.actions) {
-      for (name in plugin.actions) {
-        this.actions[name] = plugin.actions[name]
+      if ('function' === typeof plugin.actions) {
+        actions = plugin.actions(allPlugins)
+      } else {
+        actions = plugin.actions
+      }
+      for (name in actions) {
+        this.actions[name] = actions[name]
       }
     }
 

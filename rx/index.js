@@ -56,6 +56,7 @@ function initStore(plugins, options, done) {
 
     var store = new MainStore({
       plugins: pluginType(plugins, 'store'),
+      allPlugins: plugins,
       db: db
     })
     done(store)
@@ -73,7 +74,7 @@ function initView(el, store, plugins, options, done) {
   var props = {
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
-    keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys')),
+    keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys'), plugins),
     store: storeView,
   }
 
