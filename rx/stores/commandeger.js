@@ -1,4 +1,6 @@
 
+var async = require('async')
+
 module.exports = Commandeger
 
 /**
@@ -27,32 +29,33 @@ Commandeger.prototype = {
   },
 
   execute: function (command) {
-    return this.executeCommands(command)[0]
+    this.executeCommands(command)
   },
 
   executeCommands: function (...commands) {
     var time = Date.now()
     var changed = []
     var squash = false
-    var states = commands.map((command) => {
-      changed = changed.concat(this.doCommand(command))
-      squash = squash || command.squash
-      return command.state
-    })
-    if (squash) {
-      console.log('squashing', this.histpos)
-      if (this.histpos > 0) {
-        var past = this.history[this.histpos - 1]
-        past.changes = past.changes.concat(commands)
+    async.mapSeries(commands, (command, next) => {
+      this.doCommand(command, (err, newChanged) => {
+        changed = changed.concat(newChanged)
+        squash = squash || command.squash
+        next(err, command.state)
+      })
+    }, (err, states) => {
+      if (err) return console.error('Failed to execute commands!!!', err)
+      if (squash) {
+        if (this.histpos > 0) {
+          var past = this.history[this.histpos - 1]
+          past.changes = past.changes.concat(commands)
+        }
+      } else {
+        this.history = this.history.slice(0, this.histpos)
+        this.history.push({time: time, changes: commands})
+        this.histpos = this.history.length
       }
-    } else {
-      console.log('adding to history', this.histpos)
-      this.history = this.history.slice(0, this.histpos)
-      this.history.push({time: time, changes: commands})
-      this.histpos = this.history.length
-    }
-    this.changed.apply(this, changed)
-    return states
+      this.changed.apply(this, changed)
+    })
   },
 
   undoCommands: function () {
@@ -61,13 +64,16 @@ Commandeger.prototype = {
     var last = this.history[this.histpos]
     var changed = []
     var time = Date.now()
-    var changes
+    var items = []
     for (var i=last.changes.length-1; i >= 0; i--) {
-      changes = this.undoCommand(last.changes[i])
-      changed = changed.concat(changes)
+      items.push(last.changes[i])
     }
-    // XXX
-    this.changed.apply(this, changed)
+    async.mapSeries(items, (item, next) => {
+      this.undoCommand(item, (err, newChanges) => {
+        changed = changed.concat(newChanges)
+        next()
+      })
+    }, (err) => this.changed.apply(this, changed))
   },
 
   redoCommands: function () {
@@ -76,40 +82,72 @@ Commandeger.prototype = {
     this.histpos += 1
     var changed = []
     var time = Date.now()
-    var changes
-    for (var i=0; i<last.changes.length; i++) {
-      changes = this.redoCommand(last.changes[i])
-      changed = changed.concat(changes)
-    }
-    this.changed.apply(this, changed)
+    async.mapSeries(last.changes, (item, next) => {
+      this.redoCommand(item, (err, changes) => {
+        changed = changed.concat(changes)
+        next()
+      })
+    }, (err) => this.changed.apply(this, changed))
   },
 
-  doCommand: function (command) {
-    var changed = this.commands[command.cmd].apply.call(command.state, this.db, this.events[command.view])
+  doCommand: function (command, done) {
+    var cmd = this.commands[command.cmd]
+    if (cmd.async) {
+      cmd.apply.call(command.state, this.db, this.events[command.view], (err, changed) => {
+        if ('string' === typeof changed) {
+          changed = [changed]
+        }
+        if (cmd.done) {
+          cmd.done(command.state)
+        }
+        done(err, changed)
+      })
+      return
+    }
+    var changed = cmd.apply.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
-    return changed
+    done(null, changed)
   },
 
-  undoCommand: function (command) {
-    var changed = this.commands[command.cmd].undo.call(command.state, this.db, this.events[command.view])
+  undoCommand: function (command, done) {
+    var cmd = this.commands[command.cmd]
+    if (cmd.async) {
+      cmd.apply.call(command.state, this.db, this.events[command.view], (err, changed) => {
+        if ('string' === typeof changed) {
+          changed = [changed]
+        }
+        done(err, changed)
+      })
+      return
+    }
+    var changed = cmd.undo.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
     this.setActive(command.active, command.view)
-    return changed
+    done(null, changed)
   },
 
-  redoCommand: function (command) {
+  redoCommand: function (command, done) {
     var cmd = this.commands[command.cmd]
     var action = cmd.redo || cmd.apply
+    if (cmd.async) {
+      action.call(command.state, this.db, this.events[command.view], (err, changed) => {
+        if ('string' === typeof changed) {
+          changed = [changed]
+        }
+        done(err, changed)
+      })
+      return
+    }
     var changed = action.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
     }
     this.setActive(command.active, command.view)
-    return changed
+    done(null, changed)
   },
 }
 

@@ -5,6 +5,12 @@ ARGS=-t [ reactify --es6 --everything --visitors jstransform/visitors/es6-destru
 simple:
 	browserify ${ARGS} simple.js -o simple/index.js -d
 
+ix:
+	browserify ${ARGS} ix.js -o ix/index.js -d
+
+watch-ix:
+	watchify -v ${ARGS} ix.js -o ix/index.js -d
+
 simple-css:
 	lessc simple.less simple/index.css
 
@@ -29,4 +35,4 @@ dual:
 dual-css:
 	lessc dual.less dual/index.css
 
-.PHONY: simple watch-simple perf dual dual-css simple-css
+.PHONY: simple watch-simple perf dual dual-css simple-css ix ix-css

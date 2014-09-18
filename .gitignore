@@ -6,3 +6,6 @@
 *.swo
 rx/demo/dual/index.css
 rx/demo/dual/index.js
+/rx/demo/*/index.js
+/rx/demo/*/index.css
+.nfs*

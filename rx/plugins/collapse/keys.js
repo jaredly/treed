@@ -10,6 +10,7 @@ module.exports = {
     normal: 'z',
     visual: 'z',
   },
+  /*
   'collapse': {
     description: 'Collapse the current item',
     normal: 'ctrl+left',
@@ -22,5 +23,6 @@ module.exports = {
     insert: 'ctrl+right',
     visual: 'ctrl+right',
   },
+  */
 }
 

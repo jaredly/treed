@@ -72,20 +72,7 @@ module.exports = {
 
       pasteAbove: function (id) {
         if (!this.globals.clipboard) return
-        id = id || this.view.active
-        var node = this.db.nodes[id]
-          , pid = node.parent
-          , ix = this.db.nodes[pid].children.indexOf(id)
-        var cState = this.executeCommand('importTrees', {
-          pid: pid,
-          index: ix,
-          data: this.globals.clipboard
-        })
-        if (cState.created.ids.length > 1) {
-          this.setMode('visual')
-          this.setSelection(cState.created.ids)
-        }
-        this.setActive(cState.created.ids[0])
+        this.importTrees(id, this.globals.clipboard, true)
       },
     },
   },

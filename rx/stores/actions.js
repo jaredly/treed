@@ -18,28 +18,35 @@ module.exports = {
     this.executeCommand('update', {id, update}, squash)
   },
 
-  importTrees: function (id, trees) {
+  importTrees: function (id, trees, above) {
     id = id || this.view.active
+    if (above && id === this.root) return
     var node = this.db.nodes[id]
       , pid
       , ix
-    if ((node.children.length && !node.collapsed) || id === this.view.root) {
-      pid = id
-      ix = 0
-    } else {
+    if (above) {
       pid = node.parent
-      ix = this.db.nodes[pid].children.indexOf(id) + 1
+      ix = this.db.nodes[pid].children.indexOf(id)
+    } else {
+      if ((node.children.length && !node.collapsed) || id === this.view.root) {
+        pid = id
+        ix = 0
+      } else {
+        pid = node.parent
+        ix = this.db.nodes[pid].children.indexOf(id) + 1
+      }
     }
-    var cState = this.executeCommand('importTrees', {
+    this.executeCommand('importTrees', {
       pid: pid,
       index: ix,
       data: trees,
+    }, (err, cState) => {
+      if (cState.created.ids.length > 1) {
+        this.setMode('visual')
+        this.setSelection(cState.created.ids)
+      }
+      this.setActive(cState.created.ids[0])
     })
-    if (cState.created.ids.length > 1) {
-      this.setMode('visual')
-      this.setSelection(cState.created.ids)
-    }
-    this.setActive(cState.created.ids[0])
   },
 
   setMany: function (attr, ids, values) {
@@ -268,12 +275,13 @@ module.exports = {
     id = id || this.view.active
     var node = this.db.nodes[id]
     if (id === this.view.root) return
-    var cmd = this.executeCommand('create', {
+    this.executeCommand('create', {
       pid: node.parent,
       type: node.type,
       ix: this.db.nodes[node.parent].children.indexOf(id),
+    }, (err, cmd) => {
+      this.edit(cmd.id)
     })
-    this.edit(cmd.id)
   },
 
   createAfter: function (id) {
@@ -293,8 +301,9 @@ module.exports = {
         ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
       }
     }
-    var cmd = this.executeCommand('create', pos)
-    this.edit(cmd.id)
+    this.executeCommand('create', pos, (err, cmd) => {
+      this.edit(cmd.id)
+    })
   },
 
   visualMode: function () {

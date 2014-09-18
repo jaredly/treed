@@ -1,5 +1,6 @@
 
 var uuid = require('../lib/uuid')
+var verifyNodes = require('./util/verify-nodes')
 
 module.exports = Db
 
@@ -26,14 +27,13 @@ Db.prototype = {
       this.root = roots[0].id
       this.pl.findAll('node', (err, nodes) => {
         if (err) return done(err)
-        nodes.forEach((node) => {
-          this.nodes[node.id] = node
-        })
-        
-        if (!this.nodes[this.root]) {
-          console.error('Database corruption! Root has no node')
-          done(new Error('Root has no node'))
+        var map = {}
+        nodes.forEach((node) => map[node.id] = node)
+        var err = verifyNodes(this.root, map)
+        if (err) {
+          return done(err)
         }
+        this.nodes = map
 
         done()
       })
@@ -58,8 +58,9 @@ Db.prototype = {
   },
 
   // dump children INTO the pid at index ix
-  dump: function (pid, children, ix) {
-    var ids = children.map((child) => {
+  dump: function (pid, children, ix, done) {
+    var nodes = {}
+    var processChild = (pid, child) => {
       var id = uuid()
       var node = {
         id: id,
@@ -67,25 +68,30 @@ Db.prototype = {
         children: [],
         parent: pid,
       }
+      nodes[id] = node
       for (var name in child) {
         if (['content', 'children'].indexOf(name) !== -1) continue;
         node[name] = child[name]
       }
-      this.save(id, node)
       if (child.children && child.children.length) {
-        this.dump(id, child.children)
+        node.children = child.children.map(processChild.bind(this, id))
       }
       return id
-    })
-    var oldChildren = this.nodes[pid].children
-    if (!ix && ix !== 0) {
-      children = oldChildren.concat(ids)
-    } else {
-      children = oldChildren.slice()
-      ;[].splice.apply(children, [ix, 0].concat(ids))
     }
-    this.set(pid, 'children', children)
-    return {ids: ids, oldChildren: oldChildren}
+    var ids = children.map(processChild.bind(this, pid))
+    this.batchSave(nodes, (err) => {
+      if (err) return done(err)
+      var oldChildren = this.nodes[pid].children
+      if (!ix && ix !== 0) {
+        children = oldChildren.concat(ids)
+      } else {
+        children = oldChildren.slice()
+        ;[].splice.apply(children, [ix, 0].concat(ids))
+      }
+      this.set(pid, 'children', children, (err) => {
+        done(err, {ids: ids, oldChildren: oldChildren})
+      })
+    })
   },
 
   exportTree: function (pid) {
@@ -118,10 +124,16 @@ Db.prototype = {
       }
       this.pl.save('node', this.root, this.nodes[this.root], (err) => {
         if (err) return done(err)
-        this.dump(this.root, defaultData.children)
-        done(err)
+        this.dump(this.root, defaultData.children, null, done)
       })
     })
+  },
+
+  batchSave: function (nodes, done) {
+    for (var id in nodes) {
+      this.nodes[id] = nodes[id]
+    }
+    this.pl.batchSave('node', nodes, done)
   },
 
   save: function (id, value) {
@@ -129,9 +141,9 @@ Db.prototype = {
     this.pl.save('node', id, value)
   },
 
-  set: function (id, attr, value) {
+  set: function (id, attr, value, done) {
     this.nodes[id][attr] = value
-    this.pl.set('node', id, attr, value)
+    this.pl.set('node', id, attr, value, done)
   },
 
   remove: function (id) {
@@ -172,7 +184,7 @@ Db.prototype = {
     return ix
   },
 
-  setMany: function (attr, ids, value) {
+  setMany: function (attr, ids, value, done) {
     if (Array.isArray(value)) {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value[i]
@@ -182,14 +194,13 @@ Db.prototype = {
         this.nodes[id][attr] = value
       })
     }
-    this.pl.batchSet('node', attr, ids, value)
+    this.pl.batchSet('node', attr, ids, value, done)
   },
 
-  update: function (id, update) {
+  update: function (id, update, done) {
     for (var name in update) {
       this.nodes[id][name] = update[name]
     }
-    this.pl.update('node', id, update)
+    this.pl.update('node', id, update, done)
   },
-
 }
