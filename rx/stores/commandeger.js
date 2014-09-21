@@ -97,8 +97,8 @@ Commandeger.prototype = {
         if ('string' === typeof changed) {
           changed = [changed]
         }
-        if (cmd.done) {
-          cmd.done(command.state)
+        if (command.done) {
+          command.done(null, command.state)
         }
         done(err, changed)
       })
@@ -107,6 +107,9 @@ Commandeger.prototype = {
     var changed = cmd.apply.call(command.state, this.db, this.events[command.view])
     if ('string' === typeof changed) {
       changed = [changed]
+    }
+    if (command.done) {
+      command.done(null, command.state)
     }
     done(null, changed)
   },
