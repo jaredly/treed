@@ -9,7 +9,9 @@ module.exports = {
   view: {
     blocks: {
       top: function (actions, state, store) {
-        return Breadcrumb({store: store})
+        return Breadcrumb({
+          rebase: actions.rebase.bind(actions),
+          pedigree: store.getters.getPedigree()})
       },
     },
   },

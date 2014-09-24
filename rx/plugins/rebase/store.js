@@ -15,20 +15,21 @@ module.exports = {
     },
   },
 
-  extend: {
-    getPedigree: function (id, last) {
+  getters: {
+    getPedigree: function (last) {
       var items = []
-      var node = this.db.nodes[id]
+      var node = this.db.nodes[this.view.root]
       if (!last) {
         node = this.db.nodes[node.parent]
       }
       while (node) {
-        items.push({
+        items.unshift({
           id: node.id,
           content: node.content
         })
         node = this.db.nodes[node.parent]
       }
+      return items
     },
   },
 }
