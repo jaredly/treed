@@ -102,7 +102,7 @@ module.exports = {
   },
 
   move: {
-    args: ['id', 'npid', 'nindex'],
+    args: ['id', 'npid', 'nindex', 'nextIsRoot'],
     apply: function (db, events) {
       this.opid = db.nodes[this.id].parent
       this.oindex = db.removeChild(this.opid, this.id)
@@ -110,7 +110,9 @@ module.exports = {
         throw new Error('node is not a child of its parent')
       }
 
+      var unCollapse = !this.nextIsRoot
       if (!this.npid) {
+        unCollapse = false
         this.npid = this.opid
         if (this.oindex < this.nindex) {
           this.nindex -= 1
@@ -119,7 +121,7 @@ module.exports = {
 
       db.insertChild(this.npid, this.id, this.nindex)
       db.set(this.id, 'parent', this.npid)
-      if (db.nodes[this.npid].collapsed) {
+      if (unCollapse && db.nodes[this.npid].collapsed) {
         db.set(this.npid, 'collapsed', false)
         this.wasCollapsed = true
       }
@@ -150,7 +152,7 @@ module.exports = {
   },
 
   moveMany: {
-    args: ['ids', 'npid', 'nindex'],
+    args: ['ids', 'npid', 'nindex', 'nextIsRoot'],
     apply: function (db, events) {
       this.opid = db.nodes[this.ids[0]].parent
       this.oindex = db.removeChild(this.opid, this.ids[0], this.ids.length)
@@ -158,7 +160,9 @@ module.exports = {
         throw new Error('node is not a child of its parent')
       }
 
+      var unCollapse = !this.nextIsRoot
       if (!this.npid) {
+        unCollapse = false
         this.npid = this.opid
       }
       if (this.npid === this.opid) {
@@ -169,7 +173,7 @@ module.exports = {
 
       db.insertChildren(this.npid, this.ids, this.nindex)
       db.setMany('parent', this.ids, this.npid)
-      if (db.nodes[this.npid].collapsed) {
+      if (unCollapse && db.nodes[this.npid].collapsed) {
         db.set(this.npid, 'collapsed', false)
         this.wasCollapsed = true
       }

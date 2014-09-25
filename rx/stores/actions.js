@@ -190,6 +190,7 @@ module.exports = {
     this.executeCommand('move', {
       id,
       npid: pos.npid,
+      nextIsRoot: pos.npid === this.view.root,
       nindex: pos.nindex,
     })
     if (wasEditing) {
@@ -205,6 +206,7 @@ module.exports = {
     this.executeCommand('moveMany', {
       ids,
       npid: pos.npid,
+      nextIsRoot: pos.npid === this.view.root,
       nindex: pos.nindex,
     })
   },
@@ -217,6 +219,7 @@ module.exports = {
     this.executeCommand('moveMany', {
       ids,
       npid: pos.npid,
+      nextIsRoot: pos.npid === this.view.root,
       nindex: pos.nindex,
     })
   },
@@ -233,6 +236,7 @@ module.exports = {
     this.executeCommand('move', {
       id: id,
       npid: pos.npid,
+      nextIsRoot: pos.npid === this.view.root,
       nindex: pos.nindex,
     })
     if (wasEditing) {
@@ -252,6 +256,7 @@ module.exports = {
     this.executeCommand('moveMany', {
       ids,
       npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
       nindex: pos.ix,
     })
   },
@@ -268,6 +273,7 @@ module.exports = {
     this.executeCommand('moveMany', {
       ids,
       npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
       nindex: pos.ix,
     })
   },
