@@ -15,7 +15,7 @@ module.exports = {
   },
 
   updateMany: function (ids, updates, squash) {
-    this.executeCommand('updateMany', {id, updates}, squash)
+    this.executeCommand('updateMany', {ids, updates}, squash)
   },
 
   update: function (id, update, squash) {

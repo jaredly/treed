@@ -36,13 +36,22 @@ module.exports = {
     actions: function (plugins) {
       var actions = {
         changeType: function (id, type, update) {
+          if (!id) {
+            ids = this.view.mode === 'visual' ? this.view.selection : [this.view.active]
+          } else {
+            ids = [id]
+          }
           var refocus
           if (this.view.mode === 'insert') {
             refocus = document.activeElement
             document.activeElement.blur()
           }
           update.type = type
-          this.update(id, update)
+          if (ids.length > 1) {
+            this.updateMany(ids, ids.map(() => clone(update)))
+          } else {
+            this.update(ids[0], clone(update))
+          }
           if (refocus) {
             refocus.focus()
             this.setMode('insert')
@@ -55,7 +64,6 @@ module.exports = {
         Object.keys(plugin.types).forEach(function (name) {
           var defn = plugin.types[name]
           actions['type' + cap(name)] = function (id) {
-            id = id || this.view.active
             var update = {}
             if (defn.update) {
               if ('function' === typeof defn.update) {
@@ -64,7 +72,7 @@ module.exports = {
                 update = defn.update
               }
             }
-            this.changeType(id, name, clone(update))
+            this.changeType(id, name, update)
           }
         })
       })
