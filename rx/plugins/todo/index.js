@@ -11,9 +11,9 @@ module.exports = {
 
   keys: {
     'toggle done': {
-      normal: 'alt+enter',
-      insert: 'alt+enter',
-      visual: 'alt+enter',
+      normal: 'alt+return',
+      insert: 'alt+return',
+      visual: 'alt+return',
     },
   },
 
@@ -23,8 +23,8 @@ module.exports = {
         if (!arguments.length) id = this.view.active
         if (this.db.nodes[id].type !== 'todo') return
         if (this.view.mode === 'visual') {
-          this.batchSet('done', this.view.selected,
-                                this.view.selected.map((id) => !this.db.nodes[id].done))
+          this.setMany('done', this.view.selection,
+                                this.view.selection.map((id) => !this.db.nodes[id].done))
         } else {
           this.set(id, 'done', !this.db.nodes[id].done)
         }
