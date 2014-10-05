@@ -1,0 +1,21 @@
+
+.m_Todo {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #ccc;
+  float: left;
+  margin: 10px 10px 0;
+  cursor: pointer;
+
+  &-done {
+    &:after {
+      content: '✔';
+      position: relative;
+      top: -16px;
+      left: 0px;
+      font-size: 25px;
+      color: #6180FF;
+    }
+  }
+}
+
