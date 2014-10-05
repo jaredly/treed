@@ -5,7 +5,6 @@
   width: 15px;
   height: 15px;
   border: 1px solid #ccc;
-  float: left;
   margin: 10px 10px 0;
   cursor: pointer;
   border-radius: 5px;
@@ -26,5 +25,13 @@
 
 .n_Done > .list_item_head .treed_body_rendered {
   color: #aaa;
+}
+
+.list_item-type-todo > .list_item_head .list_item_body {
+  display: flex;
+
+  .treed_body {
+    flex: 1;
+  }
 }
 
