@@ -1,3 +1,5 @@
+﻿
+@charset "utf-8";
 
 .m_Todo {
   width: 15px;
@@ -6,16 +8,23 @@
   float: left;
   margin: 10px 10px 0;
   cursor: pointer;
+  border-radius: 5px;
 
   &-done {
     &:after {
-      content: '✔';
+      content: '✓';
       position: relative;
       top: -16px;
       left: 0px;
       font-size: 25px;
-      color: #6180FF;
+      color: #aaa;
+      font-weight: bold;
+      color: #aaa;
     }
   }
+}
+
+.n_Done > .list_item_head .treed_body_rendered {
+  color: #aaa;
 }
 
