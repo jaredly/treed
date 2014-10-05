@@ -14,6 +14,10 @@ module.exports = {
     this.executeCommand('set', {id, attr, value}, squash)
   },
 
+  updateMany: function (ids, updates, squash) {
+    this.executeCommand('updateMany', {id, updates}, squash)
+  },
+
   update: function (id, update, squash) {
     this.executeCommand('update', {id, update}, squash)
   },

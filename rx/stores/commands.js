@@ -25,6 +25,28 @@ module.exports = {
     },
   },
 
+  updateMany: {
+    args: ['ids', 'updates'],
+    apply: function (db, events) {
+      this.olds = this.ids.map((id, i) => {
+        var old = {}
+        for (var name in this.update) {
+          old[name] = db.nodes[this.id][name]
+        }
+        db.update(id, this.updates[i])
+        return old
+      })
+      return this.ids.map(id => events.nodeChanged(this.id))
+    },
+    undo: function (db, events) {
+      db.update(this.id, this.old)
+      this.ids.forEach((id, i) => {
+        db.update(id, this.olds[i])
+      })
+      return this.ids.map(id => events.nodeChanged(this.id))
+    },
+  },
+
   set: {
     args: ['id', 'attr', 'value'],
     apply: function (db, events) {

@@ -19,6 +19,7 @@ module.exports = {
       for (var name in plugin.types) {
         var sh = plugin.types[name].shortcut || plugin.types[name]
         keys['type ' + name] = {
+          'visual': 't ' + sh + ', alt+t ' + sh,
           'normal': 't ' + sh + ', alt+t ' + sh,
           'insert': 'alt+t ' + sh,
         }
