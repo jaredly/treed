@@ -6,13 +6,14 @@ module.exports = {
   types: {
     todo: {
       shortcut: 't',
-      keys: {
-        'toggle done': {
-          normal: 'alt+enter',
-          insert: 'alt+enter',
-          visual: 'alt+enter',
-        },
-      },
+    },
+  },
+
+  keys: {
+    'toggle done': {
+      normal: 'alt+enter',
+      insert: 'alt+enter',
+      visual: 'alt+enter',
     },
   },
 
@@ -20,12 +21,12 @@ module.exports = {
     actions: {
       toggleDone: function (id) {
         if (!arguments.length) id = this.view.active
+        if (this.db.nodes[id].type !== 'todo') return
         if (this.view.mode === 'visual') {
           this.batchSet('done', this.view.selected,
                                 this.view.selected.map((id) => !this.db.nodes[id].done))
         } else {
-          var done = this.db.nodes[id].done
-          this.set(id, 'done', !done)
+          this.set(id, 'done', !this.db.nodes[id].done)
         }
       },
     },

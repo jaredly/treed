@@ -30,8 +30,8 @@ module.exports = {
     apply: function (db, events) {
       this.olds = this.ids.map((id, i) => {
         var old = {}
-        for (var name in this.update) {
-          old[name] = db.nodes[this.id][name]
+        for (var name in this.updates[i]) {
+          old[name] = db.nodes[id][name]
         }
         db.update(id, this.updates[i])
         return old
