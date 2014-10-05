@@ -23,13 +23,7 @@ module.exports = MainStore
 function MainStore(options) {
   this.db = options.db
 
-  this.views = {}
-  this._globals = {}
-  this._actions = {}
-  this._events = {}
-  this._getters = {}
-  this._nextViewId = 0
-  this.activeView = 0
+  this.clearViews()
 
   BaseStore.apply(this, arguments)
 
@@ -43,6 +37,19 @@ function MainStore(options) {
 
 MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   constructor: MainStore,
+
+  clearViews: function () {
+    this.views = {}
+    this._globals = {}
+    this._actions = {}
+    this._events = {}
+    if (this.cmd) {
+      this.cmd.events = this._events
+    }
+    this._getters = {}
+    this._nextViewId = 0
+    this.activeView = 0
+  },
 
   // create a proxy object for the store that is specific to a single view
   registerView: function () {

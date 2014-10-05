@@ -27,10 +27,21 @@ var TreeView = React.createClass({
     keys: PT.object,
   },
 
+  componentDidUpdate: function (prevProps) {
+    if (this.props.store !== prevProps.store) {
+      var e = this.props.store.events
+      this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
+    }
+  },
+
   componentWillMount: function () {
     var e = this.props.store.events
     this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
     window.addEventListener('keydown', this._onKeyDown)
+  },
+
+  componentWillUnmount: function () {
+    window.removeEventListener('keydown', this._onKeyDown)
   },
 
   _onKeyDown: function (e) {

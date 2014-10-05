@@ -4,30 +4,6 @@ var React = require('react')
 
 var Textarea = module.exports = React.createClass({
 
-  /*
-  onKeyDown: function (e) {
-    if (!e.shiftKey && !e.ctrlKey && !e.altKey) {
-      if (e.keyCode == 38 && this.props.goUp) {
-        var l = this.getCursorLine()
-        if (l === 0 || l === 1) {
-          this.props.goUp()
-          e.preventDefault()
-        }
-        return
-      }
-      if (e.keyCode === 40 && this.props.goDown) {
-        var l = this.getCursorLine()
-        if (l === -1 || l === 1) {
-          this.props.goDown()
-          e.preventDefault()
-        }
-        return
-      }
-    }
-    if (this.props.onKeyDown) this.props.onKeyDown(e)
-  },
-  */
-
   // -1 at end
   // 0 at start
   // 1 no content

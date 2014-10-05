@@ -15,10 +15,12 @@ var MainStore = require('./stores/main')
 var Db = require('./db')
 
 module.exports = {
-  quickstart: quickstart,
-  initView: initView,
-  initStore: initStore,
-  pluginType: pluginType,
+  quickstart,
+
+  initView,
+  initStore,
+  pluginType,
+  viewConfig,
 }
 
 function quickstart(el, options, done) {
@@ -34,9 +36,10 @@ function quickstart(el, options, done) {
     el = found
   }
 
-  initStore(options.plugins, options.storeOptions, (store) => {
+  initStore(options.plugins, options.storeOptions, (err, store) => {
+    if (err) return done(err)
     initView(el, store, options.plugins, options.viewOptions, (storeView) => {
-      done && done(store, storeView)
+      done && done(err, store, storeView)
     })
   })
 }
@@ -52,20 +55,19 @@ function initStore(plugins, options, done) {
   var db = new Db(pl, pluginType(plugins, 'db'))
   window.db = db
   db.init(options.data, function (err) {
-    if (err) return console.error('Failed to start db', err);
+    if (err) return done(err)
 
     var store = new MainStore({
       plugins: pluginType(plugins, 'store'),
       allPlugins: plugins,
       db: db
     })
-    done(store)
+    done(null, store)
   })
 }
 
-function initView(el, store, plugins, options, done) {
+function viewConfig(store, plugins, options) {
   options = extend({
-    View: TreeView,
     defaultKeys: keys,
   }, options)
 
@@ -77,13 +79,18 @@ function initView(el, store, plugins, options, done) {
     keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys'), plugins),
     store: storeView,
   }
+  return {view: storeView, props: props}
+}
 
-  if (!el) {
-    return done(storeView, props)
-  }
+function initView(el, store, plugins, options, done) {
+  options = extend({
+    View: TreeView,
+  }, options)
 
-  React.renderComponent(options.View(props), el, function () {
-    done(storeView)
+  var config = viewConfig(store, plugins, options)
+
+  React.renderComponent(options.View(config.props), el, function () {
+    done(config.view)
   })
 }
 

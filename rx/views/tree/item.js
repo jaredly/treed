@@ -36,7 +36,7 @@ var TreeItem = React.createClass({
       },
 
       shouldGetNew: function (nextProps) {
-        return nextProps.id !== this.props.id
+        return nextProps.id !== this.props.id || nextProps.store !== this.props.store
       },
 
       getListeners: function (props, events) {

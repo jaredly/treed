@@ -14,6 +14,7 @@ var Editor = React.createClass({
     onBlur: PT.func,
     onChange: PT.func,
     onKeyDown: PT.func,
+    createAfter: PT.func,
     goDown: PT.func,
     goUp: PT.func,
   },
@@ -61,6 +62,11 @@ var Editor = React.createClass({
     } else if (e.key === 'Backspace') {
       if (!this.props.value.length) {
         this.props.removeEmpty()
+        e.preventDefault()
+      }
+    } else if (e.key === 'Enter') {
+      if (!e.shiftKey && !e.ctrlKey && !e.altKey && this.props.value.indexOf('\n') === -1) {
+        this.props.createAfter()
         e.preventDefault()
       }
     } else {

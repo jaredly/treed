@@ -105,6 +105,7 @@ var SimpleBody = React.createClass({
       node={this.props.node}
       goDown={this.props.actions.goDown.bind(this.props.actions)}
       goUp={this.props.actions.goUp.bind(this.props.actions)}
+      createAfter={this.props.actions.createAfter.bind(this.props.actions)}
       removeEmpty={this.props.actions.removeEmpty.bind(this.props.actions)}
       onChange={this._onChange}
       onBlur={this._onBlur}
