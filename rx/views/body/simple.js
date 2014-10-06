@@ -111,14 +111,6 @@ var SimpleBody = React.createClass({
       onChange={this._onChange}
       onBlur={this._onBlur}
       onKeyDown={this._onKeyDown}/>
-        /*
-      return <Textarea
-        ref="text"
-        value={this.state.content}
-        onChange={this._onChange}
-        onBlur={this._onBlur}
-        onKeyDown={this._onKeyDown}/>
-        */
   },
 
   renderer: function () {

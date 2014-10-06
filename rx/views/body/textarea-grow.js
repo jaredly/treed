@@ -81,8 +81,7 @@ var Textarea = module.exports = React.createClass({
     var inp = this.refs.area.getDOMNode()
       , pos = 0
     if (!start) pos = inp.value.length
-    if (inp === document.activeElement) return
-    inp.focus()
+    if (inp !== document.activeElement) inp.focus()
     inp.selectionStart = inp.selectionEnd = pos
   },
 

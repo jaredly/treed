@@ -374,7 +374,7 @@ module.exports = {
     if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    this.editPos = 'change'
+    this.view.editPos = 'change'
     this.setMode('insert')
   },
 
