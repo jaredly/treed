@@ -35,25 +35,25 @@ var Editor = React.createClass({
     var text = this.refs.text
       , line
       , pos
-    if (e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown' && !e.shiftKey) {
       line = text.getCursorLine()
       if (line === -1 || line === 1) {
         this.props.goDown()
         e.preventDefault()
       }
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowUp' && !e.shiftKey) {
       line = text.getCursorLine()
       if (line === 0 || line === 1) {
         this.props.goUp()
         e.preventDefault()
       }
-    } else if (e.key === 'ArrowRight') {
+    } else if (e.key === 'ArrowRight' && !e.shiftKey) {
       pos = text.getCursorPos()
       if (pos === -1 || pos === 1) {
         this.props.goDown(true)
         e.preventDefault()
       }
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === 'ArrowLeft' && !e.shiftKey) {
       pos = text.getCursorPos()
       if (pos === 0 || pos === 1) {
         this.props.goUp()
