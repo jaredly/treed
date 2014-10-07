@@ -24,6 +24,7 @@ function MainStore(options) {
   this.db = options.db
 
   this.clearViews()
+  this._globals = {}
 
   BaseStore.apply(this, arguments)
 
@@ -40,7 +41,6 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
 
   clearViews: function () {
     this.views = {}
-    this._globals = {}
     this._actions = {}
     this._events = {}
     if (this.cmd) {
