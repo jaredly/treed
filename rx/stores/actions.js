@@ -175,7 +175,7 @@ module.exports = {
       next = movement.down(id, this.view.root, this.db.nodes, true)
     }
     if (!next) {
-      next = movement.up(id, this.view.root, this.db.nodes)
+      next = movement.up(ids[0], this.view.root, this.db.nodes)
     }
     this.view.active = next
     this.executeCommand('remove', {ids: ids})
