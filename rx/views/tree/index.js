@@ -7,7 +7,6 @@ var PT = React.PropTypes
 var extend = require('../../util/extend')
 var Listener = require('../../listener')
 var TreeItem = require('./item')
-var SimpleBody = require('../body/simple')
 
 var TreeView = React.createClass({
   mixins: [
