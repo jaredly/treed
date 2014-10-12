@@ -8,6 +8,12 @@ var theScope = {}
 module.exports = {
   store: {
     actions: {
+
+      executeMany: function () {
+        if (this.view.mode !== 'visual') return
+        this.view.selection.forEach(this.execute.bind(this))
+      },
+
       execute: function (id) {
         if (!arguments.length) id = this.view.active
         var node = this.db.nodes[id]
@@ -53,6 +59,9 @@ module.exports = {
       normal: 'shift+return',
       insert: 'shift+return',
     },
+    'execute many': {
+      visual: 'shift+return',
+    },
   },
 
   types: {
@@ -60,6 +69,13 @@ module.exports = {
   },
 
   node: {
+    classes: function (node, state) {
+      if (node.type !== 'ipython') return
+      return cx({
+        'list_item-ijs-dirty': node.executed !== node.content,
+      })
+    },
+
     bodies: {
       ijs: {
         renderer: function () {
