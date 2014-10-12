@@ -13,6 +13,7 @@ module.exports = function (text, output, scope) {
   }, tracker, newScope);
 
   var globals = Object.getOwnPropertyNames(window)
+    .concat(['arguments', 'this', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval']);
   fixScope(tracker, tree, globals)
 
   catchOutputs(tree, '$out')
@@ -21,6 +22,7 @@ module.exports = function (text, output, scope) {
   code += ';' + tracker.declared.map(function (name) {
     return '$ns.' + name + ' = ' + name + ';'
   }).join('');
+  console.log(code)
 
   var fn = new Function('$ns', '$out', code);
   fn(scope, output)
@@ -69,6 +71,8 @@ var crawls = {
     Identifier: function (node, scope, parent, param, path) {
         if (parent.type === 'VariableDeclarator') return
         if (parent.type === 'MemberExpression' && param === 'property') return
+        if (parent.type === 'CatchClause' && param === 'param') return
+        if (parent.type === 'Property' && param === 'key') return
         if ((parent.type === 'FunctionDeclaration' || parent.type === 'FunctionExpression') &&
             (param === 'params' || param === 'id')) return;
         scope.used.push({name: node.name, path: path});
