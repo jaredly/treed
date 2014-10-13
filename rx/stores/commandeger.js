@@ -117,7 +117,7 @@ Commandeger.prototype = {
   undoCommand: function (command, done) {
     var cmd = this.commands[command.cmd]
     if (cmd.async) {
-      cmd.apply.call(command.state, this.db, this.events[command.view], (err, changed) => {
+      cmd.undo.call(command.state, this.db, this.events[command.view], (err, changed) => {
         if ('string' === typeof changed) {
           changed = [changed]
         }

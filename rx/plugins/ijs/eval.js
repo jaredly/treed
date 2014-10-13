@@ -2,8 +2,17 @@
 var esprima = require('esprima')
   , escodegen = require('escodegen')
 
+var _iframe
+function ensureIframe() {
+  if (_iframe) return _iframe
+  _iframe = document.createElement('iframe')
+  _iframe.style.display = 'none'
+  document.body.appendChild(_iframe)
+  return _iframe
+}
+
 module.exports = function (text, output, scope) {
-    
+
   var tree = esprima.parse(text);
   var tracker = newScope()
 
@@ -14,95 +23,74 @@ module.exports = function (text, output, scope) {
 
   var globals = Object.getOwnPropertyNames(window)
     .concat(['arguments', 'this', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval']);
-  fixScope(tracker, tree, globals)
+
+  // fixScope(tracker, tree, globals)
 
   catchOutputs(tree, '$out')
 
   var code = escodegen.generate(tree)
   code += ';' + tracker.declared.map(function (name) {
-    return '$ns.' + name + ' = ' + name + ';'
+    return 'window.' + name + ' = ' + name + ';'
   }).join('');
   console.log(code)
 
-  var fn = new Function('$ns', '$out', code);
-  fn(scope, output)
-}
+  var target = ensureIframe().contentWindow
 
-
-/*
-
-///////k
-module.exports = function evalScoped(text, output, scope) {
-  var tree = esprima.parse(text);
-  var names = getNames(tree)
-  catchOutputs(tree, '$out')
-  var fnSrc = makeFn(escodegen.generate(tree), names, Object.keys(scope));
-  var fn = new Function('$ns', '$out', fnSrc);
-  fn(scope, output)
-}
-*/
-
-function process(text) {
-    var output = [];
-    try {
-         evalScoped(text, output, namespace);
-    }catch (e) {
-        return JSON.stringify({output: output, ns:namespace, error: e.message}, null, 2)
-    }
-    return JSON.stringify({output: output, ns: namespace}, null, 2)
+  target.$out = output
+  target.eval(code)
 }
 
 function scopeName(node) {
-    if (node.type === 'FunctionDeclaration') return node.id.name;
-    return '<anon>'
+  if (node.type === 'FunctionDeclaration') return node.id.name;
+  return '<anon>'
 }
 
 function newScope(node, path) {
-    return {
-        path: path,
-        name: node && scopeName(node),
-        declared: node ? node.params.map(function (n) {return n.name}) : [],
-        children: [],
-        used: [],
-    }
+  return {
+    path: path,
+    name: node && scopeName(node),
+    declared: node ? node.params.map(function (n) {return n.name}) : [],
+    children: [],
+    used: [],
+  }
 }
 
 var crawls = {
-    Identifier: function (node, scope, parent, param, path) {
-        if (parent.type === 'VariableDeclarator') return
-        if (parent.type === 'MemberExpression' && param === 'property') return
-        if (parent.type === 'CatchClause' && param === 'param') return
-        if (parent.type === 'Property' && param === 'key') return
-        if ((parent.type === 'FunctionDeclaration' || parent.type === 'FunctionExpression') &&
-            (param === 'params' || param === 'id')) return;
-        scope.used.push({name: node.name, path: path});
-    },
-    VariableDeclarator: function (node, scope) {
-        scope.declared.push(node.id.name);
-    },
-    FunctionDeclaration: function (node, scope) {
-        scope.declared.push(node.id.name);
-    },
+  Identifier: function (node, scope, parent, param, path) {
+    if (parent.type === 'VariableDeclarator') return
+    if (parent.type === 'MemberExpression' && param === 'property') return
+    if (parent.type === 'CatchClause' && param === 'param') return
+    if (parent.type === 'Property' && param === 'key') return
+    if ((parent.type === 'FunctionDeclaration' || parent.type === 'FunctionExpression') &&
+        (param === 'params' || param === 'id')) return;
+    scope.used.push({name: node.name, path: path});
+  },
+  VariableDeclarator: function (node, scope) {
+    scope.declared.push(node.id.name);
+  },
+  FunctionDeclaration: function (node, scope) {
+    scope.declared.push(node.id.name);
+  },
 }
 
 function fixScope(scope, tree, inherited) {
-    var usable = inherited.concat(scope.declared)
-    scope.children.forEach(function (child) {
-        fixScope(child, tree, usable);
-    });
-    scope.used.forEach(function (item) {
-        if (usable.indexOf(item.name) !== -1) return
-        var parent = item.path.slice(0, -1).reduce(function (parent, attr) {
-            return parent[attr] || {}
-        }, tree);
-        var last = item.path[item.path.length-1]
-        parent[last] = {
-            type: 'MemberExpression',
-            object: {type: 'Identifier', name: '$ns'},
-            property: parent[last],
-            computed: false
-        };
-    });
+  var usable = inherited.concat(scope.declared)
+  scope.children.forEach(function (child) {
+    fixScope(child, tree, usable);
+  });
+  scope.used.forEach(function (item) {
+    if (usable.indexOf(item.name) !== -1) return
+      var parent = item.path.slice(0, -1).reduce(function (parent, attr) {
+        return parent[attr] || {}
+      }, tree);
+      var last = item.path[item.path.length-1]
+      parent[last] = {
+        type: 'MemberExpression',
+        object: {type: 'Identifier', name: '$ns'},
+        property: parent[last],
+        computed: false
+      };
+  });
 }
 
 function getNames(tree) {
@@ -144,16 +132,6 @@ function catchOutputs(tree, outVar) {
       }
     }
   })
-}
-
-function makeFn(text, names, scopeNames) {
-  var post = names.vbls.map(function (name) {
-    return '$ns.' + name + ' = ' + name;
-  }).join(';');
-    var pre = scopeNames.map(function (name) {
-        return names.fns[name] ? '' : ('var ' + name + ' = $ns.' + name + ';')
-    }).join('')
-  return pre + text + ';' + post
 }
 
 var crawlBlack = {
