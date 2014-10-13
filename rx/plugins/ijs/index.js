@@ -2,8 +2,10 @@
 var CodeEditor = require('../code/code-editor')
   , evalScoped = require('./eval')
   , cx = require('react/addons').addons.classSet
+  , uuid = require('../../../lib/uuid')
 
 var theScope = {}
+  , session = uuid()
 
 module.exports = {
   store: {
@@ -42,6 +44,7 @@ module.exports = {
             finished: Date.now(),
             executed: node.content,
             output: output.length > 1 ? output.filter(i => 'undefined' !== typeof i) : output,
+            session: session,
             error: error,
           })
         }, 0);
@@ -72,6 +75,7 @@ module.exports = {
     classes: function (node, state) {
       if (node.type !== 'ipython') return
       return cx({
+        'list_item-ijs-stale': node.session !== session,
         'list_item-ijs-dirty': node.executed !== node.content,
       })
     },
