@@ -115,7 +115,11 @@ function safeString(val) {
   try {
     return JSON.stringify(val, null, 2)
   } catch (e) {}
-  return val + ''
+  try {
+    return val + ''
+  } catch (e) {
+    return 'restricted ' + typeof val
+  }
 }
 
 function make_outputs(out, err) {
