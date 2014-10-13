@@ -16,6 +16,9 @@ module.exports = {
         this.view.selection.forEach(this.execute.bind(this))
       },
 
+      display: function (id, value, mime) {
+      },
+
       execute: function (id) {
         if (!arguments.length) id = this.view.active
         var node = this.db.nodes[id]
@@ -30,7 +33,7 @@ module.exports = {
         if (node.type !== 'ijs') return
         var output = [], error = null
         try {
-          evalScoped(node.content, output, theScope)
+          output = evalScoped(node.content, output, theScope)
         } catch (e) {
           error = {
             name: e.name,
@@ -39,11 +42,24 @@ module.exports = {
           }
         }
 
+        output = output.map(val => {
+          if (['object', 'function'].indexOf(typeof val) === -1) {
+            return {'text/plain': safeString(val), 'value': val}
+          }
+          var ret = {value: val}
+          if (val.__treed_display) {
+            ret = val
+          } else {
+            ret['text/plain'] = safeString(val)
+          }
+          return ret
+        })
+
         setTimeout(() => {
           this.update(id, {
             finished: Date.now(),
             executed: node.content,
-            output: output.length > 1 ? output.filter(i => 'undefined' !== typeof i) : output,
+            output: output,
             session: session,
             error: error,
           })
@@ -117,7 +133,7 @@ module.exports = {
 
 function safeString(val) {
   try {
-    return JSON.stringify(val, null, 2)
+    return JSON.stringify(val, null, 2) + ''
   } catch (e) {}
   try {
     return val + ''
@@ -129,11 +145,41 @@ function safeString(val) {
 function make_outputs(out, err) {
   var res = []
   if (out) {
-    res = res.concat(out.map((val, i) => <pre key={'out-' + i}>{safeString(val)}</pre>))
+    res = res.concat(out.map(show_output))
   }
   if (err) {
     res.push(err && <pre>{err}</pre>);
   }
   return res
+}
+
+var CUSTOM_HANDLERS = {
+}
+
+var HANDLERS = {
+  'json/link': function (output) {
+    return <a href={output.href}
+              target='_blank'
+              title={output.title}>
+              {output.text}
+           </a>
+  },
+  'text/html': output => 'HTML NOT YET SUPPORTED',
+  'text/plain': output => <pre>{output}</pre>,
+}
+
+function show_output(output, key) {
+  if (!output) return false
+  for (var name in CUSTOM_HANDLERS) {
+    if (output[name]) {
+      return CUSTOM_HANDLERS[name](output[name])
+    }
+  }
+  for (var name in HANDLERS) {
+    if (output[name]) {
+      return HANDLERS[name](output[name])
+    }
+  }
+  return <em>Unknown output type</em>
 }
 
