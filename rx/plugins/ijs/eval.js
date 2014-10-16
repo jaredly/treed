@@ -38,6 +38,15 @@ module.exports = function (text, output, scope) {
 
   target.$out = output
   target.eval(code)
+
+  var last = output.pop()
+    , keeping = output.filter(i => 'undefined' !== typeof i)
+  if (tree.body[tree.body.length-1].type === 'ExpressionStatement') {
+    keeping.push(last)
+  } else if ('undefined' !== typeof last) {
+    keeping.push(last)
+  }
+  return keeping
 }
 
 function scopeName(node) {
@@ -118,8 +127,9 @@ function getNames(tree) {
 }
 
 function catchOutputs(tree, outVar) {
-  tree.body.forEach(function (node) {
-    if (node.type === 'ExpressionStatement' && node.expression.type !== 'AssignmentExpression') {
+  tree.body.forEach(function (node, i) {
+    if (node.type === 'ExpressionStatement' &&
+        (node.expression.type !== 'AssignmentExpression' || i === tree.body.length - 1)) {
       node.expression = {
         type: 'CallExpression',
         callee: {
