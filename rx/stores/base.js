@@ -6,6 +6,7 @@ module.exports = BaseStore
 
 function BaseStore(options) {
   this._listeners = {}
+  this._plugin_teardowns = []
 
   if (options.plugins) {
     options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
@@ -15,9 +16,16 @@ function BaseStore(options) {
 BaseStore.prototype = {
   actions: {},
 
+  teardown: function () {
+    this._plugin_teardowns.forEach(fn => fn(this))
+  },
+
   addPlugin: function (plugin, allPlugins) {
     if (plugin.init) {
       plugin.init(this) // TODO async?
+    }
+    if (plugin.teardown) {
+      this._plugin_teardowns.push(plugin.teardown)
     }
 
     var name
