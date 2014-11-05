@@ -14,7 +14,7 @@ Queue.prototype = {
 
   opper: function (name, args, done) {
     this._queue.push([name, args, done])
-    console.log('push', this._queue.length, name, args)
+    // console.log('push', this._queue.length, name, args)
     if (!this.busy) {
       this.advance()
     }
@@ -27,7 +27,7 @@ Queue.prototype = {
     }
     this.busy = true
     var item = this._queue.shift()
-    console.log('pop', this._queue.length, item[0], item[1])
+    // console.log('pop', this._queue.length, item[0], item[1])
     this.db[item[0]].apply(this.db, item[1].concat([function (err) {
       if (err) console.error('DB ERROR', err)
       this.advance()
