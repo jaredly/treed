@@ -3,12 +3,14 @@ module.exports = {
   view: null,
   keys: {
     'window left': {
-      normal: 'w h',
+      normal: 'w h, alt+w h',
       insert: 'alt+w h'
+      visual: 'w h, alt+w h',
     },
     'window right': {
-      normal: 'w l',
+      normal: 'w l, alt+w l',
       insert: 'alt+w l'
+      visual: 'w l, alt+w l',
     },
   },
 
