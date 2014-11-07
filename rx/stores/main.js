@@ -70,12 +70,14 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       changed: this.changed.bind(this),
       parent: this,
       globals: this._globals,
+      startTransaction: () => this.cmd.startTransaction(),
+      stopTransaction: () => this.cmd.stopTransaction(),
       executeCommand: (cmd, state, squash, done) => {
         if (arguments.length === 3 && 'function' === typeof squash) {
           done = squash
           squash = undefined
         }
-        this.cmd.execute({
+        return this.cmd.execute({
           cmd,
           state,
           view: id,
@@ -94,7 +96,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
             active: this.views[id].active
           })
         }
-        this.cmd.executeCommands.apply(this.cmd, commands)
+        return this.cmd.executeCommands.apply(this.cmd, commands)
       },
     }, this.actions)
     this._getters[id] = extend({

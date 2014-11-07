@@ -15,6 +15,8 @@ function Commandeger(changed, setActive, db, events) {
   this.changed = changed
   this.setActive = setActive
   this.events = events
+  this._transaction_ix = null
+  this._transactioning = 0
   this.db = db
 }
 
@@ -28,34 +30,60 @@ Commandeger.prototype = {
     }
   },
 
+  startTransaction: function () {
+    if (!this._transactioning) {
+      this._transaction_ix = null
+    }
+    this._transactioning += 1
+  },
+
+  stopTransaction: function () {
+    this._transactioning -= 1
+    if (!this._transactioning) {
+      this._transaction_ix = null
+    }
+  },
+
   execute: function (command) {
-    this.executeCommands(command)
+    return this.executeCommands(command)
   },
 
   executeCommands: function (...commands) {
     var time = Date.now()
     var changed = []
-    var squash = false
+    var squash = null
+    if (null !== this._transaction_ix) {
+      squash = this._transaction_ix
+    } else {
+      commands.some(cmd => {
+        if ('number' == typeof cmd.squash) {
+          squash = cmd.squash
+          return true
+        }
+      })
+    }
+    if ('number' == typeof squash) {
+      var past = this.history[squash]
+      past.changes = past.changes.concat(commands)
+    } else {
+      this.history = this.history.slice(0, this.histpos)
+      this.history.push({time: time, changes: commands})
+      this.histpos = this.history.length
+      if (this._transactioning) {
+        this._transaction_ix = this.histpos - 1
+      }
+    }
     async.mapSeries(commands, (command, next) => {
       this.doCommand(command, (err, newChanged) => {
         changed = changed.concat(newChanged)
-        squash = squash || command.squash
         next(err, command.state)
       })
     }, (err, states) => {
       if (err) return console.error('Failed to execute commands!!!', err)
-      if (squash) {
-        if (this.histpos > 0) {
-          var past = this.history[this.histpos - 1]
-          past.changes = past.changes.concat(commands)
-        }
-      } else {
-        this.history = this.history.slice(0, this.histpos)
-        this.history.push({time: time, changes: commands})
-        this.histpos = this.history.length
-      }
       this.changed.apply(this, changed)
     })
+    if (squash !== null) return squash
+    return this.histpos - 1
   },
 
   undoCommands: function () {

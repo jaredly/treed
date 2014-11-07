@@ -11,15 +11,15 @@ var movement = require('../util/movement')
 
 module.exports = {
   set: function (id, attr, value, squash) {
-    this.executeCommand('set', {id, attr, value}, squash)
+    return this.executeCommand('set', {id, attr, value}, squash)
   },
 
   updateMany: function (ids, updates, squash) {
-    this.executeCommand('updateMany', {ids, updates}, squash)
+    return this.executeCommand('updateMany', {ids, updates}, squash)
   },
 
   update: function (id, update, squash) {
-    this.executeCommand('update', {id, update}, squash)
+    return this.executeCommand('update', {id, update}, squash)
   },
 
   importTrees: function (id, trees, above) {

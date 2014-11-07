@@ -12,10 +12,20 @@ module.exports = {
       insert: 'alt+w l',
       visual: 'w l, alt+w l',
     },
+    /** TODO implemented
+    'split': {
+      normal: ':split',
+      visual: ':split',
+    },
+    */
   },
 
   store: {
     actions: {
+      /*
+      split: function () {
+      },
+      */
       windowLeft: function () {
         if (undefined === this.view.windowLeft) return
         this.parent.activeView = this.view.windowLeft
