@@ -66,11 +66,15 @@ module.exports = {
   // cursor movement
   'go to first sibling': {
     normal: 'shift+[',
-    // visual: 'shift+[',
+  },
+  'extend to first sibling': {
+    visual: 'shift+[',
   },
   'go to last sibling': {
     normal: 'shift+]',
-    // visual: 'shift+]',
+  },
+  'extend to last sibling': {
+    visual: 'shift+]',
   },
   'go to bottom': {
     normal: 'shift+g',

@@ -122,6 +122,34 @@ module.exports = {
     }
   },
 
+  extendToFirstSibling: function () {
+    if (this.view.active === this.view.root) return
+    var pid = this.db.nodes[this.view.active].parent
+      , parent = this.db.nodes[pid]
+      , i = parent.children.indexOf(this.view.active)
+    if (i === 0) return
+    if (this.view.selection[0] === this.view.active) {
+      this.view.selection = parent.children.slice(0, i).concat(this.view.selection)
+    } else {
+      this.view.selection = parent.children.slice(0, i+1)
+    }
+    this.setActive(parent.children[0])
+  },
+
+  extendToLastSibling: function () {
+    if (this.view.active === this.view.root) return
+    var pid = this.db.nodes[this.view.active].parent
+      , parent = this.db.nodes[pid]
+      , i = parent.children.indexOf(this.view.active)
+    if (i === parent.children.length - 1) return
+    if (this.view.selection[0] === this.view.active) {
+      this.view.selection = parent.children.slice(i)
+    } else {
+      this.view.selection = this.view.selection.concat(parent.children.slice(i + 1))
+    }
+    this.setActive(parent.children[parent.children.length - 1])
+  },
+
   // Selection mode
   extendSelectionUp: function () {
     if (this.view.active === this.view.root) return
