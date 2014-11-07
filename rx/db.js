@@ -1,6 +1,7 @@
 
 var uuid = require('../lib/uuid')
 var verifyNodes = require('./util/verify-nodes')
+var treesToMap = require('./util/trees-to-map')
 
 module.exports = Db
 
@@ -59,37 +60,18 @@ Db.prototype = {
 
   // dump children INTO the pid at index ix
   dump: function (pid, children, ix, done) {
-    var nodes = {}
-    var processChild = (pid, child) => {
-      var id = uuid()
-      var node = {
-        id: id,
-        content: child.content,
-        children: [],
-        parent: pid,
-      }
-      nodes[id] = node
-      for (var name in child) {
-        if (['content', 'children'].indexOf(name) !== -1) continue;
-        node[name] = child[name]
-      }
-      if (child.children && child.children.length) {
-        node.children = child.children.map(processChild.bind(this, id))
-      }
-      return id
-    }
-    var ids = children.map(processChild.bind(this, pid))
-    this.batchSave(nodes, (err) => {
+    var mapped = treesToMap(children, pid)
+    this.batchSave(mapped.nodes, (err) => {
       if (err) return done(err)
       var oldChildren = this.nodes[pid].children
       if (!ix && ix !== 0) {
-        children = oldChildren.concat(ids)
+        children = oldChildren.concat(mapped.roots)
       } else {
         children = oldChildren.slice()
-        ;[].splice.apply(children, [ix, 0].concat(ids))
+        ;[].splice.apply(children, [ix, 0].concat(mapped.roots))
       }
       this.set(pid, 'children', children, (err) => {
-        done(err, {ids: ids, oldChildren: oldChildren})
+        done(err, {ids: mapped.roots, oldChildren: oldChildren})
       })
     })
   },

@@ -22,10 +22,20 @@ Mem.prototype = {
     this.data[type][id] = value
     done && done()
   },
-  set: function (type, id, attr, value) {
+  set: function (type, id, attr, value, done) {
     this.data[type][id][attr] = value
+    done && done()
   },
-  batchSet: function (type, attr, ids, value) {
+  batchSave: function (type, nodes, done) {
+    if (!this.data[type]) {
+      this.data[type] = {}
+    }
+    for (var id in nodes) {
+      this.data[type][id] = nodes[id]
+    }
+    done && done()
+  },
+  batchSet: function (type, attr, ids, value, done) {
     if (Array.isArray(value)) {
       for (var i=0; i<ids.length; i++) {
         this.data[type][ids[i]][attr] = value[i]
@@ -35,14 +45,17 @@ Mem.prototype = {
         this.data[type][ids[i]][attr] = value
       }
     }
+    done && done()
   },
-  update: function (type, id, update) {
+  update: function (type, id, update, done) {
     for (var name in update) {
       this.data[type][id][name] = update[name]
     }
+    done && done()
   },
-  remove: function (type, id) {
+  remove: function (type, id, done) {
     delete this.data[type][id]
+    done && done()
   },
 }
 
