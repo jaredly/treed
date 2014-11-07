@@ -44,6 +44,12 @@ module.exports = {
     normal: 'd d, shift+d, delete',
     visual: 'd, shift+d, delete',
   },
+  'join down': {
+    normal: 'shift+j',
+  },
+  'join many': {
+    visual: 'shift+j',
+  },
 
   'toggle selection edge': {
     visual: 'o, shift+o',

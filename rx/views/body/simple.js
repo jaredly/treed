@@ -104,6 +104,7 @@ var SimpleBody = React.createClass({
       ref="text"
       value={this.state.content}
       node={this.props.node}
+      store={this.props.store}
       goDown={this.props.actions.goDown.bind(this.props.actions)}
       goUp={this.props.actions.goUp.bind(this.props.actions)}
       createAfter={this.props.actions.createAfter.bind(this.props.actions)}

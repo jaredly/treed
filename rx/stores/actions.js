@@ -153,6 +153,32 @@ module.exports = {
     this.setActive(next)
   },
 
+  joinDown: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.down(id, this.view.root, this.db.nodes)
+    if (!next) return
+    var content = this.db.nodes[id].content + '\n' + this.db.nodes[next].content
+    this.executeCommands(
+      'set', {id, attr: 'content', value: content},
+      'remove', {ids: [next]}
+    )
+  },
+
+  joinMany: function () {
+    if (this.view.mode !== 'visual') return
+    var ids = this.view.selection
+    var contents = this.db.nodes[ids[0]]
+    for (var i=1; i<ids.length; i++) {
+      contents += '\n' + this.db.nodes[ids[i]].content
+    }
+    this.executeCommands(
+      'set', {id: ids[0], attr: 'content', value: contents},
+      'remove', {ids: ids.slice(1)}
+    )
+    this.setActive(ids[0])
+  },
+
   removeEmpty: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return
