@@ -43,8 +43,11 @@ Db.prototype = {
 
   create: function (pid, ix, content, type) {
     var id = uuid()
+    var now = Date.now()
     var node = {
       id: id,
+      created: now,
+      modified: now,
       content: content || '',
       type: type || 'base',
       children: [],
@@ -98,8 +101,11 @@ Db.prototype = {
     this.pl.save('root', this.root, {id: this.root}, (err) => {
       if (err) return done(err)
       this.nodes = {}
+      var now = Date.now()
       this.nodes[this.root] = {
         id: this.root,
+        created: now,
+        modified: now,
         content: defaultData.content || 'Home',
         parent: null,
         children: []
@@ -114,17 +120,20 @@ Db.prototype = {
   batchSave: function (nodes, done) {
     for (var id in nodes) {
       this.nodes[id] = nodes[id]
+      this.nodes[id].modified = Date.now()
     }
     this.pl.batchSave('node', nodes, done)
   },
 
   save: function (id, value) {
     this.nodes[id] = value
+    this.nodes[id].modified = Date.now()
     this.pl.save('node', id, value)
   },
 
   set: function (id, attr, value, done) {
     this.nodes[id][attr] = value
+    this.nodes[id].modified = Date.now()
     this.pl.set('node', id, attr, value, done)
   },
 
@@ -167,13 +176,16 @@ Db.prototype = {
   },
 
   setMany: function (attr, ids, value, done) {
+    var now = Date.now()
     if (Array.isArray(value)) {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value[i]
+        this.nodes[id].modified = now
       })
     } else {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value
+        this.nodes[id].modified = now
       })
     }
     this.pl.batchSet('node', attr, ids, value, done)
@@ -183,6 +195,7 @@ Db.prototype = {
     for (var name in update) {
       this.nodes[id][name] = update[name]
     }
+    this.nodes[id][name].modified = Date.now()
     this.pl.update('node', id, update, done)
   },
 }
