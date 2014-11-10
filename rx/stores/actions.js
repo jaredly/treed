@@ -130,8 +130,11 @@ module.exports = {
     if (i === 0) return
     if (this.view.selection[0] === this.view.active) {
       this.view.selection = parent.children.slice(0, i).concat(this.view.selection)
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
     } else {
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
       this.view.selection = parent.children.slice(0, i+1)
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
     }
     this.setActive(parent.children[0])
   },
@@ -143,9 +146,12 @@ module.exports = {
       , i = parent.children.indexOf(this.view.active)
     if (i === parent.children.length - 1) return
     if (this.view.selection[0] === this.view.active) {
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
       this.view.selection = parent.children.slice(i)
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
     } else {
       this.view.selection = this.view.selection.concat(parent.children.slice(i + 1))
+      this.changed(this.view.selection.map(id => this.events.nodeViewChanged(id)))
     }
     this.setActive(parent.children[parent.children.length - 1])
   },
@@ -196,7 +202,7 @@ module.exports = {
   joinMany: function () {
     if (this.view.mode !== 'visual') return
     var ids = this.view.selection
-    var contents = this.db.nodes[ids[0]]
+    var contents = this.db.nodes[ids[0]].content
     for (var i=1; i<ids.length; i++) {
       contents += '\n' + this.db.nodes[ids[i]].content
     }
