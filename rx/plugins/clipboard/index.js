@@ -32,6 +32,10 @@ module.exports = {
 
     actions: {
       copy: function (id) {
+        var sel = window.getSelection()
+        if (sel.type === 'Range' && !sel.getRangeAt(0).collapsed) {
+          return true
+        }
         id = id || this.view.active
         if (this.view.mode === 'visual') {
           ids = this.view.selection
@@ -43,6 +47,9 @@ module.exports = {
       },
 
       cut: function (id) {
+        if (sel.type === 'Range' && !sel.getRangeAt(0).collapsed) {
+          return true
+        }
         id = id || this.view.active
         if (id === this.view.root) return
         if (this.view.mode === 'visual') {

@@ -47,7 +47,7 @@ function bindKeys(keys, actions) {
       console.warn('[binding keys] unknown action: ' + action)
       return;
     }
-    binds[keys[name]] = function(){actions[action]()}
+    binds[keys[name]] = function(){return actions[action]()}
   })
   return keyHandler(binds)
 }
