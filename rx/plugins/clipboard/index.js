@@ -47,6 +47,7 @@ module.exports = {
       },
 
       cut: function (id) {
+        var sel = window.getSelection()
         if (sel.type === 'Range' && !sel.getRangeAt(0).collapsed) {
           return true
         }
