@@ -127,3 +127,30 @@ body {
 }
 
 
+/** email stuff **/
+
+#main {
+  position: relative;
+}
+
+.news-text {
+  text-align: left;
+  padding: 0 30px;
+}
+
+#news-banner {
+  background-color: #eee;
+  margin: 20px auto 0;
+  max-width: 900px;
+  padding: 10px;
+  border-radius: 15px;
+}
+
+#mc_embed_signup {
+  background-color: transparent;
+}
+
+#mc_embed_signup input.button,
+#mc_embed_signup input.email {
+  display: inline;
+}
