@@ -77,17 +77,17 @@ var PaperItem = React.createClass({
   */
 
   render: function () {
-    var children = this.state.node.children.map((id, i) =>
-      PaperItem({
-        plugins: this.props.plugins,
-        store: this.props.store,
-        bodies: this.props.bodies,
-        keys: this.props.keys,
-        index: i,
-        key: id,
-        id: id,
-      }))
-    if (this.state.node.type === 'header') {
+    if (this.state.node.children.length) {
+      var children = this.state.node.children.map((id, i) =>
+        PaperItem({
+          plugins: this.props.plugins,
+          store: this.props.store,
+          bodies: this.props.bodies,
+          keys: this.props.keys,
+          index: i,
+          key: id,
+          id: id,
+        }))
       return <div className='section'>
         <header>{this.state.node.content}</header>
         <p>
@@ -95,7 +95,7 @@ var PaperItem = React.createClass({
         </p>
       </div>
     }
-    return <span>{this.state.node.content} {children}</span>
+    return <span>{this.state.node.content}</span>
   },
 
 })

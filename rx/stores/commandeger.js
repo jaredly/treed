@@ -50,7 +50,7 @@ Commandeger.prototype = {
 
   executeCommands: function (...commands) {
     var time = Date.now()
-    var changed = []
+    var changed = ['changed']
     var squash = null
     if (null !== this._transaction_ix) {
       squash = this._transaction_ix
@@ -90,7 +90,7 @@ Commandeger.prototype = {
     if (this.histpos <= 0) return
     this.histpos -= 1
     var last = this.history[this.histpos]
-    var changed = []
+    var changed = ['changed']
     var time = Date.now()
     var items = []
     for (var i=last.changes.length-1; i >= 0; i--) {
@@ -108,7 +108,7 @@ Commandeger.prototype = {
     if (this.histpos >= this.history.length) return
     var last = this.history[this.histpos]
     this.histpos += 1
-    var changed = []
+    var changed = ['changed']
     var time = Date.now()
     async.mapSeries(last.changes, (item, next) => {
       this.redoCommand(item, (err, changes) => {
