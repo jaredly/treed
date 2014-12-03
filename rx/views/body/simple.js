@@ -135,8 +135,6 @@ var SimpleBody = React.createClass({
       {this.props.editState ? this.editor() : this.renderer()}
     </div>
   }
-
-  // TODO marked
 })
 
 module.exports = SimpleBody

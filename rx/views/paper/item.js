@@ -5,6 +5,23 @@ var PT = React.PropTypes
 var marked = require('marked')
 var Listener = require('../../listener')
 
+var renderer = new marked.Renderer()
+renderer.link = function (href, title, text) {
+  return '<a href="' + href + '" target="_blank" title="' + title + '">' + text + '</a>';
+}
+
+marked.setOptions({
+  gfm: true,
+  sanitize: true,
+  tables: true,
+  breaks: true,
+  pedantic: false,
+  sanitize: false,
+  smartLists: true,
+  smartypants: true,
+  renderer: renderer
+})
+
 var PaperItem = React.createClass({
   mixins: [
     Listener({
@@ -76,10 +93,26 @@ var PaperItem = React.createClass({
   },
   */
 
+  header: function () {
+    switch (this.props.depth) {
+      case 0:
+        return <h1>{this.state.node.content}</h1>
+      case 1:
+        return <h2>{this.state.node.content}</h2>
+      case 2:
+        return <h3>{this.state.node.content}</h3>
+      case 3:
+        return <h4>{this.state.node.content}</h4>
+      default:
+        return <h5>{this.state.node.content}</h5>
+    }
+  },
+
   render: function () {
     if (this.state.node.children.length) {
       var children = this.state.node.children.map((id, i) =>
         PaperItem({
+          depth: this.props.depth + 1,
           plugins: this.props.plugins,
           store: this.props.store,
           bodies: this.props.bodies,
@@ -89,13 +122,14 @@ var PaperItem = React.createClass({
           id: id,
         }))
       return <div className='section'>
-        <header>{this.state.node.content}</header>
-        <p>
-          {children}
-        </p>
+        {this.header()}
+        {children}
       </div>
     }
-    return <span>{this.state.node.content}</span>
+    return <p dangerouslySetInnerHTML={{
+      __html: this.state.node.content ?
+        marked(this.state.node.content + '') : ''
+    }}/>
   },
 
 })
