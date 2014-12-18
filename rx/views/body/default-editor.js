@@ -63,6 +63,10 @@ var Editor = React.createClass({
       if (!this.props.value.length) {
         this.props.removeEmpty()
         e.preventDefault()
+      } else if (text.getCursorSplit() === 0) {
+        // text.blur()
+        e.preventDefault()
+        this.props.joinUp(null, this.props.value)
       }
     } else if (e.key === 'Enter') {
       if (!e.shiftKey && !e.ctrlKey && !e.altKey && this.props.value.indexOf('\n') === -1) {

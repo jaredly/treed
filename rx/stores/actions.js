@@ -187,6 +187,25 @@ module.exports = {
     this.setActive(next)
   },
 
+  joinUp: function (id, text) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var prev = movement.up(id, this.view.root, this.db.nodes)
+    if (prev === id) return
+    if (!prev) return
+    var content = this.db.nodes[prev].content + text
+    this.executeCommands(
+      'remove', {ids: [id]},
+      'set', {id: prev, attr: 'content', value: content},
+      () => {
+        // document.activeElement.blur()
+        setTimeout(() => {
+        this.edit(prev)
+        },0)
+      }
+    )
+  },
+
   joinDown: function (id) {
     id = id || this.view.active
     if (id === this.view.root) return

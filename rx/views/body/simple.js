@@ -107,6 +107,7 @@ var SimpleBody = React.createClass({
       store={this.props.store}
       goDown={this.props.actions.goDown.bind(this.props.actions)}
       goUp={this.props.actions.goUp.bind(this.props.actions)}
+      joinUp={this.props.actions.joinUp.bind(this.props.actions)}
       createAfter={this.props.actions.createAfter.bind(this.props.actions)}
       removeEmpty={this.props.actions.removeEmpty.bind(this.props.actions)}
       onChange={this._onChange}
