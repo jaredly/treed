@@ -194,13 +194,14 @@ module.exports = {
     if (prev === id) return
     if (!prev) return
     var content = this.db.nodes[prev].content + text
+      , at = this.db.nodes[prev].content.length
     this.executeCommands(
       'remove', {ids: [id]},
       'set', {id: prev, attr: 'content', value: content},
       () => {
         // document.activeElement.blur()
         setTimeout(() => {
-        this.edit(prev)
+          this.editAt(prev, at)
         },0)
       }
     )
@@ -442,23 +443,22 @@ module.exports = {
   },
 
   edit: function (id) {
-    id = id || this.view.active
-    if (this.view.mode === 'edit' && this.view.active === id) return
-    if (!this.setActive(id)) {
-      this.changed(this.events.nodeViewChanged(this.view.active))
-    }
-    this.view.lastEdited = id
-    this.view.editPos = 'end'
-    this.setMode('insert')
+    this.editAt(id, 'end')
   },
 
   editStart: function (id) {
+    this.editAt(id, 'start')
+  },
+
+  editAt: function (id, at) {
     id = id || this.view.active
     if (this.view.mode === 'edit' && this.view.active === id) return
     if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    this.view.editPos = 'start'
+    if (!at) at = 'start'
+    this.view.lastEdited = id
+    this.view.editPos = at
     this.setMode('insert')
   },
 

@@ -81,7 +81,7 @@ var SimpleBody = React.createClass({
         this.refs.text.focus()
       })
     } else {
-      this.refs.text.focus(this.props.editState === 'start')
+      this.refs.text.focus(this.props.editState)
     }
   },
 
@@ -93,7 +93,7 @@ var SimpleBody = React.createClass({
           this.refs.text.focus()
         })
       } else {
-        this.refs.text.focus(this.props.editState === 'start')
+        this.refs.text.focus(this.props.editState)
       }
     }
   },
