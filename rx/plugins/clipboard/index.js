@@ -39,7 +39,7 @@ module.exports = {
         id = id || this.view.active
         if (this.view.mode === 'visual') {
           ids = this.view.selection
-          this.setMode('normal', true)
+          this.setMode('normal')
         } else {
           ids = [id]
         }

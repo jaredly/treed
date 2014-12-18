@@ -166,7 +166,13 @@ var TreeItem = React.createClass({
             id: id,
           })
         )}
-      </div> : null}
+      </div> : (
+        this.props.isRoot ?
+          <div className='list_item_nochildren' onClick={() => this.props.store.actions.createAfter(this.props.id)}>
+            Click to add a child
+          </div>
+        : null
+      )}
       {this.fromMix('bottom')}
     </div>
   }
