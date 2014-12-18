@@ -88,13 +88,16 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       },
       executeCommands: () => {
         var commands = []
-        for (var i=0; i<arguments.length; i+=2) {
+        for (var i=0; i<arguments.length-1; i+=2) {
           commands.push({
             cmd: arguments[i],
             state: arguments[i+1],
             view: id,
             active: this.views[id].active
           })
+        }
+        if (arguments.length % 2 == 1) {
+          commands[commands.length-1].done = arguments[arguments.length-1]
         }
         return this.cmd.executeCommands.apply(this.cmd, commands)
       },

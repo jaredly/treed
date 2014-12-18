@@ -355,7 +355,7 @@ module.exports = {
     })
   },
 
-  createAfter: function (id) {
+  createAfter: function (id, split, after) {
     id = id || this.view.active
     var node = this.db.nodes[id]
       , pos
@@ -372,9 +372,24 @@ module.exports = {
         ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
       }
     }
-    this.executeCommand('create', pos, (err, cmd) => {
-      this.edit(cmd.id)
-    })
+    if (arguments.length === 3) {
+      pos.content = after
+      this.executeCommands(
+        'set', {
+          id,
+          attr: 'content',
+          value: split,
+        },
+        'create', pos,
+        (err, cmd) => {
+          this.editStart(cmd.id)
+        }
+      )
+    } else {
+      this.executeCommand('create', pos, (err, cmd) => {
+        this.edit(cmd.id)
+      })
+    }
   },
 
   visualMode: function () {

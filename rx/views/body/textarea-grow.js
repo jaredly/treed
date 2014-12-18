@@ -4,6 +4,11 @@ var React = require('react')
 
 var Textarea = module.exports = React.createClass({
 
+  getCursorSplit: function () {
+    var a = this.refs.area.getDOMNode()
+    return a.selectionStart
+  },
+
   // -1 at end
   // 0 at start
   // 1 no content
@@ -75,6 +80,11 @@ var Textarea = module.exports = React.createClass({
 
   componentWillUnmount: function () {
     window.removeEventListener('resize', this.resize)
+  },
+
+  blur: function () {
+    var inp = this.refs.area.getDOMNode()
+    inp.blur()
   },
 
   focus: function (start) {
