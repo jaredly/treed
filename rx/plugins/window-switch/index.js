@@ -3,14 +3,14 @@ module.exports = {
   view: null,
   keys: {
     'window left': {
-      normal: 'w h, alt+w h',
-      insert: 'alt+w h',
-      visual: 'w h, alt+w h',
+      normal: 'w h, alt+w h, w left, alt+w left',
+      insert: 'alt+w h, alt+w left',
+      visual: 'w h, alt+w h, alt+w left, w left',
     },
     'window right': {
-      normal: 'w l, alt+w l',
-      insert: 'alt+w l',
-      visual: 'w l, alt+w l',
+      normal: 'w l, alt+w l, alt+w right, w right',
+      insert: 'alt+w l, alt+w right',
+      visual: 'w l, alt+w l, alt+w right, w right',
     },
     /** TODO implemented
     'split': {
