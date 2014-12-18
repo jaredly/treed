@@ -84,7 +84,9 @@ var TreeItem = React.createClass({
     if (this._plugin_updates) {
       this._plugin_updates.map((fn) => fn.call(this, prevProps, prevState))
     }
-    if (this.state.isActive && this.state.isActiveView && !prevState.isActive) {
+    if (this.state.isActive &&
+        this.state.isActiveView &&
+        (!prevState.isActive || prevProps.index !== this.props.index)) {
       ensureInView(this.refs.body.getDOMNode())
     }
     if (window.DEBUG_UPDATE) {
