@@ -6,7 +6,7 @@ var Textarea = module.exports = React.createClass({
 
   getCursorSplit: function () {
     var a = this.refs.area.getDOMNode()
-    return a.selectionStart
+    return a.selectionEnd
   },
 
   // -1 at end

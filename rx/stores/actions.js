@@ -88,12 +88,18 @@ module.exports = {
   // would be a simplified one that doesn't know about collapsibility. Seems
   // like there would be some duplication
   goUp: function () {
-    this.setActive(movement.up(this.view.active, this.view.root, this.db.nodes))
+    var up = movement.up(this.view.active, this.view.root, this.db.nodes)
+    if (!up) return false
+    this.setActive(up)
+    return true
   },
 
   goDown: function (editStart) {
-    this.setActive(movement.down(this.view.active, this.view.root, this.db.nodes))
+    var down = movement.down(this.view.active, this.view.root, this.db.nodes)
+    if (!down) return false
+    this.setActive(down)
     if (editStart) this.view.editPos = 'start'
+    return true
   },
 
   goLeft: function () {

@@ -38,14 +38,16 @@ var Editor = React.createClass({
     if (e.key === 'ArrowDown' && !e.shiftKey) {
       line = text.getCursorLine()
       if (line === -1 || line === 1) {
-        this.props.goDown()
-        e.preventDefault()
+        if (this.props.goDown()) {
+          e.preventDefault()
+        }
       }
     } else if (e.key === 'ArrowUp' && !e.shiftKey) {
       line = text.getCursorLine()
       if (line === 0 || line === 1) {
-        this.props.goUp()
-        e.preventDefault()
+        if (this.props.goUp()) {
+          e.preventDefault()
+        }
       }
     } else if (e.key === 'ArrowRight' && !e.shiftKey) {
       pos = text.getCursorPos()
@@ -64,7 +66,6 @@ var Editor = React.createClass({
         this.props.removeEmpty()
         e.preventDefault()
       } else if (text.getCursorSplit() === 0) {
-        // text.blur()
         e.preventDefault()
         this.props.joinUp(null, this.props.value)
       }

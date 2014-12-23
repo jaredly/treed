@@ -22,6 +22,7 @@ var TreeView = React.createClass({
   propTypes: {
     plugins: PT.array,
     nodePlugins: PT.array,
+    skipMix: PT.array,
 
     keys: PT.object,
   },
@@ -37,10 +38,24 @@ var TreeView = React.createClass({
     var e = this.props.store.events
     this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
     window.addEventListener('keydown', this._onKeyDown)
+    window.addEventListener('blur', this._onBlur)
+    window.addEventListener('focus', this._onFocus)
   },
 
   componentWillUnmount: function () {
     window.removeEventListener('keydown', this._onKeyDown)
+    window.removeEventListener('blur', this._onBlur)
+    window.removeEventListener('focus', this._onFocus)
+  },
+
+  _onBlur: function () {
+    this.props.store.view.windowBlur = true
+    // this.prev = this.props.store.view.mode
+  },
+
+  _onFocus: function () {
+    this.props.store.view.windowBlur = false
+    // this.props.store.actions.edit()
   },
 
   _onKeyDown: function (e) {
@@ -58,6 +73,7 @@ var TreeView = React.createClass({
 
   fromMix: function (part) {
     if (!this.props.plugins) return
+    if (this.props.skipMix.indexOf(part) !== -1) return
     var items = []
     for (var i=0; i<this.props.plugins.length; i++) {
       var plugin = this.props.plugins[i].blocks
