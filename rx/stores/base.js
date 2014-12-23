@@ -49,6 +49,7 @@ BaseStore.prototype = {
   },
 
   on: function (changes, listener) {
+    if ('string' === typeof changes) changes = [changes]
     for (var i=0; i<changes.length; i++) {
       if (!this._listeners[changes[i]]) {
         this._listeners[changes[i]] = [listener]
@@ -59,6 +60,7 @@ BaseStore.prototype = {
   },
 
   off: function (changes, listener) {
+    if ('string' === typeof changes) changes = [changes]
     for (var i=0; i<changes.length; i++) {
       var ix = this._listeners[changes[i]].indexOf(listener)
       if (ix !== -1) {

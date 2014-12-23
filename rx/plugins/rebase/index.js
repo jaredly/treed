@@ -11,7 +11,8 @@ module.exports = {
       var actions = store.actions
       return Breadcrumb({
         rebase: actions.rebase.bind(actions),
-        pedigree: store.getters.getPedigree()
+        reload: store.getters.getPedigree.bind(store.getters, true),
+        store: store,
       })
     },
 
@@ -19,7 +20,9 @@ module.exports = {
       top: function (actions, state, store) {
         return Breadcrumb({
           rebase: actions.rebase.bind(actions),
-          pedigree: store.getters.getPedigree()})
+          reload: store.getters.getPedigree.bind(store.getters, true),
+          store: store,
+        })
       },
     },
   },
