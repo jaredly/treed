@@ -87,6 +87,10 @@ var Textarea = module.exports = React.createClass({
     inp.blur()
   },
 
+  isFocused: function () {
+    return this.refs.area.getDOMNode() === document.activeElement
+  },
+
   focus: function (at) {
     var inp = this.refs.area.getDOMNode()
       , pos = 0

@@ -23,6 +23,10 @@ var Editor = React.createClass({
     this.focus()
   },
 
+  isFocused: function () {
+    return this.refs.text.isFocused()
+  },
+
   focus: function () {
     this.refs.text.focus.apply(this.refs.text, arguments)
   },
