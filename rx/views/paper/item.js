@@ -126,9 +126,13 @@ var PaperItem = React.createClass({
         {children}
       </div>
     }
+    var content = this.state.node.content
+    if (!content) return <p/>
+    if (this.state.node.type === 'ipython') {
+      content = '```\n' + content + '\n```'
+    }
     return <p dangerouslySetInnerHTML={{
-      __html: this.state.node.content ?
-        marked(this.state.node.content + '') : ''
+      __html: marked(content)
     }}/>
   },
 

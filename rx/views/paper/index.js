@@ -39,6 +39,7 @@ var PaperView = React.createClass({
 
   fromMix: function (part) {
     if (!this.props.plugins) return
+    if (this.props.skipMix && this.props.skipMix.indexOf(part) !== -1) return
     var items = []
     for (var i=0; i<this.props.plugins.length; i++) {
       var plugin = this.props.plugins[i].blocks

@@ -71,7 +71,7 @@ var SimpleBody = React.createClass({
       this.props.actions.setContent(this.props.node.id, this.state.content)
     }
     setTimeout(() => {
-      if (!this.props.store.view.windowBlur) {
+      if (!this.props.store.view.windowBlur && this.props.isActive) {
         this.props.actions.normalMode()
       }
     }, 0)
