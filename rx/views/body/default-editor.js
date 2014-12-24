@@ -84,6 +84,15 @@ var Editor = React.createClass({
           this.props.createAfter()
         }
         e.preventDefault()
+      } else if (e.ctrlKey && this.props.value.indexOf('\n') !== -1) {
+        pos = text.getCursorSplit()
+        if (pos < this.props.value.length) {
+          this.props.onChange(this.props.value.slice(0, pos))
+          this.props.createAfter(null, this.props.value.slice(0, pos), this.props.value.slice(pos))
+        } else {
+          this.props.createAfter()
+        }
+        e.preventDefault()
       }
     } else {
       return this.props.onKeyDown(e)
