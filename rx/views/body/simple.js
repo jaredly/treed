@@ -72,7 +72,7 @@ var SimpleBody = React.createClass({
     }
     setTimeout(() => {
       if (this.isMounted() && !this.props.store.view.windowBlur &&
-          this.props.isActive && this.refs.text && !this.refs.text.isFocused()) {
+          this.props.isActive && this.refs.text && (this.refs.text.isFocused && !this.refs.text.isFocused())) {
         this.props.actions.normalMode()
       }
     }, 10)
