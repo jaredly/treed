@@ -435,6 +435,9 @@ module.exports = {
       this.view.selection = null
     }
     this.view.mode = mode
+    if (this.view.id === this.parent.activeView) {
+      this.changed(this.events.activeModeChanged())
+    }
     this.changed(this.events.modeChanged(this.view.id))
   },
 

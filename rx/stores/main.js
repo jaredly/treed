@@ -64,44 +64,6 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       globals: this._globals,
       changed: this.changed.bind(this),
     }, this.actions)
-    /* disallowing commands for the moment
-    this._actions[id] = extend({
-      db: this.db,
-      events: view.events,
-      parent: this,
-      globals: this._globals,
-      changed: this.changed.bind(this),
-      startTransaction: () => this.cmd.startTransaction(),
-      stopTransaction: () => this.cmd.stopTransaction(),
-      executeCommand: (cmd, state, squash, done) => {
-        if (arguments.length === 3 && 'function' === typeof squash) {
-          done = squash
-          squash = undefined
-        }
-        return this.cmd.execute({
-          cmd,
-          state,
-          squash: squash,
-          done: done,
-        })
-      },
-      executeCommands: () => {
-        var commands = []
-        for (var i=0; i<arguments.length-1; i+=2) {
-          commands.push({
-            cmd: arguments[i],
-            state: arguments[i+1],
-            view: id,
-            active: this.views[id].active
-          })
-        }
-        if (arguments.length % 2 == 1) {
-          commands[commands.length-1].done = arguments[arguments.length-1]
-        }
-        return this.cmd.executeCommands.apply(this.cmd, commands)
-      },
-    }, this.actions)
-    */
     view.getters = extend({
       globals: this._globals,
       parent: this,
@@ -213,6 +175,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     activeViewChanged: () => 'active-view',
     rootChanged: function () { return 'root:' + this.vid },
     modeChanged: function () { return 'mode:' + this.vid },
+    activeModeChanged: function () { return 'mode:active' },
   },
 
   actions: require('./actions'),
