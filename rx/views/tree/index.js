@@ -27,6 +27,12 @@ var TreeView = React.createClass({
     keys: PT.object,
   },
 
+  getDefaultProps: function () {
+    return {
+      skipMix: []
+    }
+  },
+
   componentDidUpdate: function (prevProps) {
     if (this.props.store !== prevProps.store) {
       var e = this.props.store.events
