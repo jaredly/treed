@@ -9,6 +9,7 @@ var extend = require('./util/extend')
 var keyHandlers = require('./key-handlers')
 
 var keys = require('./views/tree/keys')
+var KeyManager = require('./key-manager')
 var TreeView = require('./views/tree')
 var MainStore = require('./stores/main')
 
@@ -38,8 +39,10 @@ function quickstart(el, options, done) {
 
   initStore(options.plugins, options.storeOptions, (err, store) => {
     if (err) return done(err)
-    initView(el, store, options.plugins, options.viewOptions, (storeView) => {
-      done && done(err, store, storeView)
+    var keys = new KeyManager()
+    keys.attach(store)
+    initView(el, store, keys, options.plugins, options.viewOptions, (storeView) => {
+      done && done(err, store, keys, storeView)
     })
   })
 }
@@ -76,18 +79,22 @@ function viewConfig(store, plugins, options) {
   var props = {
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
-    keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys'), plugins),
     store: storeView,
   }
-  return {view: storeView, props: props}
+  return {
+    keys: keyHandlers(options.defaultKeys, storeView.actions, pluginType(plugins, 'keys'), plugins),
+    view: storeView,
+    props: props
+  }
 }
 
-function initView(el, store, plugins, options, done) {
+function initView(el, store, keys, plugins, options, done) {
   options = extend({
     View: TreeView,
   }, options)
 
   var config = viewConfig(store, plugins, options)
+  keys.addView(config.view.id, config.keys)
 
   React.renderComponent(options.View(config.props), el, function () {
     done(config.view)

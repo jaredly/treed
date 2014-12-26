@@ -62,10 +62,6 @@ var SimpleBody = React.createClass({
     this.setState({content: value})
   },
 
-  _onKeyDown: function (e) {
-    this.props.keys(e)
-  },
-
   _onBlur: function () {
     if (this.state.content !== this.props.node.content) {
       this.props.actions.setContent(this.props.node.id, this.state.content)
@@ -116,8 +112,7 @@ var SimpleBody = React.createClass({
       createAfter={this.props.actions.createAfter.bind(this.props.actions)}
       removeEmpty={this.props.actions.removeEmpty.bind(this.props.actions)}
       onChange={this._onChange}
-      onBlur={this._onBlur}
-      onKeyDown={this._onKeyDown}/>
+      onBlur={this._onBlur}/>
   },
 
   renderer: function () {

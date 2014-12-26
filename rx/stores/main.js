@@ -132,6 +132,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }, this.getters)
 
     this.activeView = id
+    this.changed(this.events.activeViewChanged())
 
     return {
       id,

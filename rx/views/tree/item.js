@@ -62,7 +62,6 @@ var TreeItem = React.createClass({
     id: PT.string.isRequired,
     plugins: PT.array,
     bodies: PT.object,
-    keys: PT.func,
     isRoot: PT.bool,
   },
 
@@ -122,7 +121,6 @@ var TreeItem = React.createClass({
         editor: body.editor,
         renderer: body.renderer,
         node: this.state.node,
-        keys: this.props.keys,
         isActive: this.state.isActive, // do we need this?
         editState: this.state.editState,
         actions: this.props.store.actions,
@@ -162,7 +160,6 @@ var TreeItem = React.createClass({
             plugins: this.props.plugins,
             store: this.props.store,
             bodies: this.props.bodies,
-            keys: this.props.keys,
             index: i,
             key: id,
             id: id,

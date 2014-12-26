@@ -13,7 +13,6 @@ var Editor = React.createClass({
     value: PT.string,
     onBlur: PT.func,
     onChange: PT.func,
-    onKeyDown: PT.func,
     createAfter: PT.func,
     goDown: PT.func,
     goUp: PT.func,
@@ -94,8 +93,6 @@ var Editor = React.createClass({
         }
         e.preventDefault()
       }
-    } else {
-      return this.props.onKeyDown(e)
     }
   },
 

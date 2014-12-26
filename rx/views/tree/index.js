@@ -23,8 +23,6 @@ var TreeView = React.createClass({
     plugins: PT.array,
     nodePlugins: PT.array,
     skipMix: PT.array,
-
-    keys: PT.object,
   },
 
   getDefaultProps: function () {
@@ -43,13 +41,11 @@ var TreeView = React.createClass({
   componentWillMount: function () {
     var e = this.props.store.events
     this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
-    window.addEventListener('keydown', this._onKeyDown)
     window.addEventListener('blur', this._onBlur)
     window.addEventListener('focus', this._onFocus)
   },
 
   componentWillUnmount: function () {
-    window.removeEventListener('keydown', this._onKeyDown)
     window.removeEventListener('blur', this._onBlur)
     window.removeEventListener('focus', this._onFocus)
   },
@@ -62,19 +58,6 @@ var TreeView = React.createClass({
   _onFocus: function () {
     this.props.store.view.windowBlur = false
     // this.props.store.actions.edit()
-  },
-
-  _onKeyDown: function (e) {
-    if (!this.state.isActive) return
-    if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') {
-      return
-    }
-    if (this.state.mode === 'normal') {
-      return this.props.keys.normal(e)
-    }
-    if (this.state.mode === 'visual') {
-      return this.props.keys.visual(e)
-    }
   },
 
   fromMix: function (part) {
@@ -108,7 +91,6 @@ var TreeView = React.createClass({
       {TreeItem({
         store: this.props.store,
         plugins: this.props.nodePlugins,
-        keys: this.props.keys.insert,
         bodies: bodies,
         isRoot: true,
         id: this.state.root

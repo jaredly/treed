@@ -11,9 +11,11 @@ treed.quickstart('#example', {
   storeOptions: {
     data: data
   },
-}, (store) => {
+}, (err, store, keys, storeView) => {
   console.log((Date.now() - start) + 'ms to render')
+  window.keys = keys
   window.store = store
-  window.actions = store.actions
+  window.actions = storeView.actions
+  keys.listen(window)
 })
 
