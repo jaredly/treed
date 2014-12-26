@@ -39,7 +39,6 @@ module.exports = {
       return this.ids.map(id => events.nodeChanged(id))
     },
     undo: function (db, events) {
-      db.update(this.id, this.old)
       this.ids.forEach((id, i) => {
         db.update(id, this.olds[i])
       })
