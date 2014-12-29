@@ -11,6 +11,7 @@ module.exports = {
 
   keys: {
     'toggle done': {
+      type: 'todo',
       normal: 'alt+return',
       insert: 'alt+return',
       visual: 'alt+return',
