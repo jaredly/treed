@@ -11,14 +11,27 @@ function ensureInView(item) {
     st = window.getComputedStyle(parent)
   }
   var pox = parent.getBoundingClientRect()
-  if (bb.top < pox.top + 100) {
-    parent.scrollTop -= pox.top - bb.top + 100
-    return
-    // return item.scrollIntoView()
+    , height = bb.bottom - bb.top
+    , pHeight = pox.bottom - pox.top
+    , margin = 100
+  if (height + margin * 2 > pHeight) {
+    margin = 10
   }
-  if (bb.bottom > pox.bottom - 100) {
+  if (height + margin * 2 > pHeight) {
+    if (bb.top > pox.top + margin) {
+      parent.scrollTop += bb.top - pox.top - margin
+    } else if (bb.bottom < pox.bottom - margin) {
+      parent.scrollTop -= pox.bottom - bb.bottom - margin
+    }
+    return
+  }
+  if (bb.top < pox.top + margin) {
+    parent.scrollTop -= pox.top - bb.top + margin
+    return
+  }
+  if (bb.bottom > pox.bottom - margin) {
     // item.scrollIntoView(false)
-    parent.scrollTop += bb.bottom - pox.bottom + 100
+    parent.scrollTop += bb.bottom - pox.bottom + margin
   }
 }
 
