@@ -149,6 +149,7 @@ Commandeger.prototype = {
         if ('string' === typeof changed) {
           changed = [changed]
         }
+        this.setActive(command.active, command.view)
         done(err, changed)
       })
       return
@@ -169,6 +170,7 @@ Commandeger.prototype = {
         if ('string' === typeof changed) {
           changed = [changed]
         }
+        this.setActive(command.active, command.view)
         done(err, changed)
       })
       return
