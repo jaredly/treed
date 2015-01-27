@@ -101,6 +101,7 @@ var Editor = React.createClass({
       ref="text"
       value={this.props.value}
       onChange={this._onChange}
+      onPaste={this.props.onPaste}
       onBlur={this.props.onBlur}
       onKeyDown={this._onKeyDown}/>
   }

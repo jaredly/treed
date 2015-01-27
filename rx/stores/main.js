@@ -73,6 +73,17 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     return view
   },
 
+  unregisterView: function (id) {
+    delete this.views[id]
+    delete this._events[id]
+    delete this._actions[id]
+    delete this._getters[id]
+    if (id === this.activeView) {
+      this.activeView = +Object.keys(this.views)[0]
+      this.changed(this.events.activeViewChanged())
+    }
+  },
+
   // create a proxy object for the store that is specific to a single view
   registerView: function () {
     var id = this._nextViewId++

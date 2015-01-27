@@ -82,7 +82,7 @@ Db.prototype = {
   exportTree: function (pid) {
     pid = pid || this.root
     var node = this.nodes[pid]
-      , out = {}
+      , out = {id: pid}
     for (var name in node) {
       out[name] = node[name]
     }

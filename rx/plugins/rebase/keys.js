@@ -8,5 +8,9 @@ module.exports = {
     description: "zoom to the current root's parent",
     normal: 'g u',
   },
+  'rebase root': {
+    description: 'zoom to the document root',
+    normal: 'g r',
+  },
 }
 

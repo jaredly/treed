@@ -13,6 +13,12 @@ module.exports = {
       this.view.root = this.db.nodes[this.view.root].parent
       this.changed(this.events.rootChanged())
     },
+    rebaseRoot: function () {
+      if (this.view.root === this.db.root) return
+      this.setActive(this.db.root)
+      this.view.root = this.db.root
+      this.changed(this.events.rootChanged())
+    },
   },
 
   getters: {

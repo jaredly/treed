@@ -2,7 +2,7 @@
 
 var React = require('react')
 
-var Textarea = module.exports = React.createClass({
+var Textarea = React.createClass({
 
   getCursorSplit: function () {
     var a = this.refs.area.getDOMNode()
@@ -120,4 +120,6 @@ var Textarea = module.exports = React.createClass({
     </div>
   }
 })
+
+module.exports = Textarea
 
