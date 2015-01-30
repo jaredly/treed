@@ -72,10 +72,11 @@ function initStore(plugins, options, done) {
 
 function viewConfig(store, plugins, options) {
   options = extend({
+    root: null,
     defaultKeys: keys,
   }, options)
 
-  var storeView = store.registerView()
+  var storeView = store.registerView(options.root)
 
   var props = {
     plugins: pluginType(plugins, 'view'),

@@ -85,12 +85,13 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   },
 
   // create a proxy object for the store that is specific to a single view
-  registerView: function () {
+  registerView: function (root) {
     var id = this._nextViewId++
+    if (!root || !this.db.nodes[root]) root = this.db.root
     this.views[id] = {
       id: id,
-      root: this.db.root,
-      active: this.db.root,
+      root: root,
+      active: root,
       selected: null,
       editPos: null,
       mode: 'normal',

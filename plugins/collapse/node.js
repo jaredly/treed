@@ -12,7 +12,7 @@ module.exports = {
       cls.push('n_Collapse')
     }
     if (node.children.length) {
-      cls.push('list_item-parent')
+      cls.push('TreeItem-parent')
     }
     return cls.join(' ')
   },

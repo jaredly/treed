@@ -21,8 +21,6 @@ var PaperView = React.createClass({
   propTypes: {
     plugins: PT.array,
     nodePlugins: PT.array,
-
-    keys: PT.object,
   },
 
   componentDidUpdate: function (prevProps) {
@@ -69,7 +67,6 @@ var PaperView = React.createClass({
         depth: 0,
         store: this.props.store,
         plugins: this.props.nodePlugins,
-        keys: this.props.keys.insert,
         bodies: bodies,
         isRoot: true,
         id: this.state.root

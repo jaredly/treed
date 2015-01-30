@@ -63,7 +63,7 @@ Db.prototype = {
 
   // dump children INTO the pid at index ix
   dump: function (pid, children, ix, done) {
-    var mapped = treesToMap(children, pid)
+    var mapped = treesToMap(children, pid, true)
     this.batchSave(mapped.nodes, (err) => {
       if (err) return done(err)
       var oldChildren = this.nodes[pid].children
@@ -79,25 +79,25 @@ Db.prototype = {
     })
   },
 
-  exportTree: function (pid) {
+  exportTree: function (pid, keepIds) {
     pid = pid || this.root
     var node = this.nodes[pid]
       , out = {id: pid}
     for (var name in node) {
       out[name] = node[name]
     }
-    out.children = node.children.map(this.exportTree.bind(this))
-    delete out.id
+    out.children = node.children.map(id => this.exportTree(id, keepIds))
+    if (!keepIds) delete out.id
     delete out.parent
     return out
   },
 
-  exportMany: function (ids) {
-    return ids.map(this.exportTree.bind(this))
+  exportMany: function (ids, keepIds) {
+    return ids.map(id => this.exportTree(id, keepIds))
   },
 
   makeRoot: function (defaultData, done) {
-    this.root = uuid()
+    this.root = defaultData && defaultData.id || uuid()
     this.pl.save('root', this.root, {id: this.root}, (err) => {
       if (err) return done(err)
       this.nodes = {}
@@ -125,9 +125,9 @@ Db.prototype = {
     this.pl.batchSave('node', nodes, done)
   },
 
-  save: function (id, value) {
+  save: function (id, value, modified) {
     this.nodes[id] = value
-    this.nodes[id].modified = Date.now()
+    this.nodes[id].modified = modified || Date.now()
     this.pl.save('node', id, value)
   },
 

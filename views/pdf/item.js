@@ -96,7 +96,7 @@ var TreeItem = React.createClass({
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
     var abovebody = this.fromMix('abovebody')
     var belowbody = this.fromMix('belowbody')
-    return <div ref='body' className='list_item_body'>
+    return <div ref='body' className='TreeItem_body'>
       {abovebody}
       {SimpleBody({
         editor: body.editor,
@@ -115,10 +115,10 @@ var TreeItem = React.createClass({
   render: function () {
     var className = cx({
       'pdf_item': true,
-      'list_item': true,
+      'TreeItem': true,
       'pdf_item-root': this.props.isRoot,
     })
-    className += ' list_item-type-' + this.state.node.type
+    className += ' TreeItem-type-' + this.state.node.type
     if (this.props.plugins) {
       this.props.plugins.forEach((plugin) => {
         if (!plugin.classes) return
@@ -127,13 +127,13 @@ var TreeItem = React.createClass({
       })
     }
     return <div className={className}>
-      <div className='list_item_head'>
+      <div className='TreeItem_head'>
         {this.state.node.children.length ?
           <a name={this.state.node.id}/> : null}
         {this.body()}
       </div>
       {this.state.node.children.length ?
-      <div className='list_item_children' ref='children'>
+      <div className='TreeItem_children' ref='children'>
         {this.state.node.children.map((id, i) => 
           TreeItem({
             plugins: this.props.plugins,

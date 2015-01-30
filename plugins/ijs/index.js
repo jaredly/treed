@@ -91,8 +91,8 @@ module.exports = {
     classes: function (node, state) {
       if (node.type !== 'ipython') return
       return cx({
-        'list_item-ijs-stale': node.session !== session,
-        'list_item-ijs-dirty': node.executed !== node.content,
+        'TreeItem-ijs-stale': node.session !== session,
+        'TreeItem-ijs-dirty': node.executed !== node.content,
       })
     },
 

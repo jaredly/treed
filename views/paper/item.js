@@ -116,7 +116,6 @@ var PaperItem = React.createClass({
           plugins: this.props.plugins,
           store: this.props.store,
           bodies: this.props.bodies,
-          keys: this.props.keys,
           index: i,
           key: id,
           id: id,

@@ -74,8 +74,8 @@ var TreeView = React.createClass({
   },
 
   render: function () {
-    var className = 'list list-' + this.state.mode
-    if (this.state.isActive) className += ' list-active'
+    var className = 'TreeView TreeView-' + this.state.mode
+    if (this.state.isActive) className += ' TreeView-active'
     var bodies = {
       default: {editor: null, renderer: null}
     }
@@ -86,7 +86,7 @@ var TreeView = React.createClass({
         }
       }
     }
-    return <div className={className}>
+    return <div className={className} onClick={this.props.store.actions.setActiveView.bind(this.props.store.actions)}>
       {this.fromMix('top')}
       {TreeItem({
         store: this.props.store,

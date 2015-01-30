@@ -10,7 +10,7 @@ function treesToMap(trees, pid, keepIds) {
   }
 
   var processChild = (pid, child) => {
-    var id = keepIds ? child.id : uuid()
+    var id = (keepIds && child.id) ? child.id : uuid()
     var node = {
       id: id,
       content: child.content,
