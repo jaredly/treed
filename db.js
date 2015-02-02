@@ -48,6 +48,7 @@ Db.prototype = {
       id: id,
       created: now,
       modified: now,
+      collapsed: true,
       content: content || '',
       type: type || 'base',
       children: [],
