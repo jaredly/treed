@@ -50,12 +50,20 @@ KeyManager.prototype = {
   },
 
   keyDown: function (e) {
+    var res
     if (this.keys) {
-      var res = this.keys(e)
-      if (res !== true) return res
+      res = this.keys(e)
+      if (typeof res !== 'string' && res !== true) {
+        if (this.store) {
+          this.views[this.state.active][this.state.mode].clear()
+        }
+        return res
+      } else if (res === true) {
+        res = undefined
+      }
     }
     if (this.store) {
-      this.views[this.state.active][this.state.mode](e)
+      this.views[this.state.active][this.state.mode](e, res)
     }
   },
 

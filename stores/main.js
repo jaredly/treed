@@ -47,8 +47,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       this.cmd.events = this._events
     }
     this._getters = {}
-    this._nextViewId = 0
-    this.activeView = 0
+    this._nextViewId = 1
+    this.activeView = 1
   },
 
   headerView: function () {
@@ -143,7 +143,9 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       db: this.db,
     }, this.getters)
 
-    this.activeView = id
+    if (!this.activeView) {
+      this.activeView = id
+    }
     this.changed(this.events.activeViewChanged())
 
     return {
