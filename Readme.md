@@ -1,7 +1,7 @@
 # Treed
+A Powerful Tree Editing Component
 
 [![Join the chat at https://gitter.im/jaredly/treed](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jaredly/treed?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-A Powerful Tree Editing Component
 
 Treed wants to be for tree editing what ace is for text editing. Extensible, customizible, powerful, and just plain easy to use. Perhaps that's a little ambitious, but that's the idea.
 
