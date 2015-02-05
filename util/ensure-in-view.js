@@ -47,7 +47,7 @@ function scrollMe(parent, by) {
     scrolling.push(parent)
   }
   var dest = parent.scrollTop + by
-  if (Math.abs(parent.scrollTop - dest) < 5) {
+  if (Math.abs(parent.scrollTop - dest) < 150) {
     parent.scrollTop = dest
     return scrolling.pop()
   }
