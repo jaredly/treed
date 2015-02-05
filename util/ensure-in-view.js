@@ -19,19 +19,49 @@ function ensureInView(item) {
   }
   if (height + margin * 2 > pHeight) {
     if (bb.top > pox.top + margin) {
-      parent.scrollTop += bb.top - pox.top - margin
+      scrollMe(parent, bb.top - pox.top - margin)
     } else if (bb.bottom < pox.bottom - margin) {
-      parent.scrollTop -= pox.bottom - bb.bottom - margin
+      scrollMe(parent, -(pox.bottom - bb.bottom - margin))
     }
     return
   }
   if (bb.top < pox.top + margin) {
-    parent.scrollTop -= pox.top - bb.top + margin
+    scrollMe(parent, -(pox.top - bb.top + margin))
     return
   }
   if (bb.bottom > pox.bottom - margin) {
     // item.scrollIntoView(false)
-    parent.scrollTop += bb.bottom - pox.bottom + margin
+    scrollMe(parent, bb.bottom - pox.bottom + margin)
   }
+}
+
+var scrolling = []
+  , timers = []
+
+function scrollMe(parent, by) {
+  var ix = scrolling.indexOf(parent)
+  if (ix !== -1) {
+    clearInterval(timers[ix])
+  } else {
+    ix = scrolling.length
+    scrolling.push(parent)
+  }
+  var dest = parent.scrollTop + by
+  if (Math.abs(parent.scrollTop - dest) < 5) {
+    parent.scrollTop = dest
+    return scrolling.pop()
+  }
+  var ival = setInterval(function () {
+    if (Math.abs(parent.scrollTop - dest) < 5) {
+      parent.scrollTop = dest
+      var ix = scrolling.indexOf(parent)
+      scrolling.splice(ix, 1)
+      timers.splice(ix, 1)
+      clearInterval(ival)
+      return
+    }
+    parent.scrollTop += (dest - parent.scrollTop) / 5
+  }, 10);
+  timers[ix] = ival
 }
 
