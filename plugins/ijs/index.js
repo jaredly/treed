@@ -75,11 +75,11 @@ module.exports = {
 
   keys: {
     'execute': {
-      normal: 'shift+return',
-      insert: 'shift+return',
+      normal: 'shift+enter',
+      insert: 'shift+enter',
     },
     'execute many': {
-      visual: 'shift+return',
+      visual: 'shift+enter',
     },
   },
 

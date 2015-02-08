@@ -31,7 +31,7 @@ module.exports = {
   },
   // switch to insert mode
   'edit': {
-    normal: 'return, a, shift+a, f2',
+    normal: 'enter, a, shift+a, f2',
   },
   'edit start': {
     normal: 'i, shift+i',
@@ -90,6 +90,12 @@ module.exports = {
   },
   'go down': {
     normal: 'down, j',
+  },
+  'page down': {
+    normal: 'page-down',
+  },
+  'page up': {
+    normal: 'page-up',
   },
 
   // visual mode stuff

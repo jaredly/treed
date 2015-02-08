@@ -98,6 +98,30 @@ module.exports = {
     return true
   },
 
+  pageUp: function () {
+    var curr = this.view.active
+      , up
+    for (var i=0; i<10; i++) {
+      up = movement.up(curr, this.view.root, this.db.nodes)
+      if (!up) break
+      curr = up
+    }
+    this.setActive(curr)
+    return true
+  },
+
+  pageDown: function () {
+    var curr = this.view.active
+      , down
+    for (var i=0; i<10; i++) {
+      down = movement.down(curr, this.view.root, this.db.nodes)
+      if (!down) break
+      curr = down
+    }
+    this.setActive(curr)
+    return true
+  },
+
   goDown: function (editStart) {
     var down = movement.down(this.view.active, this.view.root, this.db.nodes)
     if (!down) return false

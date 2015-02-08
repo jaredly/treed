@@ -12,9 +12,9 @@ module.exports = {
   keys: {
     'toggle done': {
       type: 'todo',
-      normal: 'alt+return',
-      insert: 'alt+return',
-      visual: 'alt+return',
+      normal: 'alt+enter',
+      insert: 'alt+enter',
+      visual: 'alt+enter',
     },
   },
 
