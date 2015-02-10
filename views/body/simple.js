@@ -6,6 +6,7 @@ var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var marked = require('marked')
 var Editor = require('./default-editor')
+var ContextMenu = require('./context-menu')
 
 var renderer = new marked.Renderer()
 renderer.link = function (href, title, text) {
@@ -26,6 +27,16 @@ marked.setOptions({
 
 // a more complex body would show different things based on the type of node.
 var SimpleBody = React.createClass({
+  propTypes: {
+    editor: PT.func,
+    renderer: PT.func,
+    node: PT.object,
+    isActive: PT.bool,
+    editState: PT.string,
+    actions: PT.object,
+    store: PT.object,
+  },
+
   _onClick: function () {
     if (this.props.editState) {
       // this.props.actions.normalMode(this.props.node.id)
@@ -72,6 +83,11 @@ var SimpleBody = React.createClass({
         this.props.actions.normalMode()
       }
     }, 10)
+  },
+
+  _onContextMennu: function (e) {
+    // make the menu
+    // show the menu
   },
 
   componentDidMount: function () {
@@ -132,7 +148,7 @@ var SimpleBody = React.createClass({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
-    return <div className={className}>
+    return <div className={className} onContextMenu={this._onContextMennu}>
       {this.props.editState ? this.editor() : this.renderer()}
     </div>
   }

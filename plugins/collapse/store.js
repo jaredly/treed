@@ -38,6 +38,23 @@ module.exports = {
       this.setActive(id)
     },
 
+    expandToAndSelect: function (id) {
+      var node = this.db.nodes[id]
+        , root = this.view.root
+        , parent = node.parent
+        , current = parent
+        , toOpen = []
+      if (id !== root) {
+        while (current !== root) {
+          var node = this.db.nodes[current]
+          if (node.collapsed) toOpen.push(current)
+          current = node.parent
+        }
+      }
+      if (toOpen.length) this.setMany('collapsed', toOpen, false)
+      this.setActive(id)
+    },
+
     toggleCollapseDeep: function (id) {
       if (!arguments.length) id = this.view.active
       if (this.view.mode === 'visual') {

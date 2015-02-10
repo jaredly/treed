@@ -38,6 +38,8 @@ function ensureInView(item) {
 var scrolling = []
   , timers = []
 
+// TODO cancel this scrolling when an "onscroll" event is detected, so we
+// don't fight the user
 function scrollMe(parent, by) {
   var ix = scrolling.indexOf(parent)
   if (ix !== -1) {

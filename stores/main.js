@@ -160,6 +160,10 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     }
   },
 
+  currentViewActions: function () {
+    return this._actions[this.activeView]
+  },
+
   // just the `store` part of the plugin
   addPlugin: function (plugin, allPlugins) {
     BaseStore.prototype.addPlugin.call(this, plugin, allPlugins)

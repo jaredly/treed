@@ -121,7 +121,7 @@ var TreeItem = React.createClass({
         editor: body.editor,
         renderer: body.renderer,
         node: this.state.node,
-        isActive: this.state.isActive, // do we need this?
+        isActive: this.state.isActive,
         editState: this.state.editState,
         actions: this.props.store.actions,
         store: this.props.store,

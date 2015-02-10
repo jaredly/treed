@@ -28,6 +28,26 @@ module.exports = {
     return keys
   },
 
+  contextMenu: function (node, store, plugins) {
+    var items = []
+    plugins.forEach((plugin) => {
+      if (!plugin.types) return
+      for (var name in plugin.types) {
+        if (name === node.type) continue;
+        var sh = plugin.types[name].shortcut || plugin.types[name]
+        items.push({
+          name: plugins.types[name].title,
+          shortcut: 't ' + sh,
+          action: 'type' + cap(name)
+        })
+      }
+    })
+    return {
+      name: 'Change Type',
+      children: items,
+    }
+  },
+
   types: {
     base: 'n',
   },
