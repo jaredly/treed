@@ -25,6 +25,16 @@ module.exports = {
     },
   },
 
+  contextMenu: function (node, store) {
+    return [{
+      title: 'Copy this item',
+      action: 'copy',
+    }, {
+      title: 'Paste after',
+      action: 'paste',
+    }]
+  },
+
   store: {
     init: function (store) {
       store._globals.clipboard = null

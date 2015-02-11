@@ -1,7 +1,8 @@
 
 .ContextMenu {
+  font-family: sans-serif;
   background-color: white;
-  position: absolute;
+  position: fixed;
 
   &_item {
     position: relative;
@@ -10,10 +11,25 @@
       cursor: pointer;
       padding: 5px 10px;
       background-color: white;
+      padding-right: 60px;
+      white-space: nowrap;
     }
 
     &-selected > &_title {
         background-color: #cef;
+    }
+
+    &_shortcut {
+      background-color: #eee;
+      border-radius: 2px;
+      padding: 1px 5px;
+      position: absolute;
+      right: 6px;
+      top: 6px;
+      font-family: monospace;
+      box-shadow: 0 0 5px #aaa inset;
+      text-shadow: 1px 1px 3px #777;
+      color: #555;
     }
 
     &-parent > &_title::after {
@@ -34,7 +50,7 @@
     left: 100%;
     top: 0;
     margin-left: 3px;
-    width: 150px;
+    width: 200px;
   }
 }
 

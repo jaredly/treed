@@ -6,6 +6,8 @@ module.exports = {
   types: {
     todo: {
       shortcut: 't',
+      title: 'Todo',
+      description: 'A to-do item',
     },
   },
 

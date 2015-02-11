@@ -1,8 +1,14 @@
 
 module.exports = {
   types: {
-    list: 'l',
-    ordered_list: 'o',
+    list: {
+      shortcut: 'l',
+      title: 'List',
+    },
+    ordered_list: {
+      shortcut: 'o',
+      title: 'Ordered List',
+    },
   },
 }
 

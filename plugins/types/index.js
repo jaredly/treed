@@ -38,21 +38,25 @@ module.exports = {
         var type = plugin.types[name]
         var sh = type.shortcut || type
         items.push({
-          title: type.title || name,
+          title: 'Set type ' + (type.title || name),
           shortcut: 't ' + sh,
           icon: type.icon,
           action: 'type' + cap(name)
         })
       }
     })
-    return {
+    return items
+    /*{
       title: 'Change Type',
       children: items,
-    }
+    }*/
   },
 
   types: {
-    base: 'n',
+    base: {
+      shortcut: 'n',
+      title: 'Normal',
+    }
   },
 
   store: {

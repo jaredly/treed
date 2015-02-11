@@ -35,9 +35,13 @@ var Editor = React.createClass({
   },
 
   _onKeyDown: function (e) {
+    if (e.shiftKey && e.key === 'Enter') {
+      return e.stopPropagation()
+    }
     var text = this.refs.text
       , line
       , pos
+
     if (e.key === 'ArrowDown' && !e.shiftKey) {
       line = text.getCursorLine()
       if (line === -1 || line === 1) {

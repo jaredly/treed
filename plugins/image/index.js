@@ -1,22 +1,42 @@
 
 var React = require('react/addons')
   , cx = React.addons.classSet
+  , PT = React.PropTypes
   , DefaultEditor = require('../../views/body/default-editor')
+  , Uploader = require('./uploader')
+  , getSrc = require('./get-src')
 
 var ImageBase = React.createClass({
+  propType: {
+    title: PT.string,
+    onUpload: PT.func,
+    onClick: PT.func,
+  },
   render: function () {
-  }
+    if (!this.props.src) {
+      return <Uploader onUpload={this.props.onUpload}/>
+    }
+    return <div onClick={this.props.onClick} className='ImageBase'>
+      <img src={this.props.src} title={this.props.title}/>
+      <div onClick={e => {
+        e.stopPropagation()
+        this.props.onUpload(null)
+      }} className='ImageBase_close'>&times;</div>
+    </div>
+  },
 })
 
-var Imager = React.createClass({
+var ImageRenderer = React.createClass({
   render: function () {
-    var img = this.props.src ?
-          <img src={this.props.src} title={this.props.title}/> :
-          <h1 onClick={this.props.onUpload}>Click to upload an image</h1>
+    var img = <ImageBase
+      src={this.props.src}
+      title={this.props.title}
+      onClick={this.props.onClick}
+      onUpload={this.props.setSrc}/>
     if (this.props.title && this.props.title.trim()) {
       return <div>
-        <div className='treed_body_rendered' onClick={this.props.onClick}>{this.props.title}</div>
         {img}
+        <div className='treed_body_rendered' onClick={this.props.onClick}>{this.props.title}</div>
       </div>
     }
     return img
@@ -33,24 +53,17 @@ var ImageEditor = React.createClass({
   },
 
   _onPaste: function (e) {
-    var blob = e.clipboardData.items[0].getAsFile()
-      , reader = new FileReader()
-    if (!blob) return
     e.preventDefault()
-    reader.onload = e => this.props.editProps.store.actions.set(this.props.editProps.node.id, 'imageSrc', e.target.result)
-    reader.readAsDataURL(blob)
+    getSrc(e.clipboardData.items[0].getAsFile(), this.props.setSrc)
   },
 
   render: function () {
-
     var props = this.props.editProps
     props.onPaste = this._onPaste
 
     return <div>
-    {React.createElement(DefaultEditor, props)}
-      {this.props.src ?
-          <img src={this.props.src} title={this.props.title}/> :
-          <h1 onClick={this.props.onUpload}>Click to upload an image</h1>}
+      <ImageBase src={this.props.src} title={this.props.title} onUpload={this.props.setSrc}/>
+      {React.createElement(DefaultEditor, props)}
     </div>
   },
 })
@@ -58,8 +71,27 @@ var ImageEditor = React.createClass({
 module.exports = {
   types: {
     image: {
+      title: 'Image',
       shortcut: 'i',
     }
+  },
+
+  contextMenu: function (node, store) {
+    if (node.imageSrc) {
+      return {
+        title: 'Remove image',
+        action: 'removeImage',
+      }
+    }
+  },
+
+  store: {
+    actions: {
+      'removeImage': function (id) {
+        if (!id) id = this.view.active
+        this.set(id, 'imageSrc', null)
+      },
+    },
   },
 
   node: {
@@ -70,11 +102,22 @@ module.exports = {
             if (this.props.editState) return
             this.props.actions.edit(this.props.node.id)
           }
-          return <Imager onClick={click} src={this.props.node.imageSrc} title={this.props.node.content}/>
+          var setSrc = this.props.store.actions.set.bind(this.props.store.actions, this.props.node.id, 'imageSrc')
+          return <ImageRenderer
+            onClick={click}
+            setSrc={setSrc} 
+            src={this.props.node.imageSrc}
+            title={this.props.node.content}/>
         },
 
         editor: function (props) {
-          return <ImageEditor editProps={props} ref={props.ref} src={props.node.imageSrc} title={props.node.content}/>
+          var setSrc = props.store.actions.set.bind(props.store.actions, props.node.id, 'imageSrc')
+          return <ImageEditor
+            editProps={props}
+            setSrc={setSrc}
+            ref={props.ref}
+            src={props.node.imageSrc}
+            title={props.node.content}/>
         },
       }
     }

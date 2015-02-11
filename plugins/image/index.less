@@ -1,0 +1,45 @@
+
+.TreeItem-type-image > .TreeItem_head {
+  h3,
+  .treed_body_rendered,
+  .textarea-grow textarea {
+    text-align: center;
+  }
+
+  h3 {
+    margin: 0px;
+    padding: 10px;
+  }
+}
+
+.treed_body-type-image {
+  text-align: center;
+}
+
+.treed_body-type-image img {
+  max-width: 100%;
+}
+
+.ImageBase {
+  position: relative;
+
+  &_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+    background-color: #aaa;
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    padding: 2px 5px 3px;
+    border-radius: 3px;
+    line-height: 16px;
+    opacity: 0;
+    transition: opacity .3s ease;
+  }
+
+  &:hover &_close {
+    opacity: 1;
+  }
+}

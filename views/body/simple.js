@@ -6,7 +6,6 @@ var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var marked = require('marked')
 var Editor = require('./default-editor')
-var ContextMenu = require('./context-menu')
 
 var renderer = new marked.Renderer()
 renderer.link = function (href, title, text) {
@@ -86,7 +85,8 @@ var SimpleBody = React.createClass({
   },
 
   _onContextMennu: function (e) {
-    this.props.actions.showContextMenu(e.clientX, e.clientY)
+    this.props.actions.showContextMenu(e.clientX, e.clientY, this.props.node.id)
+    e.preventDefault()
   },
 
   componentDidMount: function () {

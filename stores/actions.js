@@ -586,23 +586,36 @@ module.exports = {
   },
 
   showCustomMenu: function (x, y, menu) {
-    if (!id) id = this.view.active
     if (this.globals.clearContextMenu) {
       this.globals.clearContextMenu()
     }
-    this.globals.clearContextMenu = Menu.show(x, y, menu)
+    this.globals.clearContextMenu = Menu.show(menu, x, y)
   },
 
   showContextMenu: function (x, y, id) {
     var items = []
+    if (!id) id = this.view.active
     this.parent.allPlugins.forEach(plugin => {
       if (!plugin.contextMenu) return
       var created = plugin.contextMenu(this.db.nodes[id], this)
+      if (!created) return
       if (!Array.isArray(created)) {
         created = [created]
       }
       items = items.concat(created)
     })
+    var replaceActions = items => {
+      items.forEach(item => {
+        if ('string' === typeof item.action) {
+          if (!this[item.action]) {
+            return console.warn('Unknown context menu action')
+          }
+          item.action = this[item.action].bind(this, id)
+        }
+        if (item.children) replaceActions(item.children)
+      })
+    }
+    replaceActions(items)
     this.showCustomMenu(x, y, items)
   },
 
