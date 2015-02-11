@@ -577,12 +577,20 @@ module.exports = {
 
   goToNextSibling: function (id) {
     id = id || this.view.active
-    this.setActive(movement.nextSibling(id, this.view.root, this.db.nodes))
+    var next = movement.nextSibling(id, this.view.root, this.db.nodes)
+    if (!next) {
+      next = movement.down(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(next)
   },
 
   goToPreviousSibling: function (id) {
     id = id || this.view.active
-    this.setActive(movement.prevSibling(id, this.view.root, this.db.nodes))
+    var prev = movement.prevSibling(id, this.view.root, this.db.nodes)
+    if (!prev) {
+      prev = movement.up(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(prev)
   },
 
   showCustomMenu: function (x, y, menu) {
