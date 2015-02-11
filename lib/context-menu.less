@@ -1,0 +1,30 @@
+
+.ContextMenu {
+  background-color: white;
+  position: absolute;
+
+  &_item {
+    position: relative;
+
+    & > &_title {
+      cursor: pointer;
+      padding: 5px 10px;
+      background-color: white;
+    }
+
+    &-selected > &_title {
+        background-color: #cef;
+    }
+  }
+
+  &_body {
+    box-shadow: 0 0 5px black;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    left: 100%;
+    top: 0;
+  }
+}
+

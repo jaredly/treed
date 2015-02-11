@@ -25,6 +25,7 @@ function MainStore(options) {
 
   this.clearViews()
   this._globals = {}
+  this._contextMenu = null
 
   BaseStore.apply(this, arguments)
 

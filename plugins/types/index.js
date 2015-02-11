@@ -28,22 +28,25 @@ module.exports = {
     return keys
   },
 
-  contextMenu: function (node, store, plugins) {
+  contextMenu: function (node, store) {
     var items = []
+      , plugins = store.parent.allPlugins
     plugins.forEach((plugin) => {
       if (!plugin.types) return
       for (var name in plugin.types) {
         if (name === node.type) continue;
-        var sh = plugin.types[name].shortcut || plugin.types[name]
+        var type = plugin.types[name]
+        var sh = type.shortcut || type
         items.push({
-          name: plugins.types[name].title,
+          title: type.title || name,
           shortcut: 't ' + sh,
+          icon: type.icon,
           action: 'type' + cap(name)
         })
       }
     })
     return {
-      name: 'Change Type',
+      title: 'Change Type',
       children: items,
     }
   },

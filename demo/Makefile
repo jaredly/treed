@@ -35,4 +35,16 @@ dual:
 dual-css:
 	lessc dual.less dual/index.css
 
-.PHONY: simple watch-simple perf dual dual-css simple-css ix ix-css
+watch-menu:
+	watchify  ${ARGS} -x react -x react/addons ../lib/context-menu.js -o menu/build.js -d -s Menu -v
+
+menu:
+	browserify ${ARGS} -x react -x react/addons ../lib/context-menu.js -o menu/build.js -d -s Menu
+
+menu-css:
+	lessc ../lib/context-menu.less > menu/build.css
+
+react:
+	browserify -r react -r react/addons -o react.js
+
+.PHONY: simple watch-simple perf dual dual-css simple-css ix ix-css menu

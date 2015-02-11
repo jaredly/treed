@@ -11,6 +11,7 @@ function BaseStore(options) {
   if (options.plugins) {
     options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
   }
+  this.allPlugins = options.allPlugins
 }
 
 BaseStore.prototype = {

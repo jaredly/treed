@@ -1,13 +1,21 @@
 
 /**
+ * The default actions! Basically all movement, general manipulation,
+ * import/export. Actions are given in the context of a view.
+ *
+ * Plugins can define additional actions.
+ *
  * These functions need access to:
  * - nodes
  * - actions
  * - changed()
  * - events.{}
+ * - view object
  */
+// TODO maybe split this into separate groups? That could be good.
 
 var movement = require('../util/movement')
+  , Menu = require('../lib/context-menu')
 
 module.exports = {
   set: function (id, attr, value, squash) {
@@ -577,10 +585,33 @@ module.exports = {
     this.setActive(movement.prevSibling(id, this.view.root, this.db.nodes))
   },
 
-}
+  showCustomMenu: function (x, y, menu) {
+    if (!id) id = this.view.active
+    if (this.globals.clearContextMenu) {
+      this.globals.clearContextMenu()
+    }
+    this.globals.clearContextMenu = Menu.show(x, y, menu)
+  },
 
-// TODO
-function TODO() {
-  console.error("TODO not implemented")
+  showContextMenu: function (x, y, id) {
+    var items = []
+    this.parent.allPlugins.forEach(plugin => {
+      if (!plugin.contextMenu) return
+      var created = plugin.contextMenu(this.db.nodes[id], this)
+      if (!Array.isArray(created)) {
+        created = [created]
+      }
+      items = items.concat(created)
+    })
+    this.showCustomMenu(x, y, items)
+  },
+
+  hideContextMenu: function () {
+    if (this.globals.clearContextMenu) {
+      this.globals.clearContextMenu()
+      this.globals.clearContextMenu = null
+    }
+  },
+
 }
 

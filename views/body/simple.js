@@ -86,8 +86,7 @@ var SimpleBody = React.createClass({
   },
 
   _onContextMennu: function (e) {
-    // make the menu
-    // show the menu
+    this.props.actions.showContextMenu(e.clientX, e.clientY)
   },
 
   componentDidMount: function () {
