@@ -15,16 +15,26 @@
     &-selected > &_title {
         background-color: #cef;
     }
+
+    &-parent > &_title::after {
+      content: '\25b8';
+      position: absolute;
+      right: 10px;
+      top: 3px;
+      color: #777;
+    }
   }
 
   &_body {
-    box-shadow: 0 0 5px black;
+    box-shadow: 0px 3px 7px rgb(145, 145, 145);
     list-style: none;
     padding: 0;
     margin: 0;
     position: absolute;
     left: 100%;
     top: 0;
+    margin-left: 3px;
+    width: 150px;
   }
 }
 

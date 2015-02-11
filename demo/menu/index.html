@@ -12,6 +12,8 @@
         }
         #something {
             padding: 20px 50px;
+            cursor: pointer;
+            background-color: #eee;
         }
     </style>
 </head>
@@ -31,6 +33,17 @@ function makeMenu(e) {
     Menu.show([
         {title: 'hello'},
         {title: 'awesome', action: log.bind(null, 'Custom action')},
+        {title: 'One'},
+        {title: 'Two'},
+        {title: 'Three', children: [
+            {title: 'Three One'},
+            {title: 'Three Two', children: [
+                {title: 'awesome', action: log.bind(null, 'Custom action')},
+                {title: 'One'},
+                {title: 'Two some is more and things are here it is long'},
+            ]},
+        ]},
+        {title: 'Four'},
     ], e.pageX, e.pageY, logItem)
 }
 
