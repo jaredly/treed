@@ -44,6 +44,9 @@ KeyManager.prototype = {
     return this.keys.remove(lid)
   },
 
+  disable: function () {this.keys.disable()},
+  enable: function () {this.keys.enable()},
+
   addKeys: function (config) {
     if (this.keys) return this.keys.add(config)
     this.keys = keys(config)

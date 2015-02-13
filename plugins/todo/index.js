@@ -3,6 +3,8 @@ var React = require('react/addons')
 var cx = React.addons.classSet
 
 module.exports = {
+  title: 'To-Do Items',
+
   types: {
     todo: {
       shortcut: 't',

@@ -12,6 +12,8 @@ function cap(text) {
 }
 
 module.exports = {
+  title: 'Type Switcher',
+
   keys: function (plugins) {
     var keys = {}
     plugins.forEach((plugin) => {
@@ -29,19 +31,20 @@ module.exports = {
   },
 
   contextMenu: function (node, store) {
+    if (!node) return
     var items = []
       , plugins = store.parent.allPlugins
     plugins.forEach((plugin) => {
       if (!plugin.types) return
       for (var name in plugin.types) {
-        if (name === node.type) continue;
         var type = plugin.types[name]
         var sh = type.shortcut || type
         items.push({
           title: 'Set type ' + (type.title || name),
           shortcut: 't ' + sh,
           icon: type.icon,
-          action: 'type' + cap(name)
+          action: 'type' + cap(name),
+          disabled: name === node.type,
         })
       }
     })

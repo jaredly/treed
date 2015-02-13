@@ -1,5 +1,7 @@
 
 module.exports = {
+  title: 'List Item Nodes',
+
   types: {
     list: {
       shortcut: 'l',

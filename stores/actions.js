@@ -103,7 +103,7 @@ module.exports = {
     var up = movement.up(this.view.active, this.view.root, this.db.nodes)
     if (!up) return false
     this.setActive(up)
-    return true
+    return
   },
 
   pageUp: function () {
@@ -115,7 +115,7 @@ module.exports = {
       curr = up
     }
     this.setActive(curr)
-    return true
+    return
   },
 
   pageDown: function () {
@@ -127,7 +127,7 @@ module.exports = {
       curr = down
     }
     this.setActive(curr)
-    return true
+    return
   },
 
   goDown: function (editStart) {
@@ -135,7 +135,7 @@ module.exports = {
     if (!down) return false
     this.setActive(down)
     if (editStart) this.view.editPos = 'start'
-    return true
+    return
   },
 
   goLeft: function () {
@@ -250,6 +250,9 @@ module.exports = {
   },
 
   joinDown: function (id) {
+    if (!arguments.length && this.view.mode === 'visual') {
+      return this.joinMany()
+    }
     id = id || this.view.active
     if (id === this.view.root) return
     var next = movement.down(id, this.view.root, this.db.nodes)
@@ -305,6 +308,9 @@ module.exports = {
   },
 
   indent: function (id) {
+    if (!arguments.length && this.view.mode === 'visual') {
+      return this.indentMany()
+    }
     id = id || this.view.active
     var pos = movement.indent(id, this.view.root, this.db.nodes)
     if (!pos) return
@@ -351,6 +357,9 @@ module.exports = {
   },
 
   dedent: function (id) {
+    if (!arguments.length && this.view.mode === 'visual') {
+      return this.dedentMany()
+    }
     id = id || this.view.active
     var pos = movement.dedent(id, this.view.root, this.db.nodes)
     if (!pos) return

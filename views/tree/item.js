@@ -130,6 +130,13 @@ var TreeItem = React.createClass({
     </div>
   },
 
+  _onContextMennu: function (e) {
+    this.props.store.actions.setActive(this.state.node.id)
+    this.props.store.actions.showContextMenu(e.clientX, e.clientY, this.state.node.id)
+    e.preventDefault()
+    e.stopPropagation()
+  },
+
   render: function () {
     var className = cx({
       'TreeItem': true,
@@ -146,7 +153,7 @@ var TreeItem = React.createClass({
         if (classes) className += ' ' + classes
       })
     }
-    return <div className={className}>
+    return <div className={className} onContextMenu={this._onContextMennu}>
       <div className='TreeItem_head'>
         {this.fromMix('left')}
         {this.body()}

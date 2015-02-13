@@ -31,7 +31,7 @@ var SimpleBody = React.createClass({
     renderer: PT.func,
     node: PT.object,
     isActive: PT.bool,
-    editState: PT.string,
+    editState: PT.oneOfType([PT.string, PT.bool]),
     actions: PT.object,
     store: PT.object,
   },
@@ -85,8 +85,10 @@ var SimpleBody = React.createClass({
   },
 
   _onContextMennu: function (e) {
+    this.props.actions.setActive(this.props.node.id)
     this.props.actions.showContextMenu(e.clientX, e.clientY, this.props.node.id)
     e.preventDefault()
+    e.stopPropagation()
   },
 
   componentDidMount: function () {

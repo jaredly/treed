@@ -2,6 +2,8 @@
 var movement = require('../../util/movement')
 
 module.exports = {
+  title: 'Clipboard',
+
   keys: {
     'remove': {}, // not using this
     'cut': {
@@ -32,6 +34,10 @@ module.exports = {
     }, {
       title: 'Paste after',
       action: 'paste',
+      disabled: !store._globals.clipboard,
+    }, {
+      title: 'Cut node(s)',
+      action: 'cut',
     }]
   },
 

@@ -1,5 +1,7 @@
 
 module.exports = {
+  title: 'Undo/Redo',
+
   keys: {
     'undo': {
       normal: 'u, ctrl+z',

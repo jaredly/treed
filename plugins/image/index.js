@@ -69,6 +69,8 @@ var ImageEditor = React.createClass({
 })
 
 module.exports = {
+  title: 'Image Node',
+
   types: {
     image: {
       title: 'Image',

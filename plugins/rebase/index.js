@@ -2,6 +2,8 @@
 var Breadcrumb = require('./breadcrumb')
 
 module.exports = {
+  title: 'Rebase',
+
   store: require('./store'),
   node: require('./node'),
   keys: require('./keys'),
