@@ -83,6 +83,14 @@ module.exports = {
     this.setActiveView()
     if (id === this.view.active) return
     this.view.active = id
+    if (this.view.mode === 'visual') {
+      var vix = this.view.selection.indexOf(id)
+      if (vix === -1) {
+        this.setMode('normal')
+      } else if (vix !== 0 && vix !== this.view.selection.length - 1) {
+        this.pullBackSelectionTo(id)
+      }
+    }
     if (this.view.mode === 'insert') this.view.editPos = 'end'
     if (!this.db.nodes[old]) {
       this.changed(this.events.nodeViewChanged(id))
@@ -144,6 +152,10 @@ module.exports = {
 
   goRight: function () {
     this.setActive(movement.right(this.view.active, this.view.root, this.db.nodes))
+  },
+
+  pullBackSelectionTo: function (id) {
+    this.setSelection(this.view.selection.slice(0, this.view.selection.indexOf(id) + 1))
   },
 
   setSelection: function (ids) {
@@ -586,9 +598,16 @@ module.exports = {
 
   goToNextSibling: function (id) {
     id = id || this.view.active
+    if (id === this.view.root) return
     var next = movement.nextSibling(id, this.view.root, this.db.nodes)
     if (!next) {
-      next = movement.down(id, this.view.root, this.db.nodes)
+      var parent = this.db.nodes[id].parent
+      if (parent) {
+        next = movement.nextSibling(parent, this.view.root, this.db.nodes)
+      }
+      if (!next) {
+        next = movement.down(id, this.view.root, this.db.nodes)
+      }
     }
     this.setActive(next)
   },

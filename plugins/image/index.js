@@ -3,6 +3,7 @@ var React = require('react/addons')
   , cx = React.addons.classSet
   , PT = React.PropTypes
   , DefaultEditor = require('../../views/body/default-editor')
+  , DefaultRenderer = require('../../views/body/default-renderer')
   , Uploader = require('./uploader')
   , getSrc = require('./get-src')
 
@@ -36,7 +37,7 @@ var ImageRenderer = React.createClass({
     if (this.props.title && this.props.title.trim()) {
       return <div>
         {img}
-        <div className='treed_body_rendered' onClick={this.props.onClick}>{this.props.title}</div>
+        <DefaultRenderer onClick={this.props.onClick} content={this.props.title}/>
       </div>
     }
     return img
@@ -53,8 +54,10 @@ var ImageEditor = React.createClass({
   },
 
   _onPaste: function (e) {
+    var file = e.clipboardData.items[0].getAsFile()
+    if (!file) return
     e.preventDefault()
-    getSrc(e.clipboardData.items[0].getAsFile(), this.props.setSrc)
+    getSrc(file, this.props.setSrc)
   },
 
   render: function () {

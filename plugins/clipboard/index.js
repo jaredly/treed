@@ -28,16 +28,21 @@ module.exports = {
   },
 
   contextMenu: function (node, store) {
+    var plural = store.view.mode === 'visual' && store.view.selection.length > 1
+      , nodeText = plural ? 'nodes' : 'node'
     return [{
-      title: 'Copy this item',
+      title: 'Copy ' + nodeText, 
       action: 'copy',
+      shortcut: 'y y',
+    }, {
+      title: 'Cut ' + nodeText,
+      action: 'cut',
+      shortcut: 'd d',
     }, {
       title: 'Paste after',
       action: 'paste',
-      disabled: !store._globals.clipboard,
-    }, {
-      title: 'Cut node(s)',
-      action: 'cut',
+      shortcut: 'p',
+      disabled: !store.globals.clipboard,
     }]
   },
 

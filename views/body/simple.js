@@ -1,28 +1,11 @@
 /** @jsx React.DOM */
 
 var React = require('react/addons')
-var cx = React.addons.classSet
-var PT = React.PropTypes
-var ensureInView = require('../../util/ensure-in-view')
-var marked = require('marked')
-var Editor = require('./default-editor')
-
-var renderer = new marked.Renderer()
-renderer.link = function (href, title, text) {
-  return '<a href="' + href + '" target="_blank" title="' + title + '">' + text + '</a>';
-}
-
-marked.setOptions({
-  gfm: true,
-  sanitize: true,
-  tables: true,
-  breaks: true,
-  pedantic: false,
-  sanitize: false,
-  smartLists: true,
-  smartypants: true,
-  renderer: renderer
-})
+  , cx = React.addons.classSet
+  , PT = React.PropTypes
+  , ensureInView = require('../../util/ensure-in-view')
+  , DefaultEditor = require('./default-editor')
+  , DefaultRenderer = require('./default-renderer')
 
 // a more complex body would show different things based on the type of node.
 var SimpleBody = React.createClass({
@@ -78,13 +61,15 @@ var SimpleBody = React.createClass({
     }
     setTimeout(() => {
       if (this.isMounted() && !this.props.store.view.windowBlur &&
-          this.props.isActive && this.refs.text && (this.refs.text.isFocused && !this.refs.text.isFocused())) {
+          this.props.isActive && this.refs.text &&
+          (this.refs.text.isFocused && !this.refs.text.isFocused())) {
         this.props.actions.normalMode()
       }
-    }, 10)
+    }, 80)
   },
 
-  _onContextMennu: function (e) {
+  _onContextMenu: function (e) {
+    if (this.props.store.view.mode === 'insert' && this.props.node.id === this.props.store.view.active) return
     this.props.actions.setActive(this.props.node.id)
     this.props.actions.showContextMenu(e.clientX, e.clientY, this.props.node.id)
     e.preventDefault()
@@ -117,7 +102,7 @@ var SimpleBody = React.createClass({
   },
 
   editor: function () {
-    var Ctrl = this.props.editor || Editor
+    var Ctrl = this.props.editor || DefaultEditor
     return <Ctrl
       ref="text"
       value={this.state.content}
@@ -134,12 +119,7 @@ var SimpleBody = React.createClass({
 
   renderer: function () {
     if (!this.props.renderer) {
-      return <span className="treed_body_rendered"
-        onClick={this._onClick}
-        dangerouslySetInnerHTML={{
-          __html: this.props.node.content ?
-                    marked(this.props.node.content + '') : ''
-        }}/>
+      return <DefaultRenderer onClick={this._onClick} content={this.props.node.content}/>
     }
     return this.props.renderer.call(this)
   },
@@ -149,7 +129,7 @@ var SimpleBody = React.createClass({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
-    return <div className={className} onContextMenu={this._onContextMennu}>
+    return <div className={className} onContextMenu={this._onContextMenu}>
       {this.props.editState ? this.editor() : this.renderer()}
     </div>
   }

@@ -130,11 +130,12 @@ var TreeItem = React.createClass({
     </div>
   },
 
-  _onContextMennu: function (e) {
-    this.props.store.actions.setActive(this.state.node.id)
-    this.props.store.actions.showContextMenu(e.clientX, e.clientY, this.state.node.id)
+  _onContextMenu: function (e) {
+    if (this.props.store.view.mode === 'insert' && this.state.node.id === this.props.store.view.active) return e.stopPropagation()
     e.preventDefault()
     e.stopPropagation()
+    this.props.store.actions.setActive(this.state.node.id)
+    this.props.store.actions.showContextMenu(e.clientX, e.clientY, this.state.node.id)
   },
 
   render: function () {
@@ -153,7 +154,7 @@ var TreeItem = React.createClass({
         if (classes) className += ' ' + classes
       })
     }
-    return <div className={className} onContextMenu={this._onContextMennu}>
+    return <div className={className} onContextMenu={this._onContextMenu}>
       <div className='TreeItem_head'>
         {this.fromMix('left')}
         {this.body()}

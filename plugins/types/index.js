@@ -12,7 +12,7 @@ function cap(text) {
 }
 
 module.exports = {
-  title: 'Type Switcher',
+  title: 'Set type to',
 
   keys: function (plugins) {
     var keys = {}
@@ -21,6 +21,7 @@ module.exports = {
       for (var name in plugin.types) {
         var sh = plugin.types[name].shortcut || plugin.types[name]
         keys['type ' + name] = {
+          title: plugin.types[name] || name,
           'visual': 't ' + sh + ', alt+t ' + sh,
           'normal': 't ' + sh + ', alt+t ' + sh,
           'insert': 'alt+t ' + sh,
@@ -40,7 +41,7 @@ module.exports = {
         var type = plugin.types[name]
         var sh = type.shortcut || type
         items.push({
-          title: 'Set type ' + (type.title || name),
+          title: (type.title || name),
           shortcut: 't ' + sh,
           icon: type.icon,
           action: 'type' + cap(name),
@@ -48,11 +49,10 @@ module.exports = {
         })
       }
     })
-    return items
-    /*{
-      title: 'Change Type',
+    return {
+      title: 'Set type',
       children: items,
-    }*/
+    }
   },
 
   types: {
