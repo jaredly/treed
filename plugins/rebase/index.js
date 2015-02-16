@@ -2,7 +2,7 @@
 var Breadcrumb = require('./breadcrumb')
 
 module.exports = {
-  title: 'Rebase',
+  title: 'Zoom In/Out',
 
   store: require('./store'),
   node: require('./node'),
