@@ -1,6 +1,11 @@
 
 ARGS=-t [ reactify --es6 --everything --visitors jstransform/visitors/es6-destructuring-visitors ]
 
+watch:
+	watchify -v ${ARGS} ${NAME}.js -o ${NAME}/index.js -d
+
+css:
+	lessc ${NAME}.less ${NAME}/index.css
 
 simple:
 	browserify ${ARGS} simple.js -o simple/index.js -d

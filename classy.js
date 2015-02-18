@@ -48,6 +48,13 @@ class Treed {
     })
   }
 
+  on (what, handler) {
+    this.store.on(what, handler)
+  }
+  off (what, handler) {
+    this.store.on(what, handler)
+  }
+
   addView(options) {
     options = extend({
       root: null,
