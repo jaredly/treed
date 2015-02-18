@@ -15,6 +15,8 @@ var treed = window.treed = new Treed({
     require('../plugins/undo'),
     require('../plugins/done'),
     require('../plugins/types'),
+    require('../plugins/image'),
+    require('../plugins/lists'),
   ]
 })
 
