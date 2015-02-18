@@ -29,7 +29,7 @@
   overflow: hidden;
   margin: 0 0 0 5px;
 
-  .n_Collapse > .TreeItem_head & {
+  .TreeItem-parent.n_Collapse > .TreeItem_head & {
     font-size: 40px;
     line-height: 14px;
     margin-top: 0;
@@ -68,7 +68,7 @@
     width: 20px;
   }
 
-  &-collapsed {
+  .TreeItem-parent > .TreeItem_head &-collapsed {
     opacity: 1;
   }
 
@@ -169,5 +169,11 @@
   > .TreeItem_children {
     display: block;
   }
+}
+
+.TreeItem_nochildren {
+  padding: 10px 50px;
+  text-align: center;
+  color: #555;
 }
 

@@ -17,14 +17,14 @@ simple-css:
 watch-simple:
 	watchify -v ${ARGS} simple.js -o simple/index.js -d
 
-wf:
-	browserify ${ARGS} workflowy.js -o workflowy/index.js -d
+plugins:
+	browserify ${ARGS} plugins.js -o plugins/index.js -d
 
-watch-wf:
-	watchify -v ${ARGS} workflowy.js -o workflowy/index.js -d
+watch-plugins:
+	watchify -v ${ARGS} plugins.js -o plugins/index.js -d
 
-wf-css:
-	lessc workflowy.less workflowy/index.css
+plugins-css:
+	lessc plugins.less plugins/index.css
 
 perf:
 	browserify ${ARGS} perf.js -o perf/index.js -d

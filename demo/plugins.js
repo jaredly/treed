@@ -7,7 +7,6 @@ window.title = 'Full Soup'
 var treed = window.treed = new Treed({
   data: require('./demo-data'),
   plugins: [
-    // require('../plugins/tags'),
     require('../plugins/todo'),
     require('../plugins/rebase'),
     require('../plugins/clipboard'),
