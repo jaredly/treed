@@ -1,6 +1,5 @@
 
 var Promise = require('bluebird')
-var merge = require('react/lib/merge')
 
 module.exports = BaseStore
 

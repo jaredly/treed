@@ -11,12 +11,12 @@ module.exports = {
     },
     toggleDone: function () {
       if (this.view.mode === 'visual') {
-        this.batchSet('done', this.view.selected,
-                              this.view.selected.map((id) => !this.db.nodes[id].done))
+        this.setMany('done', this.view.selection,
+                              this.view.selection.map((id) => !this.db.nodes[id].done))
       } else {
         var done = this.db.nodes[this.view.active].done
         this.set(this.view.active, 'done', !done)
-        this.goDown()
+        // this.goDown()
       }
     },
   },

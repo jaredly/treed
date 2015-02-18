@@ -3,14 +3,21 @@ module.exports = ensureInView
 
 function ensureInView(item) {
   var bb = item.getBoundingClientRect()
-  var parent = item.offsetParent
+  var parent = item.parentNode
   var rx = /(auto|scroll)/
   var st = window.getComputedStyle(parent)
-  while (parent.offsetParent && !rx.test(st.overflow + st.overflowY)) {
-    parent = parent.offsetParent
+  while (parent.parentNode && !rx.test(st.overflow + st.overflowY) && parent !== document.body) {
+    parent = parent.parentNode
     st = window.getComputedStyle(parent)
   }
-  var pox = parent.getBoundingClientRect()
+  var pox = parent === document.body ? {
+        top: 0,
+        left: 0,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        bottom: window.innerHeight,
+        right: window.innerWidth,
+      } : parent.getBoundingClientRect()
     , height = bb.bottom - bb.top
     , pHeight = pox.bottom - pox.top
     , margin = 100
@@ -25,22 +32,23 @@ function ensureInView(item) {
     }
     return
   }
+  var dest
   if (bb.top < pox.top + margin) {
-    scrollMe(parent, -(pox.top - bb.top + margin))
+    dest = parent.scrollTop - (pox.top - bb.top + margin)
+  } else if (bb.bottom > pox.bottom - margin) {
+    dest = parent.scrollTop + bb.bottom - pox.bottom + margin
+  } else {
     return
   }
-  if (bb.bottom > pox.bottom - margin) {
-    // item.scrollIntoView(false)
-    scrollMe(parent, bb.bottom - pox.bottom + margin)
-  }
+  if (dest < 0) dest = 0
+  if (dest > parent.scrollHeight - pox.height) dest = parent.scrollHeight - pox.height
+  scrollMe(parent, dest)
 }
 
 var scrolling = []
   , timers = []
 
-// TODO cancel this scrolling when an "onscroll" event is detected, so we
-// don't fight the user
-function scrollMe(parent, by) {
+function scrollMe(parent, dest) {
   var ix = scrolling.indexOf(parent)
   if (ix !== -1) {
     clearInterval(timers[ix])
@@ -48,20 +56,23 @@ function scrollMe(parent, by) {
     ix = scrolling.length
     scrolling.push(parent)
   }
-  var dest = parent.scrollTop + by
   if (Math.abs(parent.scrollTop - dest) < 150) {
     parent.scrollTop = dest
     return scrolling.pop()
   }
-  var ival = setInterval(function () {
-    if (Math.abs(parent.scrollTop - dest) < 5) {
-      parent.scrollTop = dest
+  var stop = function () {
       var ix = scrolling.indexOf(parent)
       scrolling.splice(ix, 1)
       timers.splice(ix, 1)
       clearInterval(ival)
-      return
+  }
+  var lastPos = null//parent.scrollTop
+  var ival = setInterval(function () {
+    if (Math.abs(parent.scrollTop - dest) < 5 || parent.scrollTop === lastPos) {
+      parent.scrollTop = dest
+      return stop()
     }
+    // lastPos = parent.scrollTop
     parent.scrollTop += (dest - parent.scrollTop) / 5
   }, 10);
   timers[ix] = ival

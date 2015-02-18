@@ -78,7 +78,7 @@ function bindKeys(keys, typed, actions) {
     */
     binds[keyBinding] = function(){
       var id = actions.view.active
-      type = actions.db.nodes[id].type
+      type = actions.db.nodes[id].type || 'base'
       if (!camels[type]) {
         return console.warn('Keybinding not defined for type: ' + type)
       }

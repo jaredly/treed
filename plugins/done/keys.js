@@ -7,9 +7,10 @@ module.exports = {
   },
 
   'toggle done': {
-    normal: 'ctrl+enter',
-    insert: 'ctrl+enter',
-    visual: 'ctrl+enter',
+    type: 'base',
+    normal: 'alt+enter',
+    insert: 'alt+enter',
+    visual: 'alt+enter',
   },
 }
 

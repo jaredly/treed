@@ -71,10 +71,11 @@ KeyManager.prototype = {
   },
 
   listen: function (window) {
-    window.addEventListener('keydown', this.keyDown)
+    this._keyDown = this.keyDown.bind(this)
+    window.addEventListener('keydown', this._keyDown)
   },
 
   unlisten: function (window) {
-    window.removeEventListener('keydown', this.keyDown)
+    window.removeEventListener('keydown', this._keyDown)
   },
 }

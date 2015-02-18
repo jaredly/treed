@@ -2,23 +2,27 @@
 @charset "utf-8";
 
 .m_Todo {
-  width: 15px;
-  height: 15px;
+  width: 1em;
+  height: 1em;
   border: 1px solid #ccc;
-  margin: 10px 10px 0;
+  margin: 0px 10px 0;
   cursor: pointer;
   border-radius: 5px;
+  background-color: white;
 
   &-done {
     &:after {
       content: '✓';
       position: relative;
-      top: -16px;
+      top: -.3em;
       left: 0px;
-      font-size: 25px;
+      font-size: 1.6em;
       color: #555;
       font-weight: bold;
       color: #555;
+      line-height: 1em;
+      height: 10px;
+      display: block;
     }
   }
 }
@@ -29,6 +33,7 @@
 
 .TreeItem-type-todo > .TreeItem_head .TreeItem_body {
   display: flex;
+  align-items: center;
 
   .treed_body {
     flex: 1;

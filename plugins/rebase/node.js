@@ -5,7 +5,7 @@ var cx = React.addons.classSet
 
 module.exports = {
   blocks: {
-    left: function (node, actions, state) {
+    abovebody: function (node, actions, state) {
       // TODO: movement
       return <div className={cx({
         'm_RebaseDot': true,

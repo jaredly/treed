@@ -14,7 +14,7 @@ module.exports = {
   },
 
   keys: {
-    'toggle done': {
+    'toggle todo done': {
       type: 'todo',
       normal: 'alt+enter',
       insert: 'alt+enter',
@@ -24,7 +24,7 @@ module.exports = {
 
   store: {
     actions: {
-      toggleDone: function (id) {
+      toggleTodoDone: function (id) {
         if (!arguments.length) id = this.view.active
         if (this.db.nodes[id].type !== 'todo') return
         if (this.view.mode === 'visual') {
@@ -49,7 +49,7 @@ module.exports = {
         return <div className={cx({
           'm_Todo': true,
           'm_Todo-done': node.done,
-        })} onClick={actions.toggleDone.bind(actions, node.id)}/>
+        })} onClick={actions.toggleTodoDone.bind(actions, node.id)}/>
       }
     },
   },

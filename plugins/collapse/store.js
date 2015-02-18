@@ -4,7 +4,7 @@ module.exports = {
     collapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (this.view.mode === 'visual') {
+      if (this.view.mode === 'visual' && !arguments.length) {
         var ids = this.view.selection.filter((id) => 
           !!this.db.nodes[id].children.length)
         if (!ids.length) return
@@ -25,7 +25,7 @@ module.exports = {
     expand: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (this.view.mode === 'visual') {
+      if (this.view.mode === 'visual' && !arguments.length) {
         var ids = this.view.selection.filter((id) => 
           !!this.db.nodes[id].children.length)
         if (!ids.length) return
@@ -79,7 +79,7 @@ module.exports = {
     toggleCollapse: function (id) {
       if (!arguments.length) id = this.view.active
       if (id === this.view.root) return
-      if (this.view.mode === 'visual') {
+      if (this.view.mode === 'visual' && !arguments.length) {
         var ids = this.view.selection.filter((id) =>
           !!this.db.nodes[id].children.length)
         if (!ids.length) return

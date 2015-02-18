@@ -1,3 +1,4 @@
+@import "../../lib/context-menu.less";
 
 /** Rebase **/
 
@@ -18,23 +19,27 @@
   border-radius: 10px;
   line-height: 10px;
   margin-top: 4px;
+  height: 10px;
 }
 
 .m_RebaseDot {
-  position: absolute;
   padding: 3px;
-  left: 24px;
   font-size: 25px;
   line-height: 18px;
   overflow: hidden;
+  margin: 0 0 0 5px;
 
   .n_Collapse > .TreeItem_head & {
     font-size: 40px;
     line-height: 14px;
-    margin-top: 2px;
-    left: 22px;
+    margin-top: 3px;
     overflow: hidden;
     color: #777;
+
+    margin-left: 3px;
+    margin-right: -1px;
+    height: 12px;
+    padding: 3px 2px;
   }
 }
 
@@ -42,13 +47,13 @@
 
 .m_Collapser {
   position: relative;
-  display: none;
+  opacity: 0;
   cursor: pointer;
   width: 0;
   height: 0;
 
   .TreeItem-parent > .TreeItem_head:hover & {
-    display: block;
+    opacity: 1;
   }
 
   &:after {
@@ -59,8 +64,12 @@
     font-family: monospace;
     cursor: pointer;
     font-size: 20px;
-    left: 0px;
+    left: -14px;
     width: 20px;
+  }
+
+  &-collapsed {
+    opacity: 1;
   }
 
   &-collapsed:after {
@@ -78,10 +87,9 @@
       display: none;
     }
 
-    .treed_body {
+    .TreeItem_body {
       font-size: 30px;
       padding-left: 5px;
-      margin-left: 40px;
 
       .treed_body_rendered,
       textarea,
@@ -97,9 +105,8 @@
 
 /** body **/
 
-.treed_body {
-  margin-left: 20px;
-  padding-left: 20px;
+.TreeItem_body {
+  margin-left: 0px;
   border-radius: 10px;
 
   .TreeItem_head:hover & {
@@ -122,9 +129,9 @@
 }
 
 .m_Done {
-  > .TreeItem_head {
-    text-decoration: line-through;
+  > .TreeItem_head .treed_body {
     color: #777;
+    font-style: italic;
   }
 }
 

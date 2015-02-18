@@ -34,6 +34,11 @@ module.exports = {
   viewConfig,
 }
 
+/*
+ * get a store
+ * add a view to the store
+ */
+
 function quickstart(el, options, done) {
   options = extend({
     viewOptions: {},
@@ -67,7 +72,6 @@ function initStore(plugins, options, done) {
 
   var pl = options.pl || new options.PL()
   var db = new Db(pl, pluginType(plugins, 'db'))
-  window.db = db
   db.init(options.data, function (err) {
     if (err) return done(err)
 
@@ -108,7 +112,7 @@ function initView(el, store, keyManager, plugins, options, done) {
   var config = viewConfig(store, plugins, options)
   keyManager.addView(config.view.id, config.keys)
 
-  React.renderComponent(options.View(config.props), el, function () {
+  React.render(options.View(config.props), el, function () {
     done(config.view)
   })
 }

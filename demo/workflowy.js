@@ -1,27 +1,28 @@
 
 var React = require('react')
+var Treed = require('../classy')
 
-var treed = require('../')
-var data = require('./demo-data')
+window.title = 'Full Soup'
 
-window.React = React
-
-var plugins = [
-  require('../plugins/undo'),
-  require('../plugins/tags'),
-  require('../plugins/rebase'),
-  require('../plugins/collapse'),
-  require('../plugins/clipboard'),
-  require('../plugins/done'),
-]
+var treed = window.treed = new Treed({
+  data: require('./demo-data'),
+  plugins: [
+    // require('../plugins/tags'),
+    require('../plugins/todo'),
+    require('../plugins/rebase'),
+    require('../plugins/clipboard'),
+    require('../plugins/collapse'),
+    require('../plugins/undo'),
+    require('../plugins/done'),
+    require('../plugins/types'),
+  ]
+})
 
 var start = Date.now()
-treed.quickstart('#example', {
-  plugins: plugins,
-  storeOptions: {data: data},
-}, (err, store, keys, storeView) => {
+treed.quickstart('#example').then(storeView => {
   console.log((Date.now() - start) + 'ms to render')
-  window.store = store
   window.actions = storeView.actions
+}).catch(error => {
+  alert("Failed to initialize: " + error)
 })
 
