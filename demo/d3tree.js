@@ -73,7 +73,11 @@ D3Tree.prototype = {
     var nodeEnter = node.enter().append("g")
         .attr("class", "node")
         .attr("transform", d => {
-          var _source = this.posmap[d.parent ? d.parent.id : d.id] || d.parent || data
+          var source = d.parent || d
+          while (source.parent && !this.posmap[source.id]) {
+            source = source.parent
+          }
+          var _source = this.posmap[source.id] || d.parent || data
           return "translate(" + (_source.y0 || _source.y) + "," + (_source.x0 || _source.x) + ")";
         })
 
@@ -122,7 +126,14 @@ D3Tree.prototype = {
     var nodeExit = node.exit().transition()
         .duration(this.duration)
         .attr("transform", function(d) {
-          var source = byId[d.parent.id]
+          var parent = d.parent
+          while (!byId[parent.id] || !byId[parent.id].x) {
+            parent = parent.parent
+          }
+          var source = byId[parent.id]
+          //while (!source.x) {
+            //source = byId[source.parent.id]
+          //}
           return "translate(" + source.y + "," + source.x + ")";
         })
         .remove();
@@ -142,7 +153,10 @@ D3Tree.prototype = {
         .attr("class", "link")
         .attr("d", d => {
           var source = d.source
-          var o = this.posmap[d.source.id] || {x: source.x0 || source.x, y: source.y0 || source.y};
+          while (source.parent && !this.posmap[source.id]) {
+            source = source.parent
+          }
+          var o = this.posmap[source.id] || {x: source.x0 || source.x, y: source.y0 || source.y};
           return this.diagonal({source: o, target: o});
         });
 
@@ -155,12 +169,17 @@ D3Tree.prototype = {
     link.exit().transition()
         .duration(this.duration)
         .attr("d", d => {
-          var source = byId[d.source.id]
+          var parent = d.source
+          while (!byId[parent.id] || !byId[parent.id].x) {
+            parent = parent.parent
+          }
+          var source = byId[parent.id]
           var o = {x: source.x, y: source.y};
           return this.diagonal({source: o, target: o});
         })
         .remove();
 
+    this.posmap = {}
     // Stash the old positions for transition.
     nodes.forEach(d => {
       d.x0 = d.x;
