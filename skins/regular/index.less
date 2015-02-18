@@ -108,6 +108,7 @@
 .TreeItem_body {
   margin-left: 0px;
   border-radius: 10px;
+  border: 1px solid transparent;
 
   .TreeItem_head:hover & {
     background-color: #ccc;
@@ -119,6 +120,11 @@
 
   .TreeItem-active > .TreeItem_head & {
     background-color: #afc;
+  }
+
+  .TreeItem-editing > .TreeItem_head & {
+    background-color: white;
+    border-color: #ccc;
   }
 
 }

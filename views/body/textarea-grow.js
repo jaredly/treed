@@ -99,7 +99,12 @@ var Textarea = React.createClass({
       pos = at
     }
     if (inp !== document.activeElement) inp.focus()
-    inp.selectionStart = inp.selectionEnd = pos
+    if (at === 'change') {
+      inp.selectionStart = 0
+      inp.selectionEnd = inp.value.length
+    } else {
+      inp.selectionStart = inp.selectionEnd = pos
+    }
   },
 
   render: function () {

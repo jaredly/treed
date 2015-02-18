@@ -26,7 +26,7 @@ treed.quickstart('#example').then(storeView => {
       storeView.actions.set(id, 'collapsed', val)
     },
     onClickNode: (id) => {
-      storeView.actions.edit(id)
+      storeView.actions.change(id)
     },
   })
 

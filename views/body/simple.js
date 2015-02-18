@@ -79,25 +79,13 @@ var SimpleBody = React.createClass({
   componentDidMount: function () {
     if (!this.props.editState) return
     ensureInView(this.refs.text.getDOMNode())
-    if (this.props.editState === 'change') {
-      this.setState({content: ''}, () => {
-        this.refs.text.focus()
-      })
-    } else {
-      this.refs.text.focus(this.props.editState)
-    }
+    this.refs.text.focus(this.props.editState)
   },
 
   componentDidUpdate: function (prevProps) {
     if (!prevProps.editState && this.props.editState) {
       ensureInView(this.refs.text.getDOMNode())
-      if (this.props.editState === 'change') {
-        this.setState({content: ''}, () => {
-          this.refs.text.focus()
-        })
-      } else {
-        this.refs.text.focus(this.props.editState)
-      }
+      this.refs.text.focus(this.props.editState)
     }
   },
 
