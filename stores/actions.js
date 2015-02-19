@@ -92,14 +92,13 @@ module.exports = {
       }
     }
     if (this.view.mode === 'insert') this.view.editPos = 'end'
-    if (!this.db.nodes[old]) {
-      this.changed(this.events.nodeViewChanged(id))
-    } else {
-      this.changed(
-        this.events.nodeViewChanged(old),
-        this.events.nodeViewChanged(id)
-      )
+    if (this.db.nodes[old]) {
+      this.changed(this.events.nodeViewChanged(old))
     }
+    this.changed(
+      this.events.activeNodeChanged(),
+      this.events.nodeViewChanged(id)
+    )
     return true
   },
 
@@ -425,6 +424,49 @@ module.exports = {
     })
   },
 
+  moveDownSiblingOrCousin: function (id) {
+    id = id || this.view.active
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var next = movement.nextSiblingOrCousin(ids[ids.length-1], this.view.root, this.db.nodes)
+    if (!next) return
+    var pos = {
+      pid: this.db.nodes[next].parent,
+      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
+    }
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
+      nindex: pos.ix,
+    })
+  },
+
+  moveUpSiblingOrCousin: function (id) {
+    id = id || this.view.active
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var next = movement.prevSiblingOrCousin(ids[0], this.view.root, this.db.nodes)
+    if (!next) return
+    var pos = {
+      pid: this.db.nodes[next].parent,
+      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
+    }
+    if (pos.pid !== this.db.nodes[id].parent) pos.ix += 1
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
+      nindex: pos.ix,
+    })
+  },
+
   createBefore: function (id) {
     id = id || this.view.active
     var node = this.db.nodes[id]
@@ -436,6 +478,66 @@ module.exports = {
     }, (err, cmd) => {
       this.edit(cmd.id)
     })
+  },
+
+  createChild: function (id) {
+    id = id || this.view.active
+    var node = this.db.nodes[id]
+      , pos
+    pos = {
+      pid: id,
+      type: node.type,
+      ix: node.children ? node.children.length : 0
+    }
+    if (node.collapsed) {
+      this.executeCommands(
+        'set', {id: id, attr: 'collapsed', value: false},
+        'create', pos,
+        (err, cmd) => {
+          this.edit(cmd.id)
+        })
+    } else {
+      this.executeCommand('create', pos, (err, cmd) => {
+        this.edit(cmd.id)
+      })
+    }
+  },
+
+  createSiblingAfter: function (id, split, after) {
+    id = id || this.view.active
+    var node = this.db.nodes[id]
+      , pos
+    if (id === this.view.root) {
+      pos = {
+        pid: id,
+        type: node.type,
+        ix: 0
+      }
+    } else {
+      pos = {
+        pid: node.parent,
+        type: node.type,
+        ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
+      }
+    }
+    if (arguments.length === 3) {
+      pos.content = after
+      this.executeCommands(
+        'set', {
+          id,
+          attr: 'content',
+          value: split,
+        },
+        'create', pos,
+        (err, cmd) => {
+          this.editStart(cmd.id)
+        }
+      )
+    } else {
+      this.executeCommand('create', pos, (err, cmd) => {
+        this.edit(cmd.id)
+      })
+    }
   },
 
   createAfter: function (id, split, after) {
@@ -600,14 +702,48 @@ module.exports = {
     id = id || this.view.active
     if (id === this.view.root) return
     var next = movement.nextSibling(id, this.view.root, this.db.nodes)
+    if (!next) return false
+    this.setActive(next)
+  },
+
+  goToNextCousin: function (id) {
+    var parent = this.db.nodes[id].parent
+      , next
+    if (!parent) return false
+    next = movement.nextCousin(parent, this.view.root, this.db.nodes)
+    this.setActive(next)
+  },
+
+  goToPreviousSiblingOrCousin: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.prevSiblingOrCousin(id, this.view.root, this.db.nodes)
+    if (!next) {
+      next = movement.up(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(next)
+  },
+
+  goToNextSiblingOrCousin: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.nextSiblingOrCousin(id, this.view.root, this.db.nodes)
+    if (!next) {
+      next = movement.down(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(next)
+  },
+
+  goToNextSibling: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.nextSibling(id, this.view.root, this.db.nodes)
     if (!next) {
       var parent = this.db.nodes[id].parent
-      if (parent) {
-        next = movement.nextSibling(parent, this.view.root, this.db.nodes)
-      }
-      if (!next) {
-        next = movement.down(id, this.view.root, this.db.nodes)
-      }
+      next = movement.nextSibling(parent, this.view.root, this.db.nodes)
+    }
+    if (!next) {
+      next = movement.down(id, this.view.root, this.db.nodes)
     }
     this.setActive(next)
   },

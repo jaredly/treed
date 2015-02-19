@@ -12,6 +12,9 @@ function D3Tree(node, config) {
       width = (config.width || 960) - margin.right - margin.left,
       height = (config.height || 800) - margin.top - margin.bottom;
 
+  if (!config.easing) {
+    config.easing = 'cubic-in-out'
+  }
   this.posmap = {}
   this.width = width
   this.height = height
@@ -42,7 +45,18 @@ function D3Tree(node, config) {
 }
 
 D3Tree.prototype = {
-  update: function (data) {
+  setActive: function (id) {
+    this.svg.select('.node.active').classed('active', false)
+    if (id) this.svg.select('.node-' + id).classed('active', true)
+  },
+  setEditing: function (id) {
+    this.svg.select('.node.editing').classed('editing', false)
+    if (id) this.svg.select('.node-' + id).classed('editing', true)
+  },
+  setText: function (id, text) {
+    this.svg.select('.node-' + id + ' text').text(text)
+  },
+  update: function (data, active) {
     data.x0 = this.height / 2;
     data.y0 = 0;
     this.posmap[data.id] = {x: data.x0, y: data.y0}
@@ -60,6 +74,14 @@ D3Tree.prototype = {
     var nodes = this.tree.nodes(data).reverse(),
         links = this.tree.links(nodes);
 
+    var classNames = d => {
+      var cls = 'node node-' + d.id
+      if (d.done) cls += ' done'
+      if (d.collapsed && d.hidesChildren) cls += ' collapsed'
+      if (active === d.id) cls += ' active'
+      return cls
+    }
+
     // Normalize for fixed-depth.
     nodes.forEach(function(d) { d.y = d.depth * 180; });
 
@@ -67,11 +89,12 @@ D3Tree.prototype = {
     var node = this.svg.selectAll("g.node")
         .data(nodes, function(d) {
           return d.id
-        });
+        })
+        .attr("class", classNames)
 
     // Enter any new nodes at the parent's previous position.
     var nodeEnter = node.enter().append("g")
-        .attr("class", "node")
+        .attr("class", classNames)
         .attr("transform", d => {
           var source = d.parent || d
           while (source.parent && !this.posmap[source.id]) {
@@ -88,13 +111,9 @@ D3Tree.prototype = {
         .style('stroke', function (d) {
           return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
         })
-        .style("fill", function(d) {
-          if (d.done) return COLORS.done
-          return d.hidesChildren ? COLORS.parent: "#fff";
-        });
 
     nodeEnter.append("text")
-        .attr("x", function(d) { return d.hidesChildren ? -10 : 10; })
+        .attr("x", this.config.circleRad * 1.5)
         .attr("dy", ".35em")
         .attr("text-anchor", function(d) { return d.hidesChildren ? "end" : "start"; })
         .text(function(d) { return d.content; })
@@ -104,19 +123,16 @@ D3Tree.prototype = {
     // Transition nodes to their new position.
     var nodeUpdate = node.transition()
         .duration(this.duration)
+        .ease(this.config.easing)
         .attr("transform", function(d) {
           return "translate(" + d.y + "," + d.x + ")";
         });
 
     nodeUpdate.select("circle")
-        .attr("r", 4.5)
+        .attr("r", this.config.circleRad || 4.5)
         .style('stroke', function (d) {
           return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
         })
-        .style("fill", function(d) {
-          if (d.done) return COLORS.done
-          return d.hidesChildren ? COLORS.parent: "#fff";
-        });
 
     nodeUpdate.select("text")
         .text(function(d) { return d.content; })
@@ -125,15 +141,13 @@ D3Tree.prototype = {
     // Transition exiting nodes to the parent's new position.
     var nodeExit = node.exit().transition()
         .duration(this.duration)
+        .ease(this.config.easing)
         .attr("transform", function(d) {
           var parent = d.parent
           while (!byId[parent.id] || !byId[parent.id].x) {
             parent = parent.parent
           }
           var source = byId[parent.id]
-          //while (!source.x) {
-            //source = byId[source.parent.id]
-          //}
           return "translate(" + source.y + "," + source.x + ")";
         })
         .remove();
@@ -163,11 +177,13 @@ D3Tree.prototype = {
     // Transition links to their new position.
     link.transition()
         .duration(this.duration)
+        .ease(this.config.easing)
         .attr("d", this.diagonal);
 
     // Transition exiting nodes to the parent's new position.
     link.exit().transition()
         .duration(this.duration)
+        .ease(this.config.easing)
         .attr("d", d => {
           var parent = d.source
           while (!byId[parent.id] || !byId[parent.id].x) {

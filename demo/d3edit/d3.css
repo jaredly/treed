@@ -14,7 +14,7 @@ body {
 }
 
 .node text {
-  font: 10px sans-serif;
+  font: 20px sans-serif;
 }
 
 .link {
@@ -33,5 +33,9 @@ body {
 
 .node.active circle {
   fill: magenta;
+}
+
+.node.editing circle {
+  fill: green;
 }
 

@@ -193,6 +193,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     nodeViewChanged: function (id) { return this.nodeChanged(id) + ':view:' + this.vid },
 
     activeViewChanged: () => 'active-view',
+    activeNodeChanged: function () { return 'active-node:' + this.vid },
     rootChanged: function () { return 'root:' + this.vid },
     modeChanged: function () { return 'mode:' + this.vid },
     activeModeChanged: function () { return 'mode:active' },
