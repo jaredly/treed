@@ -10,7 +10,10 @@ body {
 .node circle {
   fill: #fff;
   stroke: steelblue;
-  stroke-width: 1.5px;bind
+  stroke-width: 1.5px;
+}
+
+.node.active.collapsed circle {
 }
 
 .node text {
@@ -28,7 +31,8 @@ body {
 }
 
 .node.collapsed circle {
-  fill: lightsteelblue;
+    stroke-width: 5px;
+  /*fill: lightsteelblue;*/
 }
 
 .node.active circle {
