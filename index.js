@@ -8,9 +8,9 @@ var React = require('react')
 var extend = require('./util/extend')
 var keyHandlers = require('./key-handlers')
 
-var defaultKeys = flattenKeySections(require('./views/tree/keys'))
+var defaultKeys = flattenKeySections(require('./views/list/keys'))
 var KeyManager = require('./key-manager')
-var TreeView = require('./views/tree')
+var ListView = require('./views/list')
 var MainStore = require('./stores/main')
 
 function flattenKeySections(keys) {
@@ -106,7 +106,7 @@ function viewConfig(store, plugins, options) {
 
 function initView(el, store, keyManager, plugins, options, done) {
   options = extend({
-    View: TreeView,
+    View: ListView,
   }, options)
 
   var config = viewConfig(store, plugins, options)

@@ -3,8 +3,8 @@ var React = require('react')
 
 window.React = React
 
-var TreeView = require('../views/tree')
-var keys = require('../views/tree/keys')
+var ListView = require('../views/list')
+var keys = require('../views/list/keys')
 var keyHandlers = require('../key-handlers')
 
 var plugins = [
@@ -46,7 +46,7 @@ function resetDom() {
 }
 
 function initialRender(store, done) {
-  React.renderComponent(TreeView({
+  React.renderComponent(ListView({
     plugins: pluginType(plugins, 'view'),
     nodePlugins: pluginType(plugins, 'node'),
     keys: keyHandlers(keys, store.actions, pluginType(plugins, 'keys')),

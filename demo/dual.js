@@ -2,7 +2,6 @@
 var React = require('react')
 
 var treed = require('../')
-var TreeView = require('../views/tree')
 var data = require('./demo-data')
 var IxPL = require('../pl/ixdb')
 

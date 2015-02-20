@@ -108,14 +108,11 @@ D3Tree.prototype = {
         .attr("r", 1e-6)
         // Toggle children on click.
         .on("click", d => this.config.onCollapse(d.id, !d.collapsed))
-        .style('stroke', function (d) {
-          return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
-        })
 
     nodeEnter.append("text")
         .attr("x", this.config.circleRad * 1.5)
         .attr("dy", ".35em")
-        .attr("text-anchor", function(d) { return d.hidesChildren ? "end" : "start"; })
+        .attr("text-anchor", function(d) { return "start"; })
         .text(function(d) { return d.content; })
         .style("fill-opacity", 1e-6)
         .on('click', d => this.config.onClickNode(d.id))
@@ -130,9 +127,6 @@ D3Tree.prototype = {
 
     nodeUpdate.select("circle")
         .attr("r", this.config.circleRad || 4.5)
-        .style('stroke', function (d) {
-          return d.hidesChildren ? '' : (d.done ? COLORS.done : '')
-        })
 
     nodeUpdate.select("text")
         .text(function(d) { return d.content; })

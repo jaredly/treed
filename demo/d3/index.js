@@ -1,22 +1,21 @@
 
 var React = require('react')
-var Treed = require('../classy')
-var D3Tree = require('./d3tree')
+var Treed = require('../../quickstart')
+var D3Tree = require('./../d3tree')
 
 window.title = 'Full Soup'
 
 var treed = window.treed = new Treed({
-  data: require('./demo-data'),
   plugins: [
-    require('../plugins/clipboard'),
-    require('../plugins/collapse'),
-    require('../plugins/undo'),
-    require('../plugins/done'),
+    require('../../plugins/clipboard'),
+    require('../../plugins/collapse'),
+    require('../../plugins/undo'),
+    require('../../plugins/done'),
   ]
 })
 
 var start = Date.now()
-treed.quickstart('#example').then(storeView => {
+treed.quickstart('#example', {data: require('../demo-data')}).then(storeView => {
   console.log((Date.now() - start) + 'ms to render')
   window.actions = storeView.actions
   window.storeView = storeView

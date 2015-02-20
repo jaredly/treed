@@ -1,6 +1,6 @@
 
 var React = require('react')
-var Treed = require('../classy')
+var Treed = require('../quickstart')
 
 window.title = 'Full Soup'
 

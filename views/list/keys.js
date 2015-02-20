@@ -48,38 +48,6 @@ module.exports = {
     },
   },
 
-  editing: {
-    // switch to insert mode
-    'edit': {
-      normal: 'enter, a, shift+a, f2',
-    },
-    'edit start': {
-      title: 'edit at start',
-      normal: 'i, shift+i',
-    },
-    'change': {
-      title: 'replace contents',
-      normal: 'c c, shift+c',
-      visual: 'c, shift+c',
-    },
-    'remove': {
-      normal: 'd d, shift+d, delete',
-      visual: 'd, shift+d, delete',
-    },
-    'join down': {
-      title: 'join nodes',
-      normal: 'shift+j',
-      visual: 'shift+j',
-    },
-    'create after': {
-      text: 'o, enter (at end)',
-      normal: 'o',
-    },
-    'create before': {
-      normal: 'shift+o',
-    },
-  },
-
   'movement (visual mode)': {
     'toggle selection edge': {
       visual: 'o, shift+o',
@@ -106,6 +74,7 @@ module.exports = {
       insert: 'tab, shift+alt+right',
       visual: 'tab, shift+alt+l, shift+alt+right, shift+.',
     },
+
     'dedent': {
       normal: 'shift+tab, shift+alt+h, shift+alt+left, shift+comma',
       insert: 'shift+tab, shift+alt+left',
@@ -116,6 +85,7 @@ module.exports = {
       normal: 'shift+alt+j, shift+alt+down',
       visual: 'shift+alt+j, shift+alt+down',
     },
+
     'move up': {
       normal: 'shift+alt+k, shift+alt+up',
       visual: 'shift+alt+k, shift+alt+up',
@@ -125,21 +95,25 @@ module.exports = {
       normal: 'ctrl+shift+[',
       visual: 'ctrl+shift+[',
     },
+
     'move to last sibling': {
       normal: 'ctrl+shift+]',
       visual: 'ctrl+shift+]',
     },
-  },
 
-  modes: {
-    // switch modes
-    'visual mode': {
-      normal: 'v, shift+v',
+    'join down': {
+      title: 'join nodes',
+      normal: 'shift+j',
+      visual: 'shift+j',
     },
-    'normal mode': {
-      title: 'back to normal mode',
-      insert: 'escape',
-      visual: 'escape, v, shift+v',
+
+    'create after': {
+      text: 'o, enter (at end)',
+      normal: 'o',
+    },
+
+    'create before': {
+      normal: 'shift+o',
     },
   },
 }

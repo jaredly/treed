@@ -1,0 +1,160 @@
+
+var movement = require('./movement')
+  , listMovement = require('../list/movement')
+  , listActions = require('../list/actions')
+
+module.exports = {
+
+  createAfter: function (id, split, after) {
+    id = id || this.view.active
+    var node = this.db.nodes[id]
+      , pos
+    if (id === this.view.root) {
+      pos = {
+        pid: id,
+        type: node.type,
+        ix: 0
+      }
+    } else {
+      pos = {
+        pid: node.parent,
+        type: node.type,
+        ix: this.db.nodes[node.parent].children.indexOf(id) + 1,
+      }
+    }
+    if (arguments.length === 3) {
+      pos.content = after
+      this.executeCommands(
+        'set', {
+          id,
+          attr: 'content',
+          value: split,
+        },
+        'create', pos,
+        (err, cmd) => {
+          this.editStart(cmd.id)
+        }
+      )
+    } else {
+      this.executeCommand('create', pos, (err, cmd) => {
+        this.edit(cmd.id)
+      })
+    }
+  },
+
+  moveDown: function (id) {
+    id = id || this.view.active
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var next = movement.nextSiblingOrCousin(ids[ids.length-1], this.view.root, this.db.nodes)
+    if (!next) return
+    var pos = {
+      pid: this.db.nodes[next].parent,
+      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
+    }
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
+      nindex: pos.ix,
+    })
+  },
+
+  moveUp: function (id) {
+    id = id || this.view.active
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+    } else {
+      ids = [id]
+    }
+    var next = movement.prevSiblingOrCousin(ids[0], this.view.root, this.db.nodes)
+    if (!next) return
+    var pos = {
+      pid: this.db.nodes[next].parent,
+      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
+    }
+    if (pos.pid !== this.db.nodes[id].parent) pos.ix += 1
+    this.executeCommand('moveMany', {
+      ids,
+      npid: pos.pid,
+      nextIsRoot: pos.pid === this.view.root,
+      nindex: pos.ix,
+    })
+  },
+
+  goUp: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.prevSiblingOrCousin(id, this.view.root, this.db.nodes)
+    this.setActive(next)
+  },
+
+  goDown: function (id) {
+    id = id || this.view.active
+    var next = movement.nextSiblingOrCousin(id, this.view.root, this.db.nodes)
+    if (!next) {
+      var ch = this.db.nodes[id].children
+      if (ch && ch.length) {
+        next = ch[ch.length - 1]
+      } else {
+        return
+      }
+    }
+    this.setActive(next)
+  },
+
+  goLeft: listActions.goLeft,
+
+  goToFirstSibling: function (id) {
+    var first = listMovement.firstSibling(id, this.view.root, this.db.nodes)
+    if (first === id) {
+      first = movement.prevSiblingOrCousin(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(first)
+  },
+
+  goToLastSibling: function (id) {
+    var last = listMovement.lastSibling(id, this.view.root, this.db.nodes)
+    if (last === id) {
+      last = movement.nextSiblingOrCousin(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(last)
+  },
+
+  goRight: function (id) {
+    id = id || this.view.active
+    var right = movement.right(id, this.view.root, this.db.nodes)
+    if (right) this.setActive(right)
+  },
+
+  goToNextCousin: function (id) {
+    var parent = this.db.nodes[id].parent
+      , next
+    if (!parent) return false
+    next = movement.nextCousin(parent, this.view.root, this.db.nodes)
+    this.setActive(next)
+  },
+
+  goToNextSibling: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next = movement.nextSibling(id, this.view.root, this.db.nodes)
+    if (!next) {
+      var parent = this.db.nodes[id].parent
+      next = movement.nextSibling(parent, this.view.root, this.db.nodes)
+    }
+    if (!next) {
+      next = movement.down(id, this.view.root, this.db.nodes)
+    }
+    this.setActive(next)
+  },
+
+  // TODO make custom ones
+  indent: listActions.indent,
+  dedent: listActions.dedent,
+
+}
+

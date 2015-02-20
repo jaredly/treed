@@ -7,6 +7,12 @@ function BaseStore(options) {
   this._listeners = {}
   this._plugin_teardowns = []
 
+  if (options.actions) {
+    for (var name in options.actions) {
+      this.actions[name] = options.actions[name]
+    }
+  }
+
   if (options.plugins) {
     options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
   }

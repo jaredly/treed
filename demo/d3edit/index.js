@@ -7,25 +7,26 @@ var keys = require('./keys.js')
 window.title = 'Full Soup'
 
 var treed = window.treed = new Treed({
-  data: require('./data'),
   plugins: [
     require('../../plugins/clipboard'),
     require('../../plugins/collapse'),
     require('../../plugins/undo'),
     require('../../plugins/done'),
-  ]
+  ],
 })
 
 var start = Date.now()
 
 treed.keyManager.listen(window)
-treed.initStore().then(() => {
+treed.initStore(require('./data'), {
+  actions: require('../../views/side-tree/actions'),
+}).then(() => {
   var props = treed.addView({
-    defaultKeys: {
-      'go to next sibling or cousin': {
+    keys: {
+      'go down': {
         normal: 'down, j',
       },
-      'go to previous sibling or cousin': {
+      'go up': {
         normal: 'up, k',
       },
       'go left': {
@@ -43,22 +44,19 @@ treed.initStore().then(() => {
       'edit': {
         normal: 'enter',
       },
-      'go up': {
-        normal: 'backspace',
-      },
       'indent': {
         normal: 'tab, shift+alt+l, shift+alt+right',
       },
       'dedent': {
         normal: 'shift+tab, shift+alt+h, shift+alt+left',
       },
-      'move up sibling or cousin': {
+      'move up': {
         normal: 'shift+alt+up, shift+alt+k',
       },
-      'move down sibling or cousin': {
+      'move down': {
         normal: 'shift+alt+down, shift+alt+j',
       },
-      'create sibling after': {
+      'create after': {
         normal: 'o',
       },
     },
@@ -76,6 +74,7 @@ treed.initStore().then(() => {
     },
     circleRad: 15,
     duration: 300,
+    // easing: 'back-in-out',
   })
 
   function update() {

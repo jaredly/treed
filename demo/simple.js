@@ -7,7 +7,7 @@ var treed = window.treed = new Treed({
 })
 
 var start = Date.now()
-treed.quickstart('#example').then(storeView => {
+quickstart(treed, '#example').then(storeView => {
   console.log((Date.now() - start) + 'ms to render')
   window.actions = storeView.actions
 }).catch(error => {

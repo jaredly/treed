@@ -56,7 +56,7 @@ function bindKeys(keys, typed, actions) {
   Object.keys(keys).forEach((actionName) => {
     var action = camel(actionName)
     if (!actions[action]) {
-      console.warn('[binding keys] unknown action: ' + action)
+      throw new Error('Unknown action: ' + camels[type])
       return;
     }
     binds[keys[actionName]] = function(){return actions[action]()}
@@ -67,8 +67,7 @@ function bindKeys(keys, typed, actions) {
     for (var type in typed[keyBinding]) {
       camels[type] = camel(typed[keyBinding][type])
       if (!actions[camels[type]]) {
-        console.warn('[binding keys] unknown action: ' + camels[type])
-        delete camels[type]
+        throw new Error('Unknown action: ' + camels[type])
       }
     }
     /*
