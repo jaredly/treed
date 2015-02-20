@@ -5,6 +5,28 @@ var movement = require('./movement')
 
 module.exports = {
 
+  createBefore: function (id) {
+    id = id || this.view.active
+    var node = this.db.nodes[id]
+      , pos
+    if (id === this.view.root) {
+      pos = {
+        pid: id,
+        type: node.type,
+        ix: 0
+      }
+    } else {
+      pos = {
+        pid: node.parent,
+        type: node.type,
+        ix: this.db.nodes[node.parent].children.indexOf(id),
+      }
+    }
+    this.executeCommand('create', pos, (err, cmd) => {
+      this.edit(cmd.id)
+    })
+  },
+
   createAfter: function (id, split, after) {
     id = id || this.view.active
     var node = this.db.nodes[id]
@@ -41,6 +63,9 @@ module.exports = {
       })
     }
   },
+
+  joinUp: function () {},
+  removeEmpty: function () {},
 
   moveDown: function (id) {
     id = id || this.view.active

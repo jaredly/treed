@@ -58,18 +58,30 @@ var Mindmap = React.createClass({
     var positions = calcPos(
       this.props.store.view.root,
       this.props.store.actions.db.nodes,
+      20,
       100,
-      100,
+      200,
       this.state.heights);
     return positions
   },
 
   render: function () {
     var positions = this.calcPositions()
+    var bodies = {
+      default: {editor: null, renderer: null}
+    }
+    if (this.props.nodePlugins) {
+      for (var i=0; i<this.props.nodePlugins.length; i++) {
+        if (this.props.nodePlugins[i].bodies) {
+          bodies = extend(bodies, this.props.nodePlugins[i].bodies)
+        }
+      }
+    }
     return <div className='Mindmap'>
       <Movable
         height={this.props.height}
         width={this.props.width}
+        bodies={bodies}
         positions={positions}
         reCalc={this._reCalc}
         onHeight={this._onHeight}
@@ -100,7 +112,8 @@ var Movable = React.createClass({
         if (this.state.activeNode === state.activeNode) return
         var aid = state.activeNode
           , pos = props.positions.boxes[aid]
-          , nx = this.state.left + pos.x
+        if (!pos) return
+        var nx = this.state.left + pos.x
           , ny = this.state.top + pos.y
           , margin = 100
           , dx = 0
@@ -111,16 +124,16 @@ var Movable = React.createClass({
         if (ny - margin < 0) {
           dy -= ny - margin
         }
-        if (nx + pos.height + margin > this.props.width) {
-          dx -= nx + pos.height + margin - this.props.width
+        if (nx + pos.width + margin > this.props.width) {
+          dx -= nx + pos.width + margin - this.props.width
         }
-        if (ny + pos.width + margin > this.props.height) {
-          dy -= ny + pos.width + margin - this.props.height
+        if (ny + pos.height + margin > this.props.height) {
+          dy -= ny + pos.height + margin - this.props.height
         }
-        this.setState({
+        return {
           left: this.state.left + dx,
           top: this.state.top + dy,
-        })
+        }
       },
     })
   ],
@@ -129,7 +142,8 @@ var Movable = React.createClass({
     var aid = this.props.store.view.active
       , ppos = this.props.positions.boxes[aid]
       , npos = nextProps.positions.boxes[aid]
-      , dx = ppos.x - npos.x
+    if (!ppos || !npos) return
+    var dx = ppos.x - npos.x
       , dy = ppos.y - npos.y
       , nx = this.state.left + dx + npos.x
       , ny = this.state.top + dy + npos.y
@@ -215,6 +229,7 @@ var Movable = React.createClass({
         onHeight={this.props.onHeight}
         positions={positions.boxes}
         plugins={this.props.nodePlugins}
+        bodies={this.props.bodies}
         store={this.props.store}
         key={this.props.store.view.root}
         id={this.props.store.view.root}

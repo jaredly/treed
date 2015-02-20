@@ -34,6 +34,9 @@ module.exports = {
     'move down': {
       normal: 'shift+alt+down, shift+alt+j',
     },
+    'create before': {
+      normal: 'shift+o',
+    },
     'create after': {
       normal: 'o',
     },

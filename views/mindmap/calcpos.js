@@ -1,8 +1,8 @@
 
-module.exports = function calcPos(root, nodes, xsep, ysep, heights) {
+module.exports = function calcPos(root, nodes, xsep, ysep, cellHeight, heights) {
   var tree = crawl(root, nodes)
 
-  var {boxes, height, width} = calcBoxes(tree, 100, xsep, 1, ysep)
+  var {boxes, height, width} = calcBoxes(tree, cellHeight, xsep, 1, ysep)
   var links = []
   var rbox = boxes[root]
     , rx = 0//rbox.x
@@ -69,8 +69,8 @@ function calcBoxes(data, cellHeight, xsep, pxscale, ysep) {
     var x = node.x * width
       , y = node.y * height
     boxes[node.id] = {
-      x: y - node.width/2 * xs,
-      y: x,
+      x: y,
+      y: x - node.width/2 * xs,
       height: node.width * xs,
       width: ys,
     }

@@ -1,6 +1,7 @@
 var React = require('react/addons')
   , cx = React.addons.classSet
   , PT = React.PropTypes
+  , SimpleBody = require('../body/simple')
 
   , Listener = require('../../listener')
 
@@ -86,11 +87,21 @@ var MindmapNode = React.createClass({
       'MindmapNode': true,
       'MindmapNode-hiding': this.props.hiding,
       'MindmapNode-active': this.state.isActive,
-      'MindmapNode-collapsed': this.state.node.collapsed,
+      'MindmapNode-editing': this.state.editState,
+      'MindmapNode-collapsed': this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
     })
+    var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
     return <div style={style} className={cls}>
       <div onClick={this._onClick} className='MindmapNode_main'>
-        {this.state.node.content}
+        {SimpleBody({
+          editor: body.editor,
+          renderer: body.renderer,
+          node: this.state.node,
+          isActive: this.state.isActive,
+          editState: this.state.editState,
+          actions: this.props.store.actions,
+          store: this.props.store,
+        })}
       </div>
       {this.state.node.children.length ? <div className='MindmapNode_children'>
         {!this.state.lazyChildren && this.state.node.children.map((id, i) =>
