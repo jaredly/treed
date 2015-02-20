@@ -9,7 +9,7 @@ var React = require('react/addons')
 
 var Mindmap = React.createClass({
   getDefaultProps: function () {
-    return {width: 800, height: 800}
+    return {width: 1200, height: 800}
   },
 
   mixins: [
@@ -60,7 +60,7 @@ var Mindmap = React.createClass({
       this.props.store.actions.db.nodes,
       20,
       100,
-      200,
+      250,
       this.state.heights);
     return positions
   },
@@ -115,7 +115,7 @@ var Movable = React.createClass({
         if (!pos) return
         var nx = this.state.left + pos.x
           , ny = this.state.top + pos.y
-          , margin = 100
+          , margin = 30
           , dx = 0
           , dy = 0
         if (nx - margin < 0) {
@@ -139,6 +139,31 @@ var Movable = React.createClass({
   ],
 
   componentWillReceiveProps: function (nextProps) {
+        var aid = this.state.activeNode
+          , pos = nextProps.positions.boxes[aid]
+        if (!pos) return
+        var nx = this.state.left + pos.x
+          , ny = this.state.top + pos.y
+          , margin = 30
+          , dx = 0
+          , dy = 0
+        if (nx - margin < 0) {
+          dx -= nx - margin
+        }
+        if (ny - margin < 0) {
+          dy -= ny - margin
+        }
+        if (nx + pos.width + margin > this.props.width) {
+          dx -= nx + pos.width + margin - this.props.width
+        }
+        if (ny + pos.height + margin > this.props.height) {
+          dy -= ny + pos.height + margin - this.props.height
+        }
+        this.setState( {
+          left: this.state.left + dx,
+          top: this.state.top + dy,
+        })
+    /*
     var aid = this.props.store.view.active
       , ppos = this.props.positions.boxes[aid]
       , npos = nextProps.positions.boxes[aid]
@@ -157,6 +182,7 @@ var Movable = React.createClass({
       left: this.state.left + dx,
       top: this.state.top + dy,
     })
+    */
   },
 
   componentDidUpdate: function (prevProps, prevState) {
