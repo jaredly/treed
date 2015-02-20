@@ -78,21 +78,6 @@ module.exports = function (options) {
       return p
     },
 
-    componentWillReceiveProps: options.shouldGetNew && function (nextProps) {
-      if (options.shouldGetNew.call(this, nextProps)) {
-        if (options.getListeners) {
-          this._stopListening()
-          this.listen(options.getListeners(nextProps, nextProps.store.events))
-        }
-        var state = options.storeAttrs.call(this, nextProps.store.getters, nextProps)
-        var extra
-        if (options.initStoreState) {
-          extra = options.initStoreState.call(this, state, nextProps.store.getters, nextProps)
-          for (var name in extra) state[name] = extra[name]
-        }
-        this.setState(state)
-      }
-    },
 
     _stopListening: function (store) {
       store = store || this.props.store
@@ -106,6 +91,24 @@ module.exports = function (options) {
       if (!this._flux) return
       this._stopListening()
     },
+  }
+
+  if (options.shouldGetNew) {
+    plugin.componentWillReceiveProps = function (nextProps) {
+      if (options.shouldGetNew.call(this, nextProps)) {
+        if (options.getListeners) {
+          this._stopListening()
+          this.listen(options.getListeners(nextProps, nextProps.store.events))
+        }
+        var state = options.storeAttrs.call(this, nextProps.store.getters, nextProps)
+        var extra
+        if (options.initStoreState) {
+          extra = options.initStoreState.call(this, state, nextProps.store.getters, nextProps)
+          for (var name in extra) state[name] = extra[name]
+        }
+        this.setState(state)
+      }
+    }
   }
 
   if (options.getListeners) {

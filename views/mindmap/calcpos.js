@@ -1,41 +1,54 @@
 
-module.exports = function calcPos(root, nodes, width, height, xsep, ysep) {
+module.exports = function calcPos(root, nodes, xsep, ysep, heights) {
   var tree = crawl(root, nodes)
 
-  var boxes = calcBoxes(tree, width, height, 100, xsep, 1, ysep)
+  var {boxes, height, width} = calcBoxes(tree, 100, xsep, 1, ysep)
   var links = []
-  relativize(tree, 0, 0)
+  var rbox = boxes[root]
+    , rx = 0//rbox.x
+    , ry = 0//rbox.y
+  relativize(tree, rx, ry)
 
-  return {boxes, links}
+  return {boxes, links, height, width}
 
-  function relativize(node, x, y) {
+  function relativize(node, x, y, collapsed) {
     var box = boxes[node.id]
-    if (node.children && !node.collapsed) node.children.forEach(child => {
+    if (node.children) node.children.forEach(child => {
       var cb = boxes[child.id]
-      links.push({
-        x1: box.x + box.width/2,
-        y1: box.y + box.height/2,
-        x2: cb.x + cb.width/2,
-        y2: cb.y + cb.height/2
-      })
-      relativize(child, box.x, box.y)
+      if (!collapsed && !node.collapsed) {
+        links.push({
+          x1: box.x + box.width/2 - rx,
+          y1: box.y + box.height/2 - ry,
+          x2: cb.x + cb.width/2 - rx,
+          y2: cb.y + cb.height/2 - ry,
+          id: child.id,
+        })
+      }
+      relativize(child, box.x, box.y, collapsed || node.collapsed)
     })
-    box.x -= x
-    box.y -= y
+    /*
+    if (collapsed) {
+      box.x = 0
+      box.y = 0
+    } else {
+      box.x -= x
+      box.y -= y
+    }
+    */
   }
 
   function crawl(id) {
     return {
       id: id,
       children: nodes[id].collapsed ? null : nodes[id].children.map(crawl),
-      width: 100, // todo how do I know sizes?
+      width: heights[id] || 25, // todo how do I know sizes?
       // maybe query the DOM? takes a while...
     }
   }
 }
 
 
-function calcBoxes(data, width, height, cellHeight, xsep, pxscale, ysep) {
+function calcBoxes(data, cellHeight, xsep, pxscale, ysep) {
   xsep = xsep || 0
   var t = d3.layout.tree()
   t.separation(function(a, b){
@@ -44,35 +57,30 @@ function calcBoxes(data, width, height, cellHeight, xsep, pxscale, ysep) {
   var nodes = t.nodes(data)
   var links = t.links(nodes)
 
-  function nodePos(node) {
-    var x = node.x * width
-      , y = node.y * height
-    return{x:x,y:y}
-  }
-
   var {xscale, ydepth} = findScale(data, xsep)
-  var xscale = xscale || 1
-  var xs = pxscale, ys = cellHeight
+  var xs = pxscale
+    , ys = cellHeight
+    , height = ydepth * (cellHeight + ysep || 0)
+    , width = pxscale / xscale 
   //console.log(xscale, ydepth)
 
   var boxes = {}
   nodes.forEach(node => {
-    var x = node.x / xscale * pxscale
-      , y = node.y * ydepth * (cellHeight + ysep || 0)
+    var x = node.x * width
+      , y = node.y * height
     boxes[node.id] = {
-      x: x - node.width/2 * xs,
-      y: y,
-      width: node.width * xs,
-      height: ys,
+      x: y - node.width/2 * xs,
+      y: x,
+      height: node.width * xs,
+      width: ys,
     }
   })
-  return boxes
+  return {boxes, width, height}
 }
 
 function findScale(node, sep) {
   var min = null
     , maxdepth = 1
-    , maxwidth = 0
   function getWidth(node, depth) {
     if (min === null || min > 1/node.width) min = 1/node.width
     if (!node.children)return
@@ -91,7 +99,6 @@ function findScale(node, sep) {
     }
   }
   getWidth(node, 1)
-  if (min === null) min = 1/maxwidth
   return {xscale: min, ydepth: maxdepth}
 }
 

@@ -197,6 +197,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     rootChanged: function () { return 'root:' + this.vid },
     modeChanged: function () { return 'mode:' + this.vid },
     activeModeChanged: function () { return 'mode:active' },
+    changed: () => 'changed'
   },
 
   actions: require('./actions'),
@@ -205,6 +206,10 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   getters: {
     getNode: function (id) {
       return this.db.nodes[id]
+    },
+
+    getActive: function () {
+      return this.view.active
     },
 
     isActiveView: function () {

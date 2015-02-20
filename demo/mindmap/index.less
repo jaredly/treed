@@ -23,11 +23,72 @@ body {
   margin: 30px auto;
   box-shadow: 0 0 10px black inset;
   position: relative;
+
+  > .MindmapNode {
+    // top: 400px;
+  }
+}
+
+.MindmapLinks {
+  overflow: visible;
+
+  path {
+    stroke: black;
+    line-width: 10px;
+  }
+}
+
+.MindmapMovable {
+  overflow: hidden;
+  height: 800px;
+  width: 800px;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &_container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform .2s ease, top .2s ease, left .2s ease;
+  }
 }
 
 .MindmapNode {
   position: absolute;
-  box-shadow: 0 0 10px black;
+  border: 2px solid #ccc;
+  transition: transform .2s ease, opacity .2s ease;
+  opacity: 1;
+  top: 0;
+  left: 0;
+  background: white;
+  cursor: pointer;
+
+  &-collapsed {
+    &:after {
+      content: '\25b6';
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      margin-left: 2px;
+      transform: scaleY(3);
+      color: #ccc;
+      margin-top: -.8em;
+    }
+  }
+
+  &-hiding {
+    pointer-events: none;
+  }
+
+  &-active {
+    border-color: magenta;
+  }
+
+  &_main {
+    padding: 20px;
+    width: 100px;
+  }
 
   &_children {
     // position: relative;
