@@ -371,5 +371,10 @@ module.exports = {
     this.setActive(prev)
   },
 
+  goToSurvivingNeighbor: function (id) {
+    id = id || this.view.active
+    this.setActive(movement.survivingNeighbor(id, this.view.root, this.db.nodes))
+  },
+
 }
 

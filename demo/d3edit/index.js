@@ -19,7 +19,7 @@ var start = Date.now()
 
 treed.keyManager.listen(window)
 treed.initStore(require('./data'), {
-  actions: require('../../views/side-tree/actions'),
+  actions: require('../../views/mindmap/actions'),
 }).then(() => {
   var props = treed.addView({
     keys: {

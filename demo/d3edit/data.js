@@ -48,6 +48,7 @@ module.exports = {
           "children": [
             {
               "content": "Decades",
+              "collapsed": true,
               "children": [
                 {
                   "content": "'70s",

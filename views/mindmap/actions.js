@@ -49,12 +49,8 @@ module.exports = {
     } else {
       ids = [id]
     }
-    var next = movement.nextSiblingOrCousin(ids[ids.length-1], this.view.root, this.db.nodes)
-    if (!next) return
-    var pos = {
-      pid: this.db.nodes[next].parent,
-      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
-    }
+    var pos = movement.below(ids[ids.length - 1], this.view.root, this.db.nodes)
+    if (!pos) return
     this.executeCommand('moveMany', {
       ids,
       npid: pos.pid,
@@ -70,13 +66,7 @@ module.exports = {
     } else {
       ids = [id]
     }
-    var next = movement.prevSiblingOrCousin(ids[0], this.view.root, this.db.nodes)
-    if (!next) return
-    var pos = {
-      pid: this.db.nodes[next].parent,
-      ix: this.db.nodes[this.db.nodes[next].parent].children.indexOf(next)
-    }
-    if (pos.pid !== this.db.nodes[id].parent) pos.ix += 1
+    var pos = movement.above(ids[ids.length - 1], this.view.root, this.db.nodes)
     this.executeCommand('moveMany', {
       ids,
       npid: pos.pid,
@@ -97,7 +87,7 @@ module.exports = {
     var next = movement.nextSiblingOrCousin(id, this.view.root, this.db.nodes)
     if (!next) {
       var ch = this.db.nodes[id].children
-      if (ch && ch.length) {
+      if (ch && ch.length && (!this.db.nodes[id].collapsed || id === this.view.root)) {
         next = ch[ch.length - 1]
       } else {
         return
@@ -151,6 +141,8 @@ module.exports = {
     }
     this.setActive(next)
   },
+
+  goToSurvivingNeighbor: listActions.goToSurvivingNeighbor,
 
   // TODO make custom ones
   indent: listActions.indent,

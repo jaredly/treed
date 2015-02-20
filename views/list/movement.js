@@ -171,6 +171,16 @@ var movement = module.exports = {
     }
     return false
   },
+
+  survivingNeighbor: function (id, root, nodes) {
+    if (id === root) return false
+    var pid = nodes[id].parent
+      , ch = nodes[pid].children
+      , ix = ch.indexOf(id)
+    if (ix < ch.length - 1) return ch[ix + 1]
+    if (ix > 0) return ch[ix - 1]
+    return pid
+  },
 }
 
 

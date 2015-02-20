@@ -1,5 +1,5 @@
 
-var movement = require('../../util/movement')
+var movement = require('../../views/list/movement')
 
 module.exports = {
   title: 'Clipboard',
@@ -76,22 +76,24 @@ module.exports = {
         if (id === this.view.root) return
         if (this.view.mode === 'visual') {
           ids = this.view.selection
-          next = movement.down(ids[ids.length - 1], this.view.root, this.db.nodes, true)
+          next = movement.nextSibling(ids[ids.length - 1], this.view.root, this.db.nodes, true)
+          if (!next) {
+            next = movement.up(ids[0], this.view.root, this.db.nodes, true)
+          }
+          if (!next) {
+            next = this.db.nodes[ids[0]].parent
+          }
+          this.setActive(next)
           this.setMode('normal', true)
         } else {
           ids = [id]
-          next = movement.down(id, this.view.root, this.db.nodes, true)
-        }
-        if (!next) {
-          next = movement.up(ids[0], this.view.root, this.db.nodes)
+          this.goToSurvivingNeighbor(id)
         }
         if (this.view.mode === 'insert') {
           document.activeElement.blur()
         }
-        this.view.active = next
         this.globals.clipboard = this.db.exportMany(ids)
         this.executeCommand('remove', {ids: ids})
-        this.changed(this.events.nodeChanged(next))
       },
 
       paste: function (id) {
