@@ -1,0 +1,45 @@
+
+body {
+  font-family: sans-serif;
+}
+
+.node {
+  cursor: pointer;
+}
+
+.node circle {
+  fill: #fff;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.node.active.collapsed circle {
+}
+
+.node text {
+  font: 20px sans-serif;
+}
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 1.5px;
+}
+
+.node.done circle {
+  fill: #0f0;
+}
+
+.node.collapsed circle {
+    stroke-width: 5px;
+  /*fill: lightsteelblue;*/
+}
+
+.node.active circle {
+  fill: magenta;
+}
+
+.node.editing circle {
+  fill: green;
+}
+

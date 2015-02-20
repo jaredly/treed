@@ -94,9 +94,10 @@ module.exports = function (options) {
       }
     },
 
-    _stopListening: function () {
+    _stopListening: function (store) {
+      store = store || this.props.store
       for (var i=0; i<this._flux.length; i++) {
-        this.props.store.off(this._flux[i][0], this._flux[i][1])
+        store.off(this._flux[i][0], this._flux[i][1])
       }
       this._flux = null
     },
@@ -106,9 +107,16 @@ module.exports = function (options) {
       this._stopListening()
     },
   }
+
   if (options.getListeners) {
     plugin.componentWillMount = function () {
       this.listen(options.getListeners(this.props, this.props.store.events))
+    }
+    plugin.componentDidUpdate = function (prevProps) {
+      if (this.props.store !== prevProps.store) {
+        this._stopListening(prevProps.store)
+        this.listen(options.getListeners(this.props, this.props.store.events))
+      }
     }
   }
   return plugin

@@ -26,9 +26,9 @@ function ensureInView(item) {
   }
   if (height + margin * 2 > pHeight) {
     if (bb.top > pox.top + margin) {
-      scrollMe(parent, bb.top - pox.top - margin)
+      scrollMe(parent, parent.scrollTop + bb.top - pox.top - margin)
     } else if (bb.bottom < pox.bottom - margin) {
-      scrollMe(parent, -(pox.bottom - bb.bottom - margin))
+      scrollMe(parent, parent.scrollTop - (pox.bottom - bb.bottom - margin))
     }
     return
   }

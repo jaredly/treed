@@ -144,6 +144,26 @@ module.exports = {
 
   goToSurvivingNeighbor: listActions.goToSurvivingNeighbor,
 
+  remove: function (id) {
+    id = id || this.view.active
+    if (id === this.view.root) return
+    var next, ids
+    if (this.view.mode === 'visual') {
+      ids = this.view.selection
+      next = movement.down(ids[ids.length - 1], this.view.root, this.db.nodes, true)
+      this.setMode('normal', true)
+    } else {
+      ids = [id]
+      next = movement.down(id, this.view.root, this.db.nodes, true)
+    }
+    if (!next) {
+      next = movement.up(ids[0], this.view.root, this.db.nodes)
+    }
+    this.view.active = next
+    this.executeCommand('remove', {ids: ids})
+    this.changed(this.events.nodeChanged(next))
+  },
+
   // TODO make custom ones
   indent: listActions.indent,
   dedent: listActions.dedent,

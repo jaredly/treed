@@ -2,8 +2,6 @@
 var React = require('react')
 var Treed = require('../quickstart')
 
-window.title = 'Full Soup'
-
 var treed = window.treed = new Treed({
   data: require('./demo-data'),
   plugins: [

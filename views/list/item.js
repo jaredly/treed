@@ -164,14 +164,14 @@ var TreeItem = React.createClass({
       {this.state.node.children.length ?
       <div className='TreeItem_children' ref='children'>
         {!this.state.lazyChildren && this.state.node.children.map((id, i) => 
-          TreeItem({
-            plugins: this.props.plugins,
-            store: this.props.store,
-            bodies: this.props.bodies,
-            index: i,
-            key: id,
-            id: id,
-          })
+          <TreeItem
+            plugins={this.props.plugins}
+            store={this.props.store}
+            bodies={this.props.bodies}
+            index={i}
+            key={id}
+            id={id}
+          />
         )}
       </div> : (
         this.props.isRoot ?

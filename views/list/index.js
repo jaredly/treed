@@ -6,9 +6,10 @@ var PT = React.PropTypes
 
 var extend = require('../../util/extend')
 var Listener = require('../../listener')
-var TreeItem = require('./item')
+var ListItem = require('./item')
 
-var TreeView = React.createClass({
+// TODO rename TreeView classes to ListView - check css, etc.
+var ListView = React.createClass({
   mixins: [
     Listener(function (store, props) {
       return {
@@ -41,6 +42,7 @@ var TreeView = React.createClass({
   componentWillMount: function () {
     var e = this.props.store.events
     this.listen(e.rootChanged(), e.modeChanged(), e.activeViewChanged())
+    // TODO can this be factored out?
     window.addEventListener('blur', this._onBlur)
     window.addEventListener('focus', this._onFocus)
   },
@@ -88,7 +90,7 @@ var TreeView = React.createClass({
     }
     return <div className={className} onClick={this.props.store.actions.setActiveView.bind(this.props.store.actions)}>
       {this.fromMix('top')}
-      {TreeItem({
+      {ListItem({
         store: this.props.store,
         plugins: this.props.nodePlugins,
         bodies: bodies,
@@ -100,4 +102,4 @@ var TreeView = React.createClass({
   },
 })
 
-module.exports = TreeView
+module.exports = ListView
