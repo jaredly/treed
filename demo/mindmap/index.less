@@ -45,6 +45,8 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  cursor: move;
+  cursor: -webkit-grab;
 
   &_container {
     position: absolute;
@@ -56,43 +58,68 @@ body {
 
 .MindmapNode {
   position: absolute;
-  border: 2px solid #ccc;
-  transition: transform .2s linear, opacity .2s ease;
+  transition: transform .2s ease, opacity .2s ease;
   opacity: 1;
   top: 0;
   left: 0;
-  background: white;
-  cursor: pointer;
 
-  &-collapsed {
-    &:after {
-      content: '\25b6';
+  &-parent > &_main &_collapser {
+    opacity: 0;
+    transition: opacity .2s ease;
+
+    &::after {
+      content: ' ';
       position: absolute;
       left: 100%;
       top: 50%;
       margin-left: 2px;
-      transform: scaleY(3);
       color: #ccc;
-      margin-top: -.8em;
+      margin-top: -20px;
+      cursor: pointer;
+      border-width: 20px 0px 20px 15px;
+      border-color: transparent transparent transparent #ddd;
+      border-style: solid;
     }
+  }
+
+  &-parent > &_main:hover &_collapser,
+  &-collapsed > &_main &_collapser {
+    opacity: 1;
   }
 
   &-hiding {
     pointer-events: none;
   }
 
-  &-active {
+  &-active > &_main {
     border-color: magenta;
   }
 
-  &-editing {
+  &-editing > &_main {
     border-color: green;
+  }
+
+  &_line {
+    border: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    height: 6px;
+    margin-top: -3px;
+    background: #ccc;
+    transform-origin: 0 50%;
+    transition: transform .2s ease, width .2s ease;
   }
 
   &_main {
     padding: 20px;
     width: 250px;
     box-sizing: border-box;
+    border: 2px solid #ccc;
+    background: white;
+    cursor: pointer;
+    z-index: 10;
+    position: relative;
   }
 
   &_children {

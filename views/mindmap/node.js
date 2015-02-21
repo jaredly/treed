@@ -65,10 +65,32 @@ var MindmapNode = React.createClass({
   },
 
   _onClick: function () {
-    if (this.state.node.children && this.state.node.children.length) {
-      this.props.store.actions.toggleCollapse(this.props.id)
-      // this.props.reCalc()
+    this.props.store.actions.edit(this.props.id)
+  },
+
+  _toggleCollapse: function () {
+    this.props.store.actions.toggleCollapse(this.props.id)
+  },
+
+  makeLine: function () {
+    if (this.props.isRoot) return
+    var box
+    if (this.state.ticked) {
+      box = this.props.positions[this.props.id]
     }
+    if (!box) {
+      box = {x: this.props.px, y: this.props.py}
+    }
+    var x = this.props.px - box.x
+      , y = this.props.py - box.y
+      , length = Math.sqrt(x*x + y*y)
+      , ang = length ? Math.atan2(y, x) : Math.PI
+    if (ang < 0) ang += Math.PI*2
+    style = {
+      width: length,
+      transform: `rotate(${ang}rad)`,
+    }
+    return <div className='MindmapNode_line' style={style}/>
   },
 
   render: function () {
@@ -88,11 +110,14 @@ var MindmapNode = React.createClass({
       'MindmapNode-hiding': this.props.hiding,
       'MindmapNode-active': this.state.isActive,
       'MindmapNode-editing': this.state.editState,
+      'MindmapNode-parent': this.state.node.children && this.state.node.children.length,
       'MindmapNode-collapsed': this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
     })
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
     return <div style={style} className={cls}>
+      {this.makeLine()}
       <div onClick={this._onClick} className='MindmapNode_main'>
+        <div className='MindmapNode_collapser' onClick={this._toggleCollapse}/>
         {SimpleBody({
           editor: body.editor,
           renderer: body.renderer,

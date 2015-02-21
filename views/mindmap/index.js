@@ -240,28 +240,20 @@ var Movable = React.createClass({
       <div
         style={style}
         className="MindmapMovable_container">
-        <div className='Mindmap_links'>
-          <MindmapLinks
-            width={positions.height + 100}
-            height={positions.width}
-            top={this.state.top}
-            left={this.state.left}
-            links={positions.links}/>
-        </div>
-      <MindmapNode
-        px={0}
-        py={0}
-        reCalc={this.props.reCalc}
-        onHeight={this.props.onHeight}
-        positions={positions.boxes}
-        plugins={this.props.nodePlugins}
-        bodies={this.props.bodies}
-        store={this.props.store}
-        key={this.props.store.view.root}
-        id={this.props.store.view.root}
-        isRoot={true}
-        index={0}
-        />
+        <MindmapNode
+          px={0}
+          py={0}
+          reCalc={this.props.reCalc}
+          onHeight={this.props.onHeight}
+          positions={positions.boxes}
+          plugins={this.props.nodePlugins}
+          bodies={this.props.bodies}
+          store={this.props.store}
+          key={this.props.store.view.root}
+          id={this.props.store.view.root}
+          isRoot={true}
+          index={0}
+          />
       </div>
     </div>
   },
