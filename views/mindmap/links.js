@@ -2,8 +2,9 @@ var React = require('react/addons')
   , cx = React.addons.classSet
   , PT = React.PropTypes
 
-function line(x1, y1, x2, y2) {
-  return 'M' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2
+function line(obj) {
+  var {x1, y1, x2, y2} = obj
+  return 'M' + parseInt(x1) + ' ' + parseInt(y1) + ' L' + parseInt(x2) + ' ' + parseInt(y2)
 }
 
 var MindmapLinks = React.createClass({
@@ -34,11 +35,9 @@ var MindmapLinks = React.createClass({
   renderSVG() {
     return <svg className='MindmapLinks'>
       {this.props.links.map(link =>
-        <Link x1={link.x1}
+        <Link
           key={link.id}
-          y1={link.y1}
-          x2={link.x2}
-          y2={link.y2}/>
+          line={link}/>
       )}
     </svg>
   },
@@ -49,15 +48,55 @@ var MindmapLinks = React.createClass({
   }
 })
 
+var ease = d3.ease('ease')
+
 var Link = React.createClass({
+  getDefaultProps: function () {
+    return {
+      dur: 200,
+    }
+  },
   getInitialState: function () {
-    return this.props
+    return {t: 0, start: Date.now(), line: this.props.line}
+  },
+  componentWillMount: function () {
+    this._int = setInterval(this.up, 10)
   },
   componentWillReceiveProps(nextProps) {
-    this.setState(nextProps)
+    if (line(this.props.line) !== line(nextProps.line)) {
+      this.setState({
+        t: 0,
+        start: Date.now(),
+        line: this.props.line
+      })
+    }
+  },
+  componentDidUpdate: function () {
+    if (this.state.t === 0 && !this._int) {
+      this._int = setInterval(this.up, 10)
+    }
+  },
+  componentWillUnmount: function () {
+    clearInterval(this._int)
+    delete this._int
+  },
+  up: function () {
+    if (this.state.t >= this.props.dur) {
+      clearInterval(this._int)
+      delete this._int
+      return
+    }
+    this.setState({t: Date.now() - this.state.start})
+  },
+  getLine: function () {
+    var t = ease(this.state.t / this.props.dur)
+    var {x1, x2, y1, y2} = this.state.line // current
+      , next = this.props.line
+      , part = (a, b) => a + t*(b-a)
+    return `M${part(x1, next.x1)} ${part(y1, next.y1)} L${part(x2, next.x2)} ${part(y2, next.y2)}`;
   },
   render: function () {
-    return <path d={line(this.state.x1, this.state.y1, this.state.x2, this.state.y2)}/>
+    return <path d={this.getLine()}/>
   },
 })
 
