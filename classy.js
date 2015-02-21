@@ -5,6 +5,7 @@
 
 var extend = require('./util/extend')
 var keyHandlers = require('./key-handlers')
+var baseKeys = require('./stores/keys')
 
 var KeyManager = require('./key-manager')
 var MainStore = require('./stores/main')
@@ -55,10 +56,13 @@ class Treed {
 
   addView(options) {
     options = extend({
+      actions: null,
+      keys: {},
       root: null,
     }, options)
 
-    var storeView = this.store.registerView(options.root)
+    var storeView = this.store.registerView(options.root, options.actions)
+    var allKeys = extend({}, flattenKeySections(baseKeys), flattenKeySections(options.keys))
 
     var props = {
       plugins: pluginType(this.options.plugins, 'view'),
@@ -67,7 +71,7 @@ class Treed {
     }
 
     var keys = keyHandlers(
-      options.keys,
+      allKeys,
       storeView.actions,
       pluginType(this.options.plugins, 'keys'),
       this.options.plugins)
@@ -77,6 +81,16 @@ class Treed {
     return props
   }
 
+}
+
+function flattenKeySections(keys) {
+  var ret = {}
+  for (var name in keys) {
+    for (var sub in keys[name]) {
+      ret[sub] = keys[name][sub]
+    }
+  }
+  return ret
 }
 
 function pluginType(plugins, type) {

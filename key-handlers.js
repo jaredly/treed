@@ -56,7 +56,7 @@ function bindKeys(keys, typed, actions) {
   Object.keys(keys).forEach((actionName) => {
     var action = camel(actionName)
     if (!actions[action]) {
-      throw new Error('Unknown action: ' + camel(actionName))
+      // throw new Error('Unknown action: ' + camel(actionName))
       return;
     }
     binds[keys[actionName]] = function(){return actions[action]()}

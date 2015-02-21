@@ -6,9 +6,16 @@ var React = require('react/addons')
   , calcPos = require('./calcpos')
   , MindmapLinks = require('./links')
   , MindmapNode = require('./node')
+  , extend = require('../../util/extend')
 
 var Mindmap = React.createClass({
+  statics: {
+    keys: require('./keys'),
+    actions: require('./actions'),
+  },
+
   getDefaultProps: function () {
+    // TODO get this value from the container
     return {width: 1200, height: 800}
   },
 

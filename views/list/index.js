@@ -10,6 +10,11 @@ var ListItem = require('./item')
 
 // TODO rename TreeView classes to ListView - check css, etc.
 var ListView = React.createClass({
+  statics: {
+    keys: require('./keys'),
+    actions: require('./actions'),
+  },
+
   mixins: [
     Listener(function (store, props) {
       return {

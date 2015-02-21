@@ -2,8 +2,6 @@
 var React = require('react')
   , Treed = require('./classy')
   , ListView = require('./views/list')
-  , listKeys = require('./views/list/keys')
-  , baseKeys = flattenKeySections(require('./stores/keys'))
   , extend = require('./util/extend')
 
 module.exports = Treed
@@ -12,7 +10,6 @@ Treed.prototype.quickstart = function (el, options) {
   options = options || {}
 
   el = ensureElement(el)
-  var allKeys = extend({}, baseKeys, flattenKeySections(options.keys || listKeys))
 
   this.keyManager.listen(window)
 
@@ -21,7 +18,7 @@ Treed.prototype.quickstart = function (el, options) {
   }).then(() => {
     return new Promise((resolve, reject) => {
       var viewOptions = extend({
-        keys: allKeys,
+        keys: options.keys || ListView.keys,
       }, options.viewOptions)
       var View = options.View || ListView
         , props = this.addView(viewOptions)
@@ -35,16 +32,6 @@ Treed.prototype.quickstart = function (el, options) {
     console.warn('Treed initialization failed!', error)
     throw error
   });
-}
-
-function flattenKeySections(keys) {
-  var ret = {}
-  for (var name in keys) {
-    for (var sub in keys[name]) {
-      ret[sub] = keys[name][sub]
-    }
-  }
-  return ret
 }
 
 function ensureElement(el) {
