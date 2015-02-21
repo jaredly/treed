@@ -54,6 +54,10 @@ class Treed {
     this.store.on(what, handler)
   }
 
+  removeView(id) {
+    this.store.unregisterView(id)
+  }
+
   addView(options) {
     options = extend({
       actions: null,

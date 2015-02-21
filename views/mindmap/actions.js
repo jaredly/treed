@@ -102,7 +102,7 @@ module.exports = {
 
   goUp: function (id) {
     id = id || this.view.active
-    if (id === this.view.root) return
+    if (id === this.view.root) return this.goRight(id)
     var next = movement.prevSiblingOrCousin(id, this.view.root, this.db.nodes)
     this.setActive(next)
   },
@@ -124,6 +124,7 @@ module.exports = {
   goLeft: listActions.goLeft,
 
   goToFirstSibling: function (id) {
+    id = id || this.view.active
     var first = listMovement.firstSibling(id, this.view.root, this.db.nodes)
     if (first === id) {
       first = movement.prevSiblingOrCousin(id, this.view.root, this.db.nodes)
@@ -132,6 +133,7 @@ module.exports = {
   },
 
   goToLastSibling: function (id) {
+    id = id || this.view.active
     var last = listMovement.lastSibling(id, this.view.root, this.db.nodes)
     if (last === id) {
       last = movement.nextSiblingOrCousin(id, this.view.root, this.db.nodes)

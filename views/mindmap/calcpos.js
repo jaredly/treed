@@ -15,7 +15,7 @@ module.exports = function calcPos(root, nodes, xsep, ysep, cellHeight, heights) 
     var box = boxes[node.id]
     if (node.children) node.children.forEach(child => {
       var cb = boxes[child.id]
-      if (!collapsed && !node.collapsed) {
+      if (!collapsed && (node.id === root || !node.collapsed)) {
         links.push({
           x1: box.x + box.width/2 - rx,
           y1: box.y + box.height/2 - ry,
@@ -24,7 +24,7 @@ module.exports = function calcPos(root, nodes, xsep, ysep, cellHeight, heights) 
           id: child.id,
         })
       }
-      relativize(child, box.x, box.y, collapsed || node.collapsed)
+      relativize(child, box.x, box.y, collapsed || (node.id !== root && node.collapsed))
     })
     /*
     if (collapsed) {
@@ -40,7 +40,7 @@ module.exports = function calcPos(root, nodes, xsep, ysep, cellHeight, heights) 
   function crawl(id) {
     return {
       id: id,
-      children: nodes[id].collapsed ? null : nodes[id].children.map(crawl),
+      children: (id !== root && nodes[id].collapsed) ? null : nodes[id].children.map(crawl),
       width: heights[id] || 25, // todo how do I know sizes?
       // maybe query the DOM? takes a while...
     }

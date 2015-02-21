@@ -111,7 +111,7 @@ var MindmapNode = React.createClass({
       'MindmapNode-active': this.state.isActive,
       'MindmapNode-editing': this.state.editState,
       'MindmapNode-parent': this.state.node.children && this.state.node.children.length,
-      'MindmapNode-collapsed': this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
+      'MindmapNode-collapsed': !this.props.isRoot && this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
     })
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
     return <div style={style} className={cls}>
@@ -133,7 +133,7 @@ var MindmapNode = React.createClass({
           <MindmapNode
             px={box.x}
             py={box.y}
-            hiding={this.props.hiding || this.state.node.collapsed}
+            hiding={!this.props.isRoot  && (this.props.hiding || this.state.node.collapsed)}
             onHeight={this.props.onHeight}
             reCalc={this.props.reCalc}
             positions={this.props.positions}
