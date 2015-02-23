@@ -139,6 +139,7 @@ var TreeItem = React.createClass({
   },
 
   render: function () {
+    if (!this.state.node) return <span/>
     var className = cx({
       'TreeItem': true,
       'TreeItem-active': this.state.isActive,
