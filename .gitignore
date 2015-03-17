@@ -5,10 +5,8 @@
 /build
 *.swo
 .nfs*
-/demo/*/index.js
-/demo/*/index.css
-/demo/menu/build.js
-/demo/menu/build.css
+/demo/*/build.js
+/demo/*/build.css
 /demo/react.js
 /pages
 /demo/*/build.*

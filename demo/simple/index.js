@@ -1,13 +1,15 @@
 
-var React = require('react')
-var Treed = require('../classy')
+import './index.less'
 
-var treed = window.treed = new Treed({
-  data: require('./demo-data'),
-})
+var React = require('react')
+var Treed = require('../../quickstart')
+
+var treed = window.treed = new Treed()
 
 var start = Date.now()
-quickstart(treed, '#example').then(storeView => {
+treed.quickstart('#example', {
+  data: require('../demo-data'),
+}).then(storeView => {
   console.log((Date.now() - start) + 'ms to render')
   window.actions = storeView.actions
 }).catch(error => {

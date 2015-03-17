@@ -69,6 +69,7 @@ module.exports = {
 
   moveDown: function (id) {
     id = id || this.view.active
+    let ids
     if (this.view.mode === 'visual') {
       ids = this.view.selection
     } else {
@@ -86,6 +87,7 @@ module.exports = {
 
   moveUp: function (id) {
     id = id || this.view.active
+    let ids
     if (this.view.mode === 'visual') {
       ids = this.view.selection
     } else {

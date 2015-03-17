@@ -1,0 +1,28 @@
+{
+  // I want to use babel-eslint for parsing!
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "node": true
+  },
+  // To give you an idea how to override rule options:
+  "rules": {
+    "semi": 0,
+    "consistent-return": 1,
+    "strict": 1,
+    "new-cap": 1,
+    "no-comma-dangle": 0,
+    "curly": 0,
+    "yoda": 0,
+    "camelcase": 1,
+    "no-unused-vars": 1,
+    "quotes": [1, "single"],
+    "eol-last": 0,
+    "no-mixed-requires": 0,
+    "no-underscore-dangle": 0,
+    "comma-spacing": 1
+  },
+  "globals": {
+    "d3": true
+  }
+}

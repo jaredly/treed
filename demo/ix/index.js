@@ -1,19 +1,19 @@
 
 var React = require('react')
 
-var treed = require('../')
-var data = require('./demo-data')
-var IxPL = require('../pl/ixdb')
-var QueuePL = require('../pl/queuedb')
+var treed = require('../../')
+var data = require('../demo-data')
+var IxPL = require('../../pl/ixdb')
+var QueuePL = require('../../pl/queuedb')
 
 window.React = React
 
 var start = Date.now()
 treed.quickstart('#example', {
   plugins: [
-    require('../plugins/clipboard'),
-    require('../plugins/collapse'),
-    require('../plugins/undo'),
+    require('../../plugins/clipboard'),
+    require('../../plugins/collapse'),
+    require('../../plugins/undo'),
   ],
   storeOptions: {
     data: data,

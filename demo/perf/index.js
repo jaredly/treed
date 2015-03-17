@@ -3,15 +3,15 @@ var React = require('react')
 
 window.React = React
 
-var ListView = require('../views/list')
-var keys = require('../views/list/keys')
-var keyHandlers = require('../key-handlers')
+var ListView = require('../../views/list')
+var keys = require('../../views/list/keys')
+var keyHandlers = require('../../key-handlers')
 
 var plugins = [
-  require('../plugins/collapse'),
+  require('../../plugins/collapse'),
   // require('../plugins/tags'),
-  require('../plugins/rebase'),
-  require('../plugins/done'),
+  require('../../plugins/rebase'),
+  require('../../plugins/done'),
 ]
 
 function pluginType(plugins, type) {
@@ -97,7 +97,8 @@ function rebaseDance(store, max, done, times) {
 
 window.PERF = {}
 
-require('./').run({
+/*
+require('../').run({
   plugins: plugins,
 }, function (store) {
   perfInitial(store, 10, function (avg, times) {
@@ -111,10 +112,10 @@ require('./').run({
           console.log('Alldone')
         })
       })
-      */
     })
   })
 })
 
+      */
 
 
