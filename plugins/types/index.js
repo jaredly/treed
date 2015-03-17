@@ -66,6 +66,7 @@ module.exports = {
     actions: function (plugins) {
       var actions = {
         changeType: function (id, type, update) {
+          var ids
           if (!id) {
             ids = this.view.mode === 'visual' ? this.view.selection : [this.view.active]
           } else {

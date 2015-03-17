@@ -48,7 +48,6 @@ var MindmapLinks = React.createClass({
   }
 })
 
-var ease = d3.ease('ease')
 
 var Link = React.createClass({
   getDefaultProps: function () {
@@ -89,6 +88,7 @@ var Link = React.createClass({
     this.setState({t: Date.now() - this.state.start})
   },
   getLine: function () {
+    var ease = d3.ease('ease')
     var t = ease(this.state.t / this.props.dur)
     var {x1, x2, y1, y2} = this.state.line // current
       , next = this.props.line

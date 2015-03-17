@@ -54,6 +54,7 @@ module.exports = {
     actions: {
       copy: function (id) {
         var sel = window.getSelection()
+        var ids
         if (sel.type === 'Range' && !sel.getRangeAt(0).collapsed) {
           return true
         }
@@ -69,6 +70,7 @@ module.exports = {
 
       cut: function (id) {
         var sel = window.getSelection()
+        var ids
         if (sel.type === 'Range' && !sel.getRangeAt(0).collapsed) {
           return true
         }
@@ -76,7 +78,7 @@ module.exports = {
         if (id === this.view.root) return
         if (this.view.mode === 'visual') {
           ids = this.view.selection
-          next = movement.nextSibling(ids[ids.length - 1], this.view.root, this.db.nodes, true)
+          let next = movement.nextSibling(ids[ids.length - 1], this.view.root, this.db.nodes, true)
           if (!next) {
             next = movement.up(ids[0], this.view.root, this.db.nodes, true)
           }

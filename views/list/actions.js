@@ -1,3 +1,4 @@
+'use strict'
 
 var movement = require('./movement')
 
@@ -10,7 +11,6 @@ module.exports = {
     var up = movement.up(this.view.active, this.view.root, this.db.nodes)
     if (!up) return false
     this.setActive(up)
-    return
   },
 
   pageUp: function () {
@@ -22,7 +22,6 @@ module.exports = {
       curr = up
     }
     this.setActive(curr)
-    return
   },
 
   pageDown: function () {
@@ -34,7 +33,6 @@ module.exports = {
       curr = down
     }
     this.setActive(curr)
-    return
   },
 
   goDown: function (editStart) {
@@ -42,7 +40,6 @@ module.exports = {
     if (!down) return false
     this.setActive(down)
     if (editStart) this.view.editPos = 'start'
-    return
   },
 
   goLeft: function () {
@@ -64,12 +61,7 @@ module.exports = {
     this.executeCommands(
       'remove', {ids: [id]},
       'set', {id: prev, attr: 'content', value: content},
-      () => {
-        // document.activeElement.blur()
-        setTimeout(() => {
-          this.editAt(prev, at)
-        },0)
-      }
+      () => setTimeout(_ => this.editAt(prev, at), 0)
     )
   },
 
@@ -191,6 +183,7 @@ module.exports = {
 
   moveDown: function (id) {
     id = id || this.view.active
+    let ids
     if (this.view.mode === 'visual') {
       ids = this.view.selection
     } else {
@@ -208,6 +201,7 @@ module.exports = {
 
   moveUp: function (id) {
     id = id || this.view.active
+    let ids
     if (this.view.mode === 'visual') {
       ids = this.view.selection
     } else {
@@ -232,6 +226,7 @@ module.exports = {
       type: node.type,
       ix: this.db.nodes[node.parent].children.indexOf(id),
     }, (err, cmd) => {
+      if (err) return console.warn('failed to create')
       this.edit(cmd.id)
     })
   },
@@ -250,10 +245,12 @@ module.exports = {
         'set', {id: id, attr: 'collapsed', value: false},
         'create', pos,
         (err, cmd) => {
+          if (err) return console.warn('failed to create')
           this.edit(cmd.id)
         })
     } else {
       this.executeCommand('create', pos, (err, cmd) => {
+        if (err) return console.warn('failed to create')
         this.edit(cmd.id)
       })
     }
@@ -286,11 +283,13 @@ module.exports = {
         },
         'create', pos,
         (err, cmd) => {
+          if (err) return console.warn('failed to create')
           this.editStart(cmd.id)
         }
       )
     } else {
       this.executeCommand('create', pos, (err, cmd) => {
+        if (err) return console.warn('failed to create')
         this.edit(cmd.id)
       })
     }

@@ -1,3 +1,4 @@
+'use strict'
 
 var movement = module.exports = {
 

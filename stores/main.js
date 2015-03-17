@@ -107,7 +107,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       globals: this._globals,
       startTransaction: () => this.cmd.startTransaction(),
       stopTransaction: () => this.cmd.stopTransaction(),
-      executeCommand: (cmd, state, squash, done) => {
+      executeCommand: function (cmd, state, squash, done) {
         if (arguments.length === 3 && 'function' === typeof squash) {
           done = squash
           squash = undefined
@@ -120,8 +120,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
           squash: squash,
           done: done,
         })
-      },
-      executeCommands: () => {
+      }.bind(this),
+      executeCommands: function () {
         var commands = []
         for (var i=0; i<arguments.length-1; i+=2) {
           commands.push({
@@ -135,7 +135,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
           commands[commands.length-1].done = arguments[arguments.length-1]
         }
         return this.cmd.executeCommands.apply(this.cmd, commands)
-      },
+      }.bind(this),
     }, this.actions, extraActions)
     this._getters[id] = extend({
       view: this.views[id],

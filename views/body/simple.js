@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 var React = require('react/addons')
   , cx = React.addons.classSet

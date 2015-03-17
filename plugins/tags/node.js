@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 var Tagger = require('./tagger')
 var ShowTags = require('./show-tags')

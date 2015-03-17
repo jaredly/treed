@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 var React = require('react/addons')
 var cx = React.addons.classSet
@@ -112,7 +111,7 @@ var TreeItem = React.createClass({
   },
 
   body: function () {
-    var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
+    var body = this.props.bodies[this.state.node.type] || this.props.bodies.default
     var abovebody = this.fromMix('abovebody')
     var belowbody = this.fromMix('belowbody')
     return <div ref='body' className='TreeItem_body'>
@@ -164,7 +163,7 @@ var TreeItem = React.createClass({
       {this.fromMix('prechildren')}
       {this.state.node.children.length ?
       <div className='TreeItem_children' ref='children'>
-        {!this.state.lazyChildren && this.state.node.children.map((id, i) => 
+        {!this.state.lazyChildren && this.state.node.children.map((id, i) =>
           <TreeItem
             plugins={this.props.plugins}
             store={this.props.store}

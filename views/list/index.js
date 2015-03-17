@@ -1,7 +1,6 @@
-/** @jsx React.DOM */
+'use strict'
 
 var React = require('react/addons')
-var cx = React.addons.classSet
 var PT = React.PropTypes
 
 var extend = require('../../util/extend')

@@ -196,7 +196,7 @@ Db.prototype = {
     for (var name in update) {
       this.nodes[id][name] = update[name]
     }
-    this.nodes[id][name].modified = Date.now()
+    this.nodes[id].modified = Date.now()
     this.pl.update('node', id, update, done)
   },
 }

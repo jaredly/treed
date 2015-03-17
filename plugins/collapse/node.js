@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 
 var React = require('react/addons')
 var cx = React.addons.classSet
@@ -19,6 +18,7 @@ module.exports = {
 
   componentDidUpdate: function (prevProps, prevState) {
     if (this.props.isRoot) return
+    if (!this.state.node) return
     var c = this.state.node.collapsed
     if (!this.refs || !this.refs.children) return
     if (this._prev_collapsed === c) return
