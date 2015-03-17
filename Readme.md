@@ -73,12 +73,15 @@ I think it will be exactly what I've always wanted; we'll see.
 You will need:
 
 - [nodejs](http://nodejs.org/)
-- [browserify](http://browserify.org) `npm install -g browserify watchify`
-- [less](http://lesscss.org) `npm install -g less`
+- [webpack](http://webpack.github.io) `npm install -g webpack`
 
 ```
 npm install
-make all
+cd demo
+webpack --watch
 ```
+
+Then open `demo/plugins/index.html` for example in your favorite browser, and
+enjoy!
 
 
