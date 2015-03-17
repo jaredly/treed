@@ -12,7 +12,7 @@ window.React = React
 var treed = window.treed = new Treed({
   plugins: [
     require('../../plugins/undo'),
-    require('../../plugins/tags'),
+    // require('../../plugins/tags'),
     require('../../plugins/rebase'),
     require('../../plugins/collapse'),
     require('../../plugins/done'),
