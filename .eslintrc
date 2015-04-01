@@ -8,9 +8,8 @@
   // To give you an idea how to override rule options:
   "rules": {
     "semi": 0,
-    "consistent-return": 1,
-    "strict": 1,
-    "new-cap": 1,
+    "strict": 0,
+    "no-shadow": 1,
     "no-comma-dangle": 0,
     "curly": 0,
     "yoda": 0,
@@ -20,6 +19,11 @@
     "eol-last": 0,
     "no-mixed-requires": 0,
     "no-underscore-dangle": 0,
+    "no-unused-expressions": 0,
+    "no-return-assign": 1,
+    "no-use-before-define": 1,
+    "no-extra-semi": 0,
+    "consistent-return": 0,
     "comma-spacing": 1
   },
   "globals": {

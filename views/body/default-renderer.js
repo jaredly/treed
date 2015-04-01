@@ -21,9 +21,13 @@ marked.setOptions({
 })
 
 var DefaultRenderer = React.createClass({
+  _onClick(e) {
+    if (e.target.nodeName === 'A') return
+    this.props.onClick(e)
+  },
   render: function () {
     return <span className="treed_body_rendered"
-      onClick={this.props.onClick}
+      onClick={this._onClick}
       dangerouslySetInnerHTML={{
         __html: this.props.content ?  marked(this.props.content + '') : ''
       }}/>

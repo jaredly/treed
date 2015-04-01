@@ -6,6 +6,19 @@ var React = require('react/addons')
   , Listener = require('../../listener')
 
 var MindmapNode = React.createClass({
+  propTypes: {
+    id: PT.string,
+    isRoot: PT.bool,
+    store: PT.object,
+    reCalc: PT.func,
+    onHeight: PT.func,
+    positions: PT.object,
+    px: PT.number,
+    py: PT.number,
+    plutins: PT.object,
+    bodies: PT.object,
+  },
+
   mixins: [
     Listener({
       storeAttrs: function (getters, props) {
@@ -86,7 +99,7 @@ var MindmapNode = React.createClass({
       , length = Math.sqrt(x*x + y*y)
       , ang = length ? Math.atan2(y, x) : Math.PI
     if (ang < 0) ang += Math.PI*2
-    style = {
+    const style = {
       width: length,
       transform: `rotate(${ang}rad)`,
     }
@@ -97,7 +110,7 @@ var MindmapNode = React.createClass({
     var box
     if (this.state.ticked) {
       box = this.props.positions[this.props.id]
-    } 
+    }
     if (!box) {
       box = {x: this.props.px, y: this.props.py}
     }
@@ -113,27 +126,27 @@ var MindmapNode = React.createClass({
       'MindmapNode-parent': this.state.node.children && this.state.node.children.length,
       'MindmapNode-collapsed': !this.props.isRoot && this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
     })
-    var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
+    var body = this.props.bodies[this.state.node.type] || this.props.bodies.default
     return <div style={style} className={cls}>
       {this.makeLine()}
       <div onClick={this._onClick} className='MindmapNode_main'>
         <div className='MindmapNode_collapser' onClick={this._toggleCollapse}/>
-        {SimpleBody({
-          editor: body.editor,
-          renderer: body.renderer,
-          node: this.state.node,
-          isActive: this.state.isActive,
-          editState: this.state.editState,
-          actions: this.props.store.actions,
-          store: this.props.store,
-        })}
+        <SimpleBody
+          editor={body.editor}
+          renderer={body.renderer}
+          node={this.state.node}
+          isActive={this.state.isActive}
+          editState={this.state.editState}
+          actions={this.props.store.actions}
+          store={this.props.store}
+        />
       </div>
       {this.state.node.children.length ? <div className='MindmapNode_children'>
         {!this.state.lazyChildren && this.state.node.children.map((id, i) =>
           <MindmapNode
             px={box.x}
             py={box.y}
-            hiding={!this.props.isRoot  && (this.props.hiding || this.state.node.collapsed)}
+            hiding={!this.props.isRoot && (this.props.hiding || this.state.node.collapsed)}
             onHeight={this.props.onHeight}
             reCalc={this.props.reCalc}
             positions={this.props.positions}
