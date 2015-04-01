@@ -110,12 +110,11 @@ var Textarea = React.createClass({
     return <div className={
       'textarea-grow ' + this.props.className
     }>
-      {
-        this.transferPropsTo(<textarea
-          ref='area'
-          className='body_input'
-          />)
-      }
+      <textarea
+        ref='area'
+        className='body_input'
+        {...this.props}
+        />
       <div
         ref='shadow'
         className='shadow'>

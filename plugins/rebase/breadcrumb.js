@@ -30,7 +30,7 @@ var Breadcrumb = React.createClass({
   render: function () {
     return <ul className='Breadcrumb'>
       {this.state.pedigree.map(item =>
-        <li onClick={this.props.rebase.bind(null, item.id)} className="Breadcrumb_item">
+        <li key={item.id} onClick={this.props.rebase.bind(null, item.id)} className="Breadcrumb_item">
           {item.content.slice(0, 25)}
         </li>
       )}

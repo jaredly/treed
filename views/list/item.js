@@ -116,15 +116,15 @@ var TreeItem = React.createClass({
     var belowbody = this.fromMix('belowbody')
     return <div ref='body' className='TreeItem_body'>
       {abovebody}
-      {SimpleBody({
-        editor: body.editor,
-        renderer: body.renderer,
-        node: this.state.node,
-        isActive: this.state.isActive,
-        editState: this.state.editState,
-        actions: this.props.store.actions,
-        store: this.props.store,
-      })}
+      <SimpleBody
+        editor={body.editor}
+        renderer={body.renderer}
+        node={this.state.node}
+        isActive={this.state.isActive}
+        editState={this.state.editState}
+        actions={this.props.store.actions}
+        store={this.props.store}
+      />
       {belowbody}
     </div>
   },

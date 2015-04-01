@@ -94,13 +94,13 @@ var ListView = React.createClass({
     }
     return <div className={className} onClick={this.props.store.actions.setActiveView.bind(this.props.store.actions)}>
       {this.fromMix('top')}
-      {ListItem({
-        store: this.props.store,
-        plugins: this.props.nodePlugins,
-        bodies: bodies,
-        isRoot: true,
-        id: this.state.root
-      })}
+      <ListItem
+        store={this.props.store}
+        plugins={this.props.nodePlugins}
+        bodies={bodies}
+        isRoot={true}
+        id={this.state.root}
+      />
       {this.fromMix('bottom')}
     </div>
   },

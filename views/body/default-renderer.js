@@ -11,7 +11,7 @@ renderer.link = function (href, title, text) {
 
 marked.setOptions({
   gfm: true,
-  sanitize: true,
+  // sanitize: true,
   tables: true,
   breaks: true,
   pedantic: false,

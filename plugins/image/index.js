@@ -2,6 +2,7 @@
 var React = require('react/addons')
   , cx = React.addons.classSet
   , PT = React.PropTypes
+  , classnames = require('classnames')
   , DefaultEditor = require('../../views/body/default-editor')
   , DefaultRenderer = require('../../views/body/default-renderer')
   , Uploader = require('./uploader')
@@ -13,11 +14,56 @@ var ImageBase = React.createClass({
     onUpload: PT.func,
     onClick: PT.func,
   },
+
+  getInitialState() {
+    return {dragging: false}
+  },
+
+  _dragOver(e) {
+    e.preventDefault()
+    if (!this.state.dragging) {
+      this.setState({dragging: true})
+    }
+  },
+
+  _dragEnd(e) {
+    e.preventDefault()
+    this.setState({dragging: false})
+  },
+
+  _drop(e) {
+    e.preventDefault()
+    this.setState({dragging: false})
+    let files = e.dataTransfer.files
+    if (!files.length) return
+    const file = files[0]
+    if (!file.type.match(/^image\//)) {
+      return console.warn('not an image file')
+    }
+    getSrc(file, this.props.onUpload)
+  },
+
   render: function () {
     if (!this.props.src) {
-      return <Uploader onUpload={this.props.onUpload}/>
+      return <div
+          className={classnames('ImageBase', this.state.dragging && 'ImageBase-dragging')}
+          onClick={this.props.onClick} 
+          onDragEnter={this._dragOver}
+          onDragOver={this._dragOver}
+          onDragLeave={this._dragEnd}
+          onDragEnd={this._dragEnd}
+          onDrop={this._drop}>
+        <Uploader onUpload={this.props.onUpload}/>
+      </div>
     }
-    return <div onClick={this.props.onClick} className='ImageBase'>
+    return <div
+        className={classnames('ImageBase', this.state.dragging && 'ImageBase-dragging')}
+        onClick={this.props.onClick} 
+        onDragEnter={this._dragOver}
+        onDragOver={this._dragOver}
+        onDragLeave={this._dragEnd}
+        onDragEnd={this._dragEnd}
+        onDrop={this._drop}>
       <img src={this.props.src} title={this.props.title}/>
       <div onClick={e => {
         e.stopPropagation()

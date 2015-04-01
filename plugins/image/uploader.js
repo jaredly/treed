@@ -2,6 +2,7 @@
 var React = require('react/addons')
   , cx = React.addons.classSet
   , PT = React.PropTypes
+  , classnames = require('classnames')
   , getSrc = require('./get-src')
 
 var Uploader = React.createClass({

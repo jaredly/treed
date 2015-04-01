@@ -49,7 +49,7 @@ module.exports = {
         return <div className={cx({
           'm_Todo': true,
           'm_Todo-done': node.done,
-        })} onClick={actions.toggleTodoDone.bind(actions, node.id)}/>
+        })} key="todo" onClick={actions.toggleTodoDone.bind(actions, node.id)}/>
       }
     },
   },
