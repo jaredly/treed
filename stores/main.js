@@ -190,13 +190,13 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
 
   events: {
     nodeChanged: (id) => 'node:' + id,
-    nodeViewChanged: function (id) { return this.nodeChanged(id) + ':view:' + this.vid },
+    nodeViewChanged(id) { return this.nodeChanged(id) + ':view:' + this.vid },
 
     activeViewChanged: () => 'active-view',
-    activeNodeChanged: function () { return 'active-node:' + this.vid },
-    rootChanged: function () { return 'root:' + this.vid },
-    modeChanged: function () { return 'mode:' + this.vid },
-    activeModeChanged: function () { return 'mode:active' },
+    activeNodeChanged() { return 'active-node:' + this.vid },
+    rootChanged() { return 'root:' + this.vid },
+    modeChanged() { return 'mode:' + this.vid },
+    activeModeChanged() { return 'mode:active' },
     changed: () => 'changed'
   },
 

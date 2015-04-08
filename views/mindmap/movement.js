@@ -4,7 +4,8 @@ var movement = module.exports = {
     if (nodes[id].children && nodes[id].children.length && (!nodes[id].collapsed || id === root)) {
       return nodes[id].children[0]
     }
-    var up = down = id
+    let up = id
+    let down = id
     while (up || down) {
       if (down) {
         if (nodes[down].children && nodes[down].children.length && !nodes[down].collapsed) {
@@ -26,7 +27,7 @@ var movement = module.exports = {
   // TODO: refactor below and nextSiblingOrCousin to remove duplicate logic.
   below: function (id, root, nodes) {
     if (id === root) return
-    var pid = nodes[id].parent
+    let pid = nodes[id].parent
       , p = nodes[pid]
       , ch = p.children
       , ix = ch.indexOf(id)
@@ -149,12 +150,11 @@ var movement = module.exports = {
 
   nextCousin: function (id, root, nodes) {
     if (id === root) return
-    var aunt
+    let aunt
       , degree = 1
       , parent = nodes[id].parent
     while (!aunt) {
-      var pid = nodes[parent].parent
-        , ch = nodes[parent].children
+      let ch = nodes[parent].children
         , ix = ch.indexOf(parent) + 1
       while (ix < ch.length && !(nodes[ch[ix]].children &&
                                      !nodes[ch[ix]].collapsed &&
@@ -169,7 +169,7 @@ var movement = module.exports = {
       degree += 1
       parent = nodes[parent].parent
     }
-    cousin = aunt
+    let cousin = aunt
     for (; degree > 0 && nodes[cousin].children && nodes[cousin].children.length; degree--) {
       cousin = nodes[cousin].children[0]
     }

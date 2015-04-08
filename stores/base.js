@@ -1,4 +1,6 @@
 
+import async from 'async'
+
 var Promise = require('bluebird')
 
 module.exports = BaseStore
@@ -13,23 +15,33 @@ function BaseStore(options) {
     }
   }
 
-  if (options.plugins) {
-    options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
-  }
-  this.allPlugins = options.allPlugins
 }
 
 BaseStore.prototype = {
   actions: {},
 
+  init(plugins, done) {
+    this.allPlugins = plugins || []
+    if (!plugins) return done()
+    const tasks = plugins
+      .map(plugin => plugin.store)
+      .filter(plugin => !!plugin)
+      .map(plugin => this.addPlugin.bind(this, plugin))
+
+    async.parallel(tasks, done)
+    /*
+    if (options.plugins) {
+      options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
+    }
+    */
+
+  },
+
   teardown: function () {
     this._plugin_teardowns.forEach(fn => fn(this))
   },
 
-  addPlugin: function (plugin, allPlugins) {
-    if (plugin.init) {
-      plugin.init(this) // TODO async?
-    }
+  addPlugin: function (plugin, done) {
     if (plugin.teardown) {
       this._plugin_teardowns.push(plugin.teardown)
     }
@@ -38,7 +50,7 @@ BaseStore.prototype = {
       , actions
     if (plugin.actions) {
       if ('function' === typeof plugin.actions) {
-        actions = plugin.actions(allPlugins)
+        actions = plugin.actions(this.allPlugins)
       } else {
         actions = plugin.actions
       }
@@ -52,6 +64,14 @@ BaseStore.prototype = {
         this[name] = plugin.extend[name]
       }
     }
+
+    if (plugin.init) {
+      plugin.init(this) // TODO async?
+    } else if (plugin.asyncInit) {
+      return plugin.asyncInit(this, done)
+    }
+
+    done()
   },
 
   on: function (changes, listener) {

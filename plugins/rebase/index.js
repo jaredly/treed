@@ -1,4 +1,6 @@
 
+import React from 'react'
+
 var Breadcrumb = require('./breadcrumb')
 
 module.exports = {

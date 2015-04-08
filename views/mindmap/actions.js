@@ -23,6 +23,7 @@ module.exports = {
       }
     }
     this.executeCommand('create', pos, (err, cmd) => {
+      if (err) return console.warn('failed to create', err) // TODO UI?
       this.edit(cmd.id)
     })
   },
@@ -54,11 +55,13 @@ module.exports = {
         },
         'create', pos,
         (err, cmd) => {
+          if (err) return console.warn('failed to create', err) // TODO UI?
           this.editStart(cmd.id)
         }
       )
     } else {
       this.executeCommand('create', pos, (err, cmd) => {
+      if (err) return console.warn('failed to create', err) // TODO UI?
         this.edit(cmd.id)
       })
     }

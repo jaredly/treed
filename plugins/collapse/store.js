@@ -57,6 +57,7 @@ module.exports = {
 
     toggleCollapseDeep: function (id) {
       if (!arguments.length) id = this.view.active
+      let ids
       if (this.view.mode === 'visual') {
         ids = this.view.selection
       } else {
@@ -69,7 +70,7 @@ module.exports = {
         if (!node.children.length) return []
         return [].concat.apply([id], node.children.map(allParents))
       }
-      pedigrees = ids.map(allParents)
+      let pedigrees = ids.map(allParents)
       var commands = pedigrees.map((ids) => {
         return ['setMany', {ids: ids, attr: 'collapsed', values: !this.db.nodes[ids[0]].collapsed}]
       })

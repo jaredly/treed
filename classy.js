@@ -37,12 +37,16 @@ class Treed {
 
         var store = this.store = new MainStore({
           actions: options.actions,
-          plugins: pluginType(this.options.plugins, 'store'),
-          allPlugins: this.options.plugins,
+          // plugins: pluginType(this.options.plugins, 'store'),
+          // allPlugins: this.options.plugins,
           db: db
         })
-        this.keyManager.attach(store)
-        resolve(store)
+
+        store.init(this.options.plugins, (err) => {
+          if (err) return reject(err)
+          this.keyManager.attach(store)
+          resolve(store)
+        })
       })
     })
   }
@@ -50,6 +54,7 @@ class Treed {
   on (what, handler) {
     this.store.on(what, handler)
   }
+
   off (what, handler) {
     this.store.on(what, handler)
   }

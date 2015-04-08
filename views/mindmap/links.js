@@ -1,6 +1,5 @@
 var React = require('react/addons')
-  , cx = React.addons.classSet
-  , PT = React.PropTypes
+  // , PT = React.PropTypes
 
 function line(obj) {
   var {x1, y1, x2, y2} = obj

@@ -4,9 +4,8 @@ module.exports = function calcPos(root, nodes, xsep, ysep, cellHeight, heights) 
 
   var {boxes, height, width} = calcBoxes(tree, cellHeight, xsep, 1, ysep)
   var links = []
-  var rbox = boxes[root]
-    , rx = 0//rbox.x
-    , ry = 0//rbox.y
+  var rx = 0
+    , ry = 0
   relativize(tree, rx, ry)
 
   return {boxes, links, height, width}
@@ -55,13 +54,13 @@ function calcBoxes(data, cellHeight, xsep, pxscale, ysep) {
     return a.width + b.width + (xsep || 0)
   });
   var nodes = t.nodes(data)
-  var links = t.links(nodes)
+  // var links = t.links(nodes)
 
   var {xscale, ydepth} = findScale(data, xsep)
   var xs = pxscale
     , ys = cellHeight
     , height = ydepth * (cellHeight + ysep || 0)
-    , width = pxscale / xscale 
+    , width = pxscale / xscale
   //console.log(xscale, ydepth)
 
   var boxes = {}
@@ -78,7 +77,7 @@ function calcBoxes(data, cellHeight, xsep, pxscale, ysep) {
   return {boxes, width, height}
 }
 
-function findScale(node, sep) {
+function findScale(rootNode, sep) {
   var min = null
     , maxdepth = 1
   function getWidth(node, depth) {
@@ -98,7 +97,7 @@ function findScale(node, sep) {
       getWidth(node.children[node.children.length-1], depth + 1)
     }
   }
-  getWidth(node, 1)
+  getWidth(rootNode, 1)
   return {xscale: min, ydepth: maxdepth}
 }
 

@@ -53,30 +53,30 @@ var Movable = React.createClass({
   ],
 
   componentWillReceiveProps: function (nextProps) {
-        var aid = this.state.activeNode
-          , pos = nextProps.positions.boxes[aid]
-        if (!pos) return
-        var nx = this.state.left + pos.x
-          , ny = this.state.top + pos.y
-          , margin = 30
-          , dx = 0
-          , dy = 0
-        if (nx - margin < 0) {
-          dx -= nx - margin
-        }
-        if (ny - margin < 0) {
-          dy -= ny - margin
-        }
-        if (nx + pos.width + margin > this.props.width) {
-          dx -= nx + pos.width + margin - this.props.width
-        }
-        if (ny + pos.height + margin > this.props.height) {
-          dy -= ny + pos.height + margin - this.props.height
-        }
-        this.setState( {
-          left: this.state.left + dx,
-          top: this.state.top + dy,
-        })
+    var aid = this.state.activeNode
+      , pos = nextProps.positions.boxes[aid]
+    if (!pos) return
+    var nx = this.state.left + pos.x
+      , ny = this.state.top + pos.y
+      , margin = 30
+      , dx = 0
+      , dy = 0
+    if (nx - margin < 0) {
+      dx -= nx - margin
+    }
+    if (ny - margin < 0) {
+      dy -= ny - margin
+    }
+    if (nx + pos.width + margin > this.props.width) {
+      dx -= nx + pos.width + margin - this.props.width
+    }
+    if (ny + pos.height + margin > this.props.height) {
+      dy -= ny + pos.height + margin - this.props.height
+    }
+    this.setState( {
+      left: this.state.left + dx,
+      top: this.state.top + dy,
+    })
     /*
     var aid = this.props.store.view.active
       , ppos = this.props.positions.boxes[aid]

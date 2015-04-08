@@ -13,6 +13,8 @@ var KeyManager = require('./key-manager')
 var ListView = require('./views/list')
 var MainStore = require('./stores/main')
 
+console.warn('DEPRECATED! Please switch to treed/classy')
+
 function flattenKeySections(keys) {
   var ret = {}
   for (var name in keys) {

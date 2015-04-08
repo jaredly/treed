@@ -154,6 +154,19 @@
   box-sizing: border-box;
   background-color: transparent;
 
+  blockquote {
+    border-left: 5px solid #ccc;
+    padding-left: 10px;
+    margin: 10px 0;
+
+    > p:first-child {
+      margin-top: 0;
+    }
+    > p:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   > *:first-child {
     margin-top: 0;
   }
