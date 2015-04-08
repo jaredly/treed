@@ -166,9 +166,7 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
   },
 
   // just the `store` part of the plugin
-  addPlugin: function (plugin, allPlugins) {
-    BaseStore.prototype.addPlugin.call(this, plugin, allPlugins)
-
+  addPlugin: function (plugin, config, done) {
     if (plugin.getters) {
       for (var name in plugin.getters) {
         this.getters[name] = plugin.getters[name]
@@ -182,6 +180,8 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
     if (plugin.commands) {
       this.cmds.addCommands(plugin.commands)
     }
+
+    BaseStore.prototype.addPlugin.call(this, plugin, config, done)
   },
 
   viewAction: function (name, id, ...args) {

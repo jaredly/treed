@@ -24,7 +24,7 @@ class Treed {
 
   initStore(data, options) {
     var options = extend({
-      PL: require('./pl/mem'),
+      PL: require('./pl/mem'), // TODO make it mandatory to have a PL? and remove this dep
       pl: null,
       actions: null,
     }, options)
@@ -42,7 +42,7 @@ class Treed {
           db: db
         })
 
-        store.init(this.options.plugins, (err) => {
+        store.init(this.options.plugins, this.options.pluginConfig, (err) => {
           if (err) return reject(err)
           this.keyManager.attach(store)
           resolve(store)

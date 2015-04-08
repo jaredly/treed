@@ -20,28 +20,23 @@ function BaseStore(options) {
 BaseStore.prototype = {
   actions: {},
 
-  init(plugins, done) {
+  init(plugins, pluginConfig, done) {
     this.allPlugins = plugins || []
     if (!plugins) return done()
     const tasks = plugins
       .map(plugin => plugin.store)
       .filter(plugin => !!plugin)
-      .map(plugin => this.addPlugin.bind(this, plugin))
+      .map(plugin => this.addPlugin.bind(this, plugin, pluginConfig && pluginConfig[plugin.id]))
 
     async.parallel(tasks, done)
-    /*
-    if (options.plugins) {
-      options.plugins.forEach((plugin) => this.addPlugin(plugin, options.allPlugins))
-    }
-    */
-
   },
 
   teardown: function () {
     this._plugin_teardowns.forEach(fn => fn(this))
   },
 
-  addPlugin: function (plugin, done) {
+
+  addPlugin: function (plugin, config, done) {
     if (plugin.teardown) {
       this._plugin_teardowns.push(plugin.teardown)
     }
@@ -66,9 +61,22 @@ BaseStore.prototype = {
     }
 
     if (plugin.init) {
-      plugin.init(this) // TODO async?
+      plugin.init(this, config) // TODO async?
     } else if (plugin.asyncInit) {
-      return plugin.asyncInit(this, done)
+      let timeout = setTimeout(() => {
+        if (timeout !== null) {
+          done(new Error('Plugin failed to initialize within 5 seconds'))
+          timeout = null
+        }
+      }, 10000)
+      return plugin.asyncInit(this, config, (err) => {
+        if (timeout === null) {
+          return
+        }
+        clearTimeout(timeout)
+        timeout = null
+        done(err)
+      })
     }
 
     done()
