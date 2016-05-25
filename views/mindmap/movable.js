@@ -1,5 +1,5 @@
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
 
   , Listener = require('../../listener')
@@ -114,7 +114,7 @@ var Movable = React.createClass({
   },
 
   _onMouseDown: function (e) {
-    if (e.target !== this.getDOMNode()) return
+    if (e.target !== this._node) return
     // e.preventDefault()
     e.stopPropagation()
     this.props.store.actions.setActiveView()
@@ -151,6 +151,7 @@ var Movable = React.createClass({
     if (this.state.moving) style.transition = 'none'
     var positions = this.props.positions
     return <div
+        ref={n => this._node = n}
         onMouseDown={this._onMouseDown}
         className='MindmapMovable'>
       <div

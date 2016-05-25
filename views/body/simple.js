@@ -1,6 +1,7 @@
 
+import {findDOMNode} from 'react-dom'
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
   , ensureInView = require('../../util/ensure-in-view')
   , DefaultEditor = require('./default-editor')
@@ -77,19 +78,19 @@ var SimpleBody = React.createClass({
 
   componentDidMount: function () {
     if (!this.props.editState) return
-    ensureInView(this.refs.text.getDOMNode())
+    ensureInView(findDOMNode(this.refs.text))
     this.refs.text.focus(this.props.editState)
   },
 
   componentDidUpdate: function (prevProps) {
     if (!prevProps.editState && this.props.editState) {
-      ensureInView(this.refs.text.getDOMNode())
+      ensureInView(findDOMNode(this.refs.text))
       this.refs.text.focus(this.props.editState)
     }
   },
 
   editor: function () {
-    var Ctrl = this.props.editor || DefaultEditor
+    var Ctrl = this.props.editor || props => <DefaultEditor {...props} />
     const props = {
       ref: "text",
       value: this.state.content,
@@ -121,8 +122,9 @@ var SimpleBody = React.createClass({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
+    var child = this.props.editState ? this.editor() : this.renderer() 
     return <div className={className} onContextMenu={this._onContextMenu}>
-      {this.props.editState ? this.editor() : this.renderer()}
+      {child}
     </div>
   }
 })

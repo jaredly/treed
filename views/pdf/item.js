@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var SimpleBody = require('../body/simple')
@@ -56,7 +56,7 @@ var TreeItem = React.createClass({
 
   componentDidMount: function () {
     if (this.state.isActive && this.state.isActiveView) {
-      ensureInView(this.refs.body.getDOMNode())
+      ensureInView(this.refs.body)
     }
   },
 
@@ -66,11 +66,11 @@ var TreeItem = React.createClass({
       this._plugin_updates.map((fn) => fn.call(this, prevProps, prevState))
     }
     if (this.state.isActive && this.state.isActiveView && !prevState.isActive) {
-      ensureInView(this.refs.body.getDOMNode())
+      ensureInView(this.refs.body)
     }
     if (window.DEBUG_UPDATE) {
       // DEBUG STUFF
-      var n = this.getDOMNode()
+      var n = this._node
       n.style.outline = '1px solid red'
       setTimeout(function () {
         n.style.outline = ''
@@ -125,7 +125,7 @@ var TreeItem = React.createClass({
         if (classes) className += ' ' + classes
       })
     }
-    return <div className={className}>
+    return <div ref={n => this._node = n} className={className}>
       <div className='TreeItem_head'>
         {this.state.node.children.length ?
           <a name={this.state.node.id}/> : null}

@@ -1,13 +1,13 @@
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 var PT = React.PropTypes
 
 var FlexPanes = React.createClass({
   propTypes: {
     flex: PT.object,
     onChange: PT.func.isRequired,
-    main: PT.renderable,
-    second: PT.renderable,
+    main: PT.node,
+    second: PT.node,
   },
 
   getInitialState: function () {
@@ -22,7 +22,7 @@ var FlexPanes = React.createClass({
     this.setState({dragging: true})
   },
   _onDrag: function (e) {
-    var second = this.refs.second.getDOMNode().getBoundingClientRect()
+    var second = this.refs.second.getBoundingClientRect()
     this.setState({
       tmpSize: this.props.flex.pos === 'bottom' ?
         second.bottom - e.clientY :

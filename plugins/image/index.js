@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
   , classnames = require('classnames')
   , DefaultEditor = require('../../views/body/default-editor')

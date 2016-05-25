@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 
 var TableEditor = React.createClass({
   componentDidUpdate: function () {
@@ -11,7 +11,7 @@ var TableEditor = React.createClass({
   },
   reFocus: function () {
     if (!this.state.editing) return
-    this.getCurrentCell().getDOMNode().focus()
+    this.getCurrentCell().focus()
   },
   getInitialState: function () {
     return {
@@ -59,7 +59,7 @@ var TableEditor = React.createClass({
         return this.startEditing(r + 1, 0)
       }
     } else if (e.key === 'Escape') {
-      return this.getCurrentCell().getDOMNode().blur()
+      return this.getCurrentCell().blur()
     }
   },
   makeCell: function (val, r, c) {

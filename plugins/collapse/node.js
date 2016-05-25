@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 
 var slide = require('../../util/slide')
 
@@ -23,7 +23,7 @@ module.exports = {
     if (!this.refs || !this.refs.children) return
     if (this._prev_collapsed === c) return
     this._prev_collapsed = c
-    var el = this.refs.children.getDOMNode()
+    var el = this.refs.children
     if (c) {
       slide.up(el)
     } else {

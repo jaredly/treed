@@ -1,5 +1,5 @@
 
-var levelup = require('levelup')
+var levelup = window.levelup // require('levelup')
   , sublevel = require('sublevel')
   , async = require('async')
 

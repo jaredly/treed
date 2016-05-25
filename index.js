@@ -3,6 +3,7 @@
  * better off going custom.
  */
 
+import {render} from 'react-dom'
 var React = require('react')
 
 var extend = require('./util/extend')
@@ -114,7 +115,7 @@ function initView(el, store, keyManager, plugins, options, done) {
   var config = viewConfig(store, plugins, options)
   keyManager.addView(config.view.id, config.keys)
 
-  React.render(options.View(config.props), el, function () {
+  render(options.View(config.props), el, function () {
     done(config.view)
   })
 }

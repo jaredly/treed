@@ -1,4 +1,5 @@
 
+import {render} from 'react-dom'
 var React = require('react')
   , Treed = require('./classy')
   , ListView = require('./views/list')
@@ -32,7 +33,7 @@ Treed.prototype.startView = function (el, options) {
     var View = options.View || ListView
       , props = this.addView(viewOptions)
 
-    React.render(<View {...props}/>, el, function (err) {
+    render(<View {...props}/>, el, function (err) {
       if (err) return reject(err)
       resolve(props.store)
     })

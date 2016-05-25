@@ -1,5 +1,5 @@
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
 
   , Listener = require('../../listener')
@@ -85,14 +85,14 @@ var Mindmap = React.createClass({
     }
     var {height, width} = this.props
     if (this.isMounted()) {
-      var box = this.getDOMNode().getBoundingClientRect()
+      var box = this._node.getBoundingClientRect()
       height = box.height
       width = box.width
     }
     return <div className={cx({
         'Mindmap': true,
         'Mindmap-active': this.state.isActive,
-    })}>
+    })} ref={n => this._node = n}>
       <Movable
         height={height}
         width={width}

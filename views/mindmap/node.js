@@ -1,5 +1,5 @@
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
   , SimpleBody = require('../body/simple')
 
@@ -62,12 +62,12 @@ var MindmapNode = React.createClass({
   },
 
   componentDidMount: function () {
-    this.props.onHeight(this.props.id, this.getDOMNode().getBoundingClientRect().height)
+    this.props.onHeight(this.props.id, this._node.getBoundingClientRect().height)
     this.setState({ticked: true})
   },
 
   componentDidUpdate: function (prevProps, prevState) {
-    this.props.onHeight(this.props.id, this.getDOMNode().getBoundingClientRect().height)
+    this.props.onHeight(this.props.id, this._node.getBoundingClientRect().height)
     if (this.state.collapsed !== prevState.collapsed) {
       this.props.reCalc()
     }
@@ -127,7 +127,7 @@ var MindmapNode = React.createClass({
       'MindmapNode-collapsed': !this.props.isRoot && this.state.node.children && this.state.node.children.length && this.state.node.collapsed,
     })
     var body = this.props.bodies[this.state.node.type] || this.props.bodies.default
-    return <div style={style} className={cls}>
+    return <div style={style} ref={n => this._node = n} className={cls}>
       {this.makeLine()}
       <div onClick={this._onClick} className='MindmapNode_main'>
         <div className='MindmapNode_collapser' onClick={this._toggleCollapse}/>

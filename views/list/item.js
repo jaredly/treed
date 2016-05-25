@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var SimpleBody = require('../body/simple')
@@ -73,7 +73,7 @@ var TreeItem = React.createClass({
 
   componentDidMount: function () {
     if (this.state.isActive && this.state.isActiveView) {
-      ensureInView(this.refs.body.getDOMNode())
+      ensureInView(this.refs.body)
     }
   },
 
@@ -85,11 +85,11 @@ var TreeItem = React.createClass({
     if (this.state.isActive &&
         this.state.isActiveView &&
         (!prevState.isActive || prevProps.index !== this.props.index)) {
-      ensureInView(this.refs.body.getDOMNode())
+      ensureInView(this.refs.body)
     }
     if (window.DEBUG_UPDATE) {
       // DEBUG STUFF
-      var n = this.getDOMNode()
+      var n = this._node
       n.style.outline = '1px solid red'
       setTimeout(function () {
         n.style.outline = ''
@@ -154,7 +154,7 @@ var TreeItem = React.createClass({
         if (classes) className += ' ' + classes
       })
     }
-    return <div className={className} onContextMenu={this._onContextMenu}>
+    return <div className={className} ref={n => this._node = n} onContextMenu={this._onContextMenu}>
       <div className='TreeItem_head'>
         {this.fromMix('left')}
         {this.body()}

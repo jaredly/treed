@@ -24,9 +24,15 @@ BaseStore.prototype = {
     this.allPlugins = plugins || []
     if (!plugins) return done()
     const tasks = plugins
-      .map(plugin => plugin.store)
-      .filter(plugin => !!plugin)
-      .map(plugin => this.addPlugin.bind(this, plugin, pluginConfig && pluginConfig[plugin.id]))
+      // .map(plugin => plugin.store)
+      // .filter(plugin => !!plugin)
+      .map(plugin =>
+           plugin.store &&
+             this.addPlugin.bind(
+              this, plugin.store,
+              pluginConfig && pluginConfig[plugin.id]
+            ))
+      .filter(fn => !!fn)
 
     async.parallel(tasks, done)
   },

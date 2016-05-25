@@ -14,7 +14,7 @@ var MindmapLinks = React.createClass({
     // this.renderCanvas()
   },
   renderCanvas() {
-    var ctx = this.getDOMNode().getContext('2d')
+    var ctx = this._node.getContext('2d')
     ctx.clearRect(0, 0, this.props.width, this.props.height)
     ctx.strokeStyle='red'
     ctx.lineWidth = 10
@@ -32,7 +32,7 @@ var MindmapLinks = React.createClass({
   },
 
   renderSVG() {
-    return <svg className='MindmapLinks'>
+    return <svg ref={n => this._node = n} className='MindmapLinks'>
       {this.props.links.map(link =>
         <Link
           key={link.id}

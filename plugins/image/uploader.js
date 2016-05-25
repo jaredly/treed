@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-  , cx = React.addons.classSet
+  , cx = require('classnames')
   , PT = React.PropTypes
   , classnames = require('classnames')
   , getSrc = require('./get-src')
@@ -11,7 +11,7 @@ var Uploader = React.createClass({
   },
 
   _onClick: function () {
-    this.refs.file.getDOMNode().click()
+    this.refs.file.click()
   },
 
   _onChange: function (e) {

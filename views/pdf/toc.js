@@ -1,6 +1,6 @@
 
 var React = require('react/addons')
-var cx = React.addons.classSet
+var cx = require('classnames')
 var PT = React.PropTypes
 var ensureInView = require('../../util/ensure-in-view')
 var SimpleBody = require('../body/simple')

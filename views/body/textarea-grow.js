@@ -4,7 +4,7 @@ var React = require('react')
 var Textarea = React.createClass({
 
   getCursorSplit: function () {
-    var a = this.refs.area.getDOMNode()
+    var a = this.refs.area
     return a.selectionEnd
   },
 
@@ -14,7 +14,7 @@ var Textarea = React.createClass({
   // 2 selection not collapsed
   // 3 somewhere in the middle
   getCursorPos: function () {
-    var a = this.refs.area.getDOMNode()
+    var a = this.refs.area
     if (a.selectionStart !== a.selectionEnd) {
       return 2
     }
@@ -29,8 +29,8 @@ var Textarea = React.createClass({
   // 1 == there's only one line
   // 2 == middle somewhere
   getCursorLine: function () {
-    var s = this.refs.shadow.getDOMNode()
-      , a = this.refs.area.getDOMNode()
+    var s = this.refs.shadow
+      , a = this.refs.area
       , style = window.getComputedStyle(s)
       , lineHeight = this._fontSize / .875
     if (s.getBoundingClientRect().height - parseInt(style.paddingTop) - parseInt(style.paddingBottom) <= lineHeight * 1.5) {
@@ -58,8 +58,8 @@ var Textarea = React.createClass({
   },
 
   resize: function () {
-    var shadow = this.refs.shadow.getDOMNode()
-      , area = this.refs.area.getDOMNode()
+    var shadow = this.refs.shadow
+      , area = this.refs.area
     var style = window.getComputedStyle(shadow)
     this._fontSize = parseInt(style.fontSize, 10)
     area.style.height = style.height
@@ -82,16 +82,16 @@ var Textarea = React.createClass({
   },
 
   blur: function () {
-    var inp = this.refs.area.getDOMNode()
+    var inp = this.refs.area
     inp.blur()
   },
 
   isFocused: function () {
-    return this.refs.area.getDOMNode() === document.activeElement
+    return this.refs.area === document.activeElement
   },
 
   focus: function (at) {
-    var inp = this.refs.area.getDOMNode()
+    var inp = this.refs.area
       , pos = 0
     if (at === 'end' || !at) pos = inp.value.length
     if ('number' === typeof at) {
