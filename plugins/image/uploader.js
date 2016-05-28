@@ -11,7 +11,9 @@ var Uploader = React.createClass({
   },
 
   _onClick: function () {
-    this.refs.file.click()
+    this.refs.file.value = '';
+    this.refs.file.onchange = this._onChange;
+    this.refs.file.click();
   },
 
   _onChange: function (e) {
@@ -23,7 +25,7 @@ var Uploader = React.createClass({
   render: function () {
     return <div className='Uploader'>
       <h3 onClick={this._onClick}>Click to upload an image</h3>
-      <input type="file" ref="file" onChange={this._onChange} style={{display: 'none'}}/>
+      <input type="file" ref="file" style={{display: 'none'}} />
     </div>
   },
 })

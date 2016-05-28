@@ -71,13 +71,13 @@ module.exports = {
     // move stuff
     'indent': {
       normal: 'tab, shift+alt+l, shift+alt+right, shift+.',
-      insert: 'tab, shift+alt+right',
+      insert: 'tab',
       visual: 'tab, shift+alt+l, shift+alt+right, shift+.',
     },
 
     'dedent': {
       normal: 'shift+tab, shift+alt+h, shift+alt+left, shift+comma',
-      insert: 'shift+tab, shift+alt+left',
+      insert: 'shift+tab',
       visual: 'shift+tab, shift+alt+h, shift+alt+left, shift+comma',
     },
 
