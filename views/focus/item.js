@@ -78,15 +78,15 @@ var FocusItem = React.createClass({
   body: function () {
     var body = this.props.bodies[this.state.node.type] || this.props.bodies['default']
     return <div ref='body' className='focus_item_body' style={{flex: 1}}>
-      {SimpleBody({
-        editor: body.editor,
-        renderer: body.renderer,
-        node: this.state.node,
-        isActive: true,
-        editState: this.state.editState,
-        actions: this.props.store.actions,
-        store: this.props.store,
-      })}
+      {<SimpleBody
+        editor={body.editor}
+        renderer={body.renderer}
+        node={this.state.node}
+        isActive={true}
+        editState={this.state.editState}
+        actions={this.props.store.actions}
+        store={this.props.store}
+      />}
     </div>
   },
 

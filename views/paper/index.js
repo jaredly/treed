@@ -63,14 +63,14 @@ var PaperView = React.createClass({
     }
     return <div className={className}>
       {this.fromMix('top')}
-      {PaperItem({
-        depth: 0,
-        store: this.props.store,
-        plugins: this.props.nodePlugins,
-        bodies: bodies,
-        isRoot: true,
-        id: this.state.root
-      })}
+      {<PaperItem
+        depth={0}
+        store={this.props.store}
+        plugins={this.props.nodePlugins}
+        bodies={bodies}
+        isRoot={true}
+        id={this.state.root}
+      />}
       {this.fromMix('bottom')}
     </div>
   },

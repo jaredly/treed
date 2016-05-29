@@ -68,12 +68,12 @@ var TreeView = React.createClass({
         }
       }
     }
-    return FocusItem({
-      store: this.props.store,
-      plugins: this.props.nodePlugins,
-      bodies: bodies,
-      id: this.state.root
-    })
+    return <FocusItem
+      store={this.props.store}
+      plugins={this.props.nodePlugins}
+      bodies={bodies}
+      id={this.state.root}
+    />
   },
 })
 

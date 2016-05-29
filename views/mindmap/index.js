@@ -84,7 +84,7 @@ var Mindmap = React.createClass({
       }
     }
     var {height, width} = this.props
-    if (this.isMounted()) {
+    if (this._node) {
       var box = this._node.getBoundingClientRect()
       height = box.height
       width = box.width

@@ -110,15 +110,15 @@ var PaperItem = React.createClass({
   render: function () {
     if (this.state.node.children.length) {
       var children = this.state.node.children.map((id, i) =>
-        PaperItem({
-          depth: this.props.depth + 1,
-          plugins: this.props.plugins,
-          store: this.props.store,
-          bodies: this.props.bodies,
-          index: i,
-          key: id,
-          id: id,
-        }))
+        <PaperItem
+          depth={this.props.depth + 1}
+          plugins={this.props.plugins}
+          store={this.props.store}
+          bodies={this.props.bodies}
+          index={i}
+          key={id}
+          id={id}
+        />)
       return <div className='section'>
         {this.header()}
         {children}
@@ -126,6 +126,21 @@ var PaperItem = React.createClass({
     }
     var content = this.state.node.content
     if (!content) return <p/>
+    if (this.state.node.type === 'image') {
+      return <div style={{textAlign: 'center'}}>
+        <img
+          src={this.state.node.imageSrc}
+          style={{
+            boxShadow: '0 0 5px #ccc',
+            margin: 20,
+            padding: 5,
+          }}
+        />
+        <p dangerouslySetInnerHTML={{
+          __html: marked(content)
+        }}/>
+      </div>
+    }
     if (this.state.node.type === 'ipython') {
       content = '```\n' + content + '\n```'
     }
