@@ -1,6 +1,6 @@
 
 var Promise = require('bluebird')
-var React = require('react/addons')
+var React = require('react')
 var PT = React.PropTypes
 
 module.exports = function (options) {

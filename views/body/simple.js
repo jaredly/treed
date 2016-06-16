@@ -1,6 +1,6 @@
 
 import {findDOMNode} from 'react-dom'
-var React = require('react/addons')
+var React = require('react')
   , cx = require('classnames')
   , PT = React.PropTypes
   , ensureInView = require('../../util/ensure-in-view')

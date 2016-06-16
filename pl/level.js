@@ -3,19 +3,17 @@ var levelup = window.levelup // require('levelup')
   , sublevel = require('sublevel')
   , async = require('async')
 
-module.exports = Level
+module.exports = class Level {
+  constructor(backend, opts) {
+    this.prefix = (opts && opts.prefix || 'ixdb') + ':'
+    this._db = sublevel(levelup(this.prefix, {
+      db: backend,
+      valueEncoding: 'json'
+    }))
+    this._subs = {}
+  }
 
-function Level(backend, opts) {
-  this.prefix = (opts && opts.prefix || 'ixdb') + ':'
-  this._db = sublevel(levelup(this.prefix, {
-    db: backend,
-    valueEncoding: 'json'
-  }))
-  this._subs = {}
-}
-
-Level.prototype = {
-  findAll: function (type, done) {
+  findAll(type, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
@@ -24,16 +22,16 @@ Level.prototype = {
       .on('data', (data) => nodes.push(data))
       .on('error', (err) => done(err))
       .on('end', () => done(null, nodes))
-  },
+  }
 
-  save: function (type, id, value, done) {
+  save(type, id, value, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
     this._subs[type].put(id, value, done)
-  },
+  }
 
-  set: function (type, id, attr, value, done) {
+  set(type, id, attr, value, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
@@ -42,9 +40,9 @@ Level.prototype = {
       val[attr] = value
       this._subs[type].put(id, val, done)
     })
-  },
+  }
 
-  batchSave: function (type, nodes, done) {
+  batchSave(type, nodes, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
@@ -53,9 +51,9 @@ Level.prototype = {
       ops.push({type: 'put', key: id, value: nodes[id]})
     }
     this._subs[type].batch(ops, done)
-  },
+  }
 
-  batchSet: function (type, attr, ids, value, done) {
+  batchSet(type, attr, ids, value, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
@@ -76,21 +74,9 @@ Level.prototype = {
       console.log('batch-set', ops)
       this._subs[type].batch(ops, done)
     })
-    /*
-    this._subs[type].
-    if (Array.isArray(value)) {
-      for (var i=0; i<ids.length; i++) {
-        this.set(type, ids[i], attr, value[i])
-      }
-    } else {
-      for (var i=0; i<ids.length; i++) {
-        this.set(type, ids[i], attr, value)
-      }
-    }
-    */
-  },
+  }
 
-  update: function (type, id, update, done) {
+  update(type, id, update, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
@@ -101,14 +87,14 @@ Level.prototype = {
       }
       this._subs[type].put(id, val, done)
     })
-  },
+  }
 
-  remove: function (type, id, done) {
+  remove(type, id, done) {
     if (!this._subs[type]) {
       this._subs[type] = this._db.sublevel(type)
     }
     this._subs[type].del(id, done)
-  },
+  }
 }
 
 

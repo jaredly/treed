@@ -8,6 +8,9 @@ module.exports = Db
 function Db(pl, plugins) {
   this.nodes = {}
   this.pl = pl
+  if (pl.setupTypes) {
+    pl.setupTypes(['node'])
+  }
   this.plugins = plugins || []
   this.addNewNodeAttrs = []
   plugins.forEach((plugin) => {
@@ -178,18 +181,22 @@ Db.prototype = {
 
   setMany: function (attr, ids, value, done) {
     var now = Date.now()
+    const update = {}
     if (Array.isArray(value)) {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value[i]
         this.nodes[id].modified = now
+        update[id] = this.nodes[id]
       })
     } else {
       ids.forEach((id, i) => {
         this.nodes[id][attr] = value
         this.nodes[id].modified = now
+        update[id] = this.nodes[id]
       })
     }
-    this.pl.batchSet('node', attr, ids, value, done)
+    this.pl.batchSave('node', update, done)
+    // this.pl.batchSet('node', attr, ids, value, done)
   },
 
   update: function (id, update, done) {

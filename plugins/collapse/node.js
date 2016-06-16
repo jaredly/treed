@@ -1,5 +1,5 @@
 
-var React = require('react/addons')
+var React = require('react')
 var cx = require('classnames')
 
 var slide = require('../../util/slide')

@@ -52,15 +52,15 @@ watch:
 # 	lessc dual.less dual/index.css
 # 
 # watch-menu:
-# 	watchify  ${ARGS} -x react -x react/addons ../lib/context-menu.js -o menu/build.js -d -s Menu -v
+# 	watchify  ${ARGS} -x react -x react ../lib/context-menu.js -o menu/build.js -d -s Menu -v
 # 
 # menu:
-# 	browserify ${ARGS} -x react -x react/addons ../lib/context-menu.js -o menu/build.js -d -s Menu
+# 	browserify ${ARGS} -x react -x react ../lib/context-menu.js -o menu/build.js -d -s Menu
 # 
 # menu-css:
 # 	lessc ../lib/context-menu.less > menu/build.css
 # 
 # react:
-# 	browserify -r react -r react/addons -o react.js
+# 	browserify -r react -r react -o react.js
 # 
 # .PHONY: simple watch-simple perf dual dual-css simple-css ix ix-css menu
