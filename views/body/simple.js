@@ -1,22 +1,21 @@
 
+import React, {PropTypes} from 'react'
 import {findDOMNode} from 'react-dom'
-var React = require('react')
-  , cx = require('classnames')
-  , PT = React.PropTypes
-  , ensureInView = require('../../util/ensure-in-view')
-  , DefaultEditor = require('./default-editor')
-  , DefaultRenderer = require('./default-renderer')
+import cx from 'classnames'
+import ensureInView from '../../util/ensure-in-view'
+import DefaultEditor from './default-editor'
+import DefaultRenderer from './default-renderer'
 
 // a more complex body would show different things based on the type of node.
-var SimpleBody = React.createClass({
+const SimpleBody = React.createClass({
   propTypes: {
-    editor: PT.func,
-    renderer: PT.func,
-    node: PT.object,
-    isActive: PT.bool,
-    editState: PT.oneOfType([PT.string, PT.bool]),
-    actions: PT.object,
-    store: PT.object,
+    editor: PropTypes.func,
+    renderer: PropTypes.func,
+    node: PropTypes.object,
+    isActive: PropTypes.bool,
+    editState: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]),
+    actions: PropTypes.object,
+    store: PropTypes.object,
   },
 
   _onClick: function () {
@@ -114,7 +113,7 @@ var SimpleBody = React.createClass({
     if (!this.props.renderer) {
       return <DefaultRenderer onClick={this._onClick} content={this.props.node.content}/>
     }
-    return this.props.renderer.call(this)
+    return this.props.renderer.call(this, this.props, this._onClick)
   },
 
   render: function () {

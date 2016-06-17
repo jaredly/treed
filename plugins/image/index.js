@@ -148,17 +148,17 @@ module.exports = {
   node: {
     bodies: {
       image: {
-        renderer: function () {
+        renderer: function (props, onFocus) {
           var click = () => {
-            if (this.props.editState) return
-            this.props.actions.edit(this.props.node.id)
+            if (props.editState) return
+            props.actions.edit(props.node.id)
           }
-          var setSrc = this.props.store.actions.set.bind(this.props.store.actions, this.props.node.id, 'imageSrc')
+          var setSrc = props.store.actions.set.bind(props.store.actions, props.node.id, 'imageSrc')
           return <ImageRenderer
             onClick={click}
             setSrc={setSrc} 
-            src={this.props.node.imageSrc}
-            title={this.props.node.content}/>
+            src={props.node.imageSrc}
+            title={props.node.content}/>
         },
 
         editor: function (props) {

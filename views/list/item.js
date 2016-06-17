@@ -1,13 +1,19 @@
 
-var React = require('react')
-var cx = require('classnames')
-var PT = React.PropTypes
-var ensureInView = require('../../util/ensure-in-view')
-var SimpleBody = require('../body/simple')
+import React, {PropTypes} from 'react'
+import cx from 'classnames'
 
-var Listener = require('../../listener')
+import ensureInView from '../../util/ensure-in-view'
+import SimpleBody from '../body/simple'
+import Listener from '../../listener'
 
-var TreeItem = React.createClass({
+const TreeItem = React.createClass({
+  propTypes: {
+    id: PropTypes.string.isRequired,
+    plugins: PropTypes.array,
+    bodies: PropTypes.object,
+    isRoot: PropTypes.bool,
+  },
+
   mixins: [
     Listener({
       storeAttrs: function (getters, props) {
@@ -55,13 +61,6 @@ var TreeItem = React.createClass({
         this._plugin_updates.push(plugin.componentDidUpdate)
       }
     })
-  },
-
-  propTypes: {
-    id: PT.string.isRequired,
-    plugins: PT.array,
-    bodies: PT.object,
-    isRoot: PT.bool,
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
@@ -114,17 +113,23 @@ var TreeItem = React.createClass({
     var body = this.props.bodies[this.state.node.type] || this.props.bodies.default
     var abovebody = this.fromMix('abovebody')
     var belowbody = this.fromMix('belowbody')
-    return <div ref='body' className='TreeItem_body'>
-      {abovebody}
+    const props = {
+      node: this.state.node,
+      isActive: this.state.isActive,
+      editState: this.state.editState,
+      actions: this.props.store.actions,
+      store: this.props.store,
+    }
+    const content = body.Component ?
+      <body.Component {...props} /> :
       <SimpleBody
         editor={body.editor}
         renderer={body.renderer}
-        node={this.state.node}
-        isActive={this.state.isActive}
-        editState={this.state.editState}
-        actions={this.props.store.actions}
-        store={this.props.store}
+        {...props}
       />
+    return <div ref='body' className='TreeItem_body'>
+      {abovebody}
+      {content}
       {belowbody}
     </div>
   },
