@@ -91,7 +91,7 @@ const SimpleBody = React.createClass({
   },
 
   editor: function () {
-    var Ctrl = this.props.editor || props => <DefaultEditor {...props} />
+    var Ctrl = this.props.editor || (props => <DefaultEditor {...props} />)
     const props = {
       ref: "text",
       value: this.state.content,

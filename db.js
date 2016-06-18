@@ -136,8 +136,15 @@ Db.prototype = {
   },
 
   set: function (id, attr, value, done) {
+    this.nodes[id] = {
+      ...this.nodes[id],
+      [attr]: value,
+      modified: Date.now()
+    }
+    /*
     this.nodes[id][attr] = value
     this.nodes[id].modified = Date.now()
+    */
     this.pl.set('node', id, attr, value, done)
   },
 
@@ -184,14 +191,28 @@ Db.prototype = {
     const update = {}
     if (Array.isArray(value)) {
       ids.forEach((id, i) => {
+        this.nodes[id] = {
+          ...this.nodes[id],
+          [attr]: value[i],
+          modified: now,
+        }
+        /*
         this.nodes[id][attr] = value[i]
         this.nodes[id].modified = now
+        */
         update[id] = this.nodes[id]
       })
     } else {
       ids.forEach((id, i) => {
+        this.nodes[id] = {
+          ...this.nodes[id],
+          [attr]: value,
+          modified: now,
+        }
+        /*
         this.nodes[id][attr] = value
         this.nodes[id].modified = now
+        */
         update[id] = this.nodes[id]
       })
     }
@@ -200,10 +221,17 @@ Db.prototype = {
   },
 
   update: function (id, update, done) {
+    this.nodes[id] = {
+      ...this.nodes[id],
+      ...update,
+      modified: Date.now(),
+    }
+    /*
     for (var name in update) {
       this.nodes[id][name] = update[name]
     }
     this.nodes[id].modified = Date.now()
+    */
     this.pl.update('node', id, update, done)
   },
 }
