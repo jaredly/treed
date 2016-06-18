@@ -84,7 +84,9 @@ const SimpleBody = React.createClass({
   componentDidUpdate: function (prevProps) {
     if (!prevProps.editState && this.props.editState) {
       ensureInView(findDOMNode(this.refs.text))
-      this.refs.text.focus(this.props.editState)
+      if (this.props.editState !== prevProps.editState && (!this.refs.text.isFocused || !this.refs.text.isFocused())) {
+        this.refs.text.focus(this.props.editState)
+      }
     }
   },
 

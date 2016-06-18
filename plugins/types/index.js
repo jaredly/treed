@@ -77,11 +77,24 @@ module.exports = {
             refocus = document.activeElement
             document.activeElement.blur()
           }
-          update.type = type
-          if (ids.length > 1) {
-            this.updateMany(ids, ids.map(() => clone(update)))
+
+          let getUpdate
+          if (!update) {
+            getUpdate = () => ({type})
+          } else if ('function' === typeof update) {
+            getUpdate = id => {
+              const data = update(this.db.nodes[id])
+              data.type = type
+              return data
+            }
           } else {
-            this.update(ids[0], clone(update))
+            getUpdate = () => ({...update, type})
+          }
+
+          if (ids.length > 1) {
+            this.updateMany(ids, ids.map(getUpdate))
+          } else {
+            this.update(ids[0], getUpdate(ids[0]))
           }
           if (refocus) {
             refocus.focus()
@@ -95,15 +108,7 @@ module.exports = {
         Object.keys(plugin.types).forEach(function (name) {
           var defn = plugin.types[name]
           actions['type' + cap(name)] = function (id) {
-            var update = {}
-            if (defn.update) {
-              if ('function' === typeof defn.update) {
-                update = defn.update()
-              } else {
-                update = defn.update
-              }
-            }
-            this.changeType(id, name, update)
+            this.changeType(id, name, defn.update)
           }
         })
       })
