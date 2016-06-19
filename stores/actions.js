@@ -90,7 +90,7 @@ module.exports = {
         this.pullBackSelectionTo(id)
       }
     }
-    if (this.view.mode === 'insert') this.view.editPos = 'end'
+    if (this.view.mode === 'insert') this.view.editPos = 'default'
     if (this.db.nodes[old]) {
       this.changed(this.events.nodeViewChanged(old))
     }
@@ -100,7 +100,6 @@ module.exports = {
     )
     return true
   },
-
 
   pullBackSelectionTo: function (id) {
     this.setSelection(this.view.selection.slice(0, this.view.selection.indexOf(id) + 1))
@@ -238,12 +237,17 @@ module.exports = {
     this.setMode('normal')
   },
 
+  // In a codemirrir we just focus, and it will preserve the last focus
   edit: function (id) {
-    this.editAt(id, 'end')
+    this.editAt(id, 'default')
   },
 
   editStart: function (id) {
     this.editAt(id, 'start')
+  },
+
+  editEnd: function (id) {
+    this.editAt(id, 'end')
   },
 
   editAt: function (id, at) {
@@ -252,7 +256,7 @@ module.exports = {
     if (!this.setActive(id)) {
       this.changed(this.events.nodeViewChanged(this.view.active))
     }
-    if (!at) at = 'start'
+    if (!at) at = 'default'
     this.view.lastEdited = id
     this.view.editPos = at
     this.setMode('insert')

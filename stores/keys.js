@@ -16,7 +16,10 @@ module.exports = {
   editing: {
     // switch to insert mode
     'edit': {
-      normal: 'enter, a, shift+a, f2',
+      normal: 'enter, f2',
+    },
+    'edit end': {
+      normal: 'a, shift+a',
     },
     'edit start': {
       title: 'edit at start',

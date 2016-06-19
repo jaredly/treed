@@ -93,7 +93,9 @@ var Textarea = React.createClass({
   focus: function (at) {
     var inp = this.refs.area
       , pos = 0
-    if (at === 'end' || !at) pos = inp.value.length
+    if (at === 'end' || !at || at === 'default') {
+      pos = inp.value.length
+    }
     if ('number' === typeof at) {
       pos = at
     }
