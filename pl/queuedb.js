@@ -12,6 +12,13 @@ Queue.prototype = {
     return this.db.findAll.apply(this.db, arguments)
   },
 
+  init() {
+    if (this.db.init) {
+      return this.db.init()
+    }
+    return Promise.resolve()
+  },
+
   opper: function (name, args, done) {
     this._queue.push([name, args, done])
     // console.log('push', this._queue.length, name, args)

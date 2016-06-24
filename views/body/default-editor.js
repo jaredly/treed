@@ -14,12 +14,13 @@ var Editor = React.createClass({
     onBlur: PT.func,
     onChange: PT.func,
     createAfter: PT.func,
+    editState: PT.string,
     goDown: PT.func,
     goUp: PT.func,
   },
 
   componentDidMount: function () {
-    this.focus()
+    this.focus(this.props.editState)
   },
 
   isFocused: function () {

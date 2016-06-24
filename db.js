@@ -25,10 +25,21 @@ function Db(pl, plugins) {
 
 Db.prototype = {
   init: function (defaultData, done) {
+    if (this.pl.init) {
+      this.pl.init().then(
+        () => this._getInitialData(defaultData, done),
+        err => done(err)
+      ).catch(err => console.error('Failed to init?', err))
+    } else {
+      this._getInitialData(defaultData, done)
+    }
+  },
+
+  _getInitialData(defaultData, done) {
     this.pl.findAll('root', (err, roots) => {
       if (err) return done(err)
       if (!roots.length) return this.makeRoot(defaultData, done)
-      this.root = roots[0].id
+      this.root = roots[0].id // TODO why ignore all other potential roots?
       this.pl.findAll('node', (err, nodes) => {
         if (err) return done(err)
         var map = {}
@@ -38,7 +49,6 @@ Db.prototype = {
           return done(err)
         }
         this.nodes = map
-
         done()
       })
     })
@@ -141,10 +151,6 @@ Db.prototype = {
       [attr]: value,
       modified: Date.now()
     }
-    /*
-    this.nodes[id][attr] = value
-    this.nodes[id].modified = Date.now()
-    */
     this.pl.set('node', id, attr, value, done)
   },
 
@@ -196,10 +202,6 @@ Db.prototype = {
           [attr]: value[i],
           modified: now,
         }
-        /*
-        this.nodes[id][attr] = value[i]
-        this.nodes[id].modified = now
-        */
         update[id] = this.nodes[id]
       })
     } else {
@@ -209,10 +211,6 @@ Db.prototype = {
           [attr]: value,
           modified: now,
         }
-        /*
-        this.nodes[id][attr] = value
-        this.nodes[id].modified = now
-        */
         update[id] = this.nodes[id]
       })
     }
@@ -226,12 +224,6 @@ Db.prototype = {
       ...update,
       modified: Date.now(),
     }
-    /*
-    for (var name in update) {
-      this.nodes[id][name] = update[name]
-    }
-    this.nodes[id].modified = Date.now()
-    */
     this.pl.update('node', id, update, done)
   },
 }

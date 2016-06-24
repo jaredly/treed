@@ -97,6 +97,7 @@ const SimpleBody = React.createClass({
       value: this.state.content,
       node: this.props.node,
       store: this.props.store,
+      editState: this.props.editState,
       goDown: this.props.actions.goDown.bind(this.props.actions),
       goUp: this.props.actions.goUp.bind(this.props.actions),
       joinUp: this.props.actions.joinUp.bind(this.props.actions),
