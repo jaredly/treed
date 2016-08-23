@@ -40,9 +40,9 @@ function ensureInView(item) {
     return
   }
   var dest
-  if (itemBox.top < parentBox.top) {
+  if (itemBox.top < parentBox.top + margin) {
     dest = parent.scrollTop - (parentBox.top - itemBox.top + margin)
-  } else if (itemBox.bottom > parentBox.bottom) {
+  } else if (itemBox.bottom > parentBox.bottom - margin) {
     dest = parent.scrollTop + itemBox.bottom - parentBox.bottom + margin
   } else {
     return

@@ -9,6 +9,10 @@ renderer.link = function (href, title, text) {
   return '<a href="' + href + '" target="_blank" title="' + title + '">' + text + '</a>';
 }
 
+function escapeRegExp(str) {
+  return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+}
+
 marked.setOptions({
   gfm: true,
   // sanitize: true,
@@ -20,6 +24,35 @@ marked.setOptions({
   renderer: renderer
 })
 
+const emojis = {
+  ':?:': '❓',
+  ':t:': '💭',
+  ':":': '❝',
+  ':i:': '💡',
+  ':?!:': '🗣',
+  ':)': '🙂',
+  ':P': '😛',
+  ':D': '😀',
+  ':/': '😕',
+  ':(': '🙁',
+  ';)': '😉',
+  '>.<': '😣',
+  ':p:': '🎉',
+}
+
+const emoji_names = {
+  party: '🎉',
+}
+
+const emojiRegexes = Object.keys(emojis)
+  .map(k => [new RegExp('\\B' + escapeRegExp(k) + '\\B', 'g'), emojis[k]]);
+
+const replaceReduce = (text, [rx, emo]) => text.replace(rx, emo)
+
+const replaceEmojis = text => {
+  return emojiRegexes.reduce(replaceReduce, text)
+}
+
 var DefaultRenderer = React.createClass({
   _onClick(e) {
     if (e.target.nodeName === 'A') return
@@ -29,7 +62,7 @@ var DefaultRenderer = React.createClass({
     return <span className="treed_body_rendered"
       onClick={this._onClick}
       dangerouslySetInnerHTML={{
-        __html: this.props.content ?  marked(this.props.content + '') : ''
+        __html: this.props.content ?  marked(replaceEmojis(this.props.content + '')) : ''
       }}/>
   }
 })
