@@ -26,6 +26,10 @@ marked.setOptions({
 
 const emojis = {
   ':?:': '❓',
+  ':!:': '❗️',
+  ':+1:': '👍',
+  ':f:': '🔥',
+  ':100:': '💯',
   ':t:': '💭',
   ':":': '❝',
   ':i:': '💡',
@@ -40,14 +44,16 @@ const emojis = {
   ':p:': '🎉',
 }
 
+// TODO use these
 const emoji_names = {
   party: '🎉',
+  tada: '🎉',
 }
 
 const emojiRegexes = Object.keys(emojis)
-  .map(k => [new RegExp('\\B' + escapeRegExp(k) + '\\B', 'g'), emojis[k]]);
+  .map(k => [new RegExp('(\\s|^)' + escapeRegExp(k) + '\\s', 'g'), emojis[k]]);
 
-const replaceReduce = (text, [rx, emo]) => text.replace(rx, emo)
+const replaceReduce = (text, [rx, emo]) => text.replace(rx, t => (t[0] === ' ' ? t[0] : '') + emo + t.slice(-1))
 
 const replaceEmojis = text => {
   return emojiRegexes.reduce(replaceReduce, text)
