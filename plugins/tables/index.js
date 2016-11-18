@@ -32,8 +32,7 @@ module.exports = {
       update(node) {
         return {
           table: node.table || {
-            rows: 2,
-            cols: 2,
+            sort: null,
             matrix: [[node.content, ''], ['', '']]
           }
         }
