@@ -47,7 +47,7 @@ const emojis = {
   ':p:': '🎉',
 }
 
-const emojiRx = new RegExp(Object.keys(emojis).map(k => emojis[k]).join('|'))
+const emojiRx = new RegExp(Object.keys(emojis).map(k => emojis[k]).join('|'), 'g')
 
 // TODO use these
 const emoji_names = {

@@ -36,7 +36,7 @@ const TreeItem = React.createClass({
       updateStoreState: function (state, getters, props) {
         var node = state.node
         return {
-          lazyChildren: this.state.lazyChildren && node.collapsed
+          lazyChildren: this.state.lazyChildren && node && node.collapsed
         }
       },
 
