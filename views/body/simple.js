@@ -18,7 +18,11 @@ const SimpleBody = React.createClass({
     store: PropTypes.object,
   },
 
-  _onClick: function () {
+  _onClick: function (e) {
+    if (this.props.store.globals.viewerMode) {
+      this.toggleOpen(e)
+      return
+    }
     if (this.props.editState) {
       // this.props.actions.normalMode(this.props.node.id)
     } else {
@@ -76,13 +80,13 @@ const SimpleBody = React.createClass({
   },
 
   componentDidMount: function () {
-    if (!this.props.editState) return
+    if (!this.props.editState || !this.refs.text) return
     ensureInView(findDOMNode(this.refs.text))
     this.refs.text.focus(this.props.editState)
   },
 
   componentDidUpdate: function (prevProps) {
-    if (!prevProps.editState && this.props.editState) {
+    if (!prevProps.editState && this.props.editState && this.refs.text) {
       ensureInView(findDOMNode(this.refs.text))
       if (this.props.editState !== prevProps.editState && (!this.refs.text.isFocused || !this.refs.text.isFocused())) {
         this.refs.text.focus(this.props.editState)
@@ -119,13 +123,22 @@ const SimpleBody = React.createClass({
     return this.props.renderer.call(this, this.props, this._onClick)
   },
 
+  toggleOpen: function (e) {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    this.props.actions.setActive(this.props.node.id)
+    this.props.actions.set(this.props.node.id, 'collapsed', !this.props.node.collapsed)
+  },
+
   render: function () {
     var className = cx({
       'treed_body': true
     })
     className += ' treed_body-type-' + this.props.node.type
-    var child = this.props.editState ? this.editor() : this.renderer() 
-    return <div className={className} onContextMenu={this._onContextMenu}>
+    var child = this.props.editState ? this.editor() : this.renderer()
+    return <div className={className} onClick={this.props.store.globals.viewerMode ? this.toggleOpen : undefined} onContextMenu={this._onContextMenu}>
       {child}
     </div>
   }

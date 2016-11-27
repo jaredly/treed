@@ -5,6 +5,8 @@ var React = require('react')
   , TagView = require('./tag-view')
   , Listener = require('../../listener')
 
+const {css, StyleSheet} = require('aphrodite')
+
 var ShowTags = React.createClass({
   propTypes: {
     id: PT.string,
@@ -12,37 +14,28 @@ var ShowTags = React.createClass({
     store: PT.object,
   },
 
-  mixins: [Listener({
-    storeAttrs: (store, props) => {
-      return {
-        tags: props.tags && props.tags.map((tag) =>
-          store.getNode(tag)
-        )
-      }
-    },
-
-    getListeners: function (props) {
-      return props.tags ? props.tags.map((id) => 'node:' + id) : []
-    },
-
-    // TODO check for real
-    shouldGetNew: function (nextProps) {
-      return nextProps.tags !== this.props.tags
-    },
-
-  })],
-
   render: function () {
-    return <div className='ShowTags'>
+    return <div className={css(styles.container)}>
       <TagView
-        tags={this.state.tags}
-        onClick={(node) => this.props.store.actions
-                            .rebase(node.id)}/>
-      <i className="ShowTags-icon"
-        onClick={() => this.props.store.actions.taggingMode(this.props.id)}/>
+        tags={this.props.tags}
+        onClick={
+          // (node) => this.props.store.actions.rebase(node.id)
+          () => this.props.store.actions.taggingMode(this.props.id)
+        }/>
+        {/*<i className="ShowTags-icon"
+        onClick={
+          () => this.props.store.actions.taggingMode(this.props.id)
+        }/>*/}
     </div>
   },
 })
 
 module.exports = ShowTags
 
+const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    right: 0,
+    top: -5,
+  },
+})

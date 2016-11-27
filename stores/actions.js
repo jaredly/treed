@@ -89,8 +89,11 @@ module.exports = {
       } else if (vix !== 0 && vix !== this.view.selection.length - 1) {
         this.pullBackSelectionTo(id)
       }
+    } else if (this.view.mode === 'insert') {
+      this.view.editPos = 'default'
+    } else if (this.view.mode !== 'normal') {
+      this.setMode('normal')
     }
-    if (this.view.mode === 'insert') this.view.editPos = 'default'
     if (this.db.nodes[old]) {
       this.changed(this.events.nodeViewChanged(old))
     }
