@@ -5,6 +5,7 @@ import cx from 'classnames'
 import ensureInView from '../../util/ensure-in-view'
 import SimpleBody from '../body/simple'
 import Listener from '../../listener'
+import Symlink from './Symlink'
 
 const TreeItem = React.createClass({
   propTypes: {
@@ -72,7 +73,7 @@ const TreeItem = React.createClass({
 
   componentDidMount: function () {
     if (this.state.isActive && this.state.isActiveView) {
-      ensureInView(this.refs.body)
+      this._body && ensureInView(this._body)
     }
   },
 
@@ -84,7 +85,7 @@ const TreeItem = React.createClass({
     if (this.state.isActive &&
         this.state.isActiveView &&
         (!prevState.isActive || prevProps.index !== this.props.index)) {
-      ensureInView(this.refs.body)
+      this._body && ensureInView(this._body)
     }
     if (window.DEBUG_UPDATE) {
       // DEBUG STUFF
@@ -107,6 +108,27 @@ const TreeItem = React.createClass({
     }
     if (!items.length) return null
     return items
+  },
+
+  head() {
+    if (this.state.node.type === 'symlink') {
+      const props = {
+        node: this.state.node,
+        bodies: this.props.bodies,
+        isActive: this.state.isActive,
+        editState: this.state.editState,
+        actions: this.props.store.actions,
+        plugins: this.props.plugins,
+        store: this.props.store,
+        onBodyEl: el => this._body = el,
+      }
+      return <Symlink {...props} />
+    }
+    return <div className='TreeItem_head'>
+      {this.fromMix('left')}
+      {this.body()}
+      {this.fromMix('right')}
+    </div>
   },
 
   body: function () {
@@ -161,11 +183,7 @@ const TreeItem = React.createClass({
       })
     }
     return <div className={className} ref={n => this._node = n} onContextMenu={this._onContextMenu}>
-      <div className='TreeItem_head'>
-        {this.fromMix('left')}
-        {this.body()}
-        {this.fromMix('right')}
-      </div>
+      {this.head()}
       {this.fromMix('prechildren')}
       {this.state.node.children.length ?
       <div className='TreeItem_children' ref='children'>
