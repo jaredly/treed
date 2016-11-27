@@ -18,13 +18,12 @@ var TagView = React.createClass({
   },
 
   render: function () {
-    if (this.props.tags) {
-      console.log(this.props.tags)
-    }
     return <ul className={css(styles.container)}>
       {this.props.tags &&
-       this.props.tags.map((tag) =>
+       this.props.tags.length > 0 &&
+       this.props.tags.map((tag, i) =>
         <li
+          key={i}
           onClick={this._onClick.bind(null, tag)}
           className={css(styles.tag)}>
           {tag}

@@ -223,7 +223,7 @@ module.exports = {
     if (id === this.view.root) return
     this.executeCommand('create', {
       pid: node.parent,
-      type: node.type,
+      type: node.type === 'symlink' ? 'normal' : node.type,
       ix: this.db.nodes[node.parent].children.indexOf(id),
     }, (err, cmd) => {
       if (err) return console.warn('failed to create')
@@ -237,7 +237,7 @@ module.exports = {
       , pos
     pos = {
       pid: id,
-      type: node.type,
+      type: node.type === 'symlink' ? 'normal' : node.type,
       ix: node.children ? node.children.length : 0
     }
     if (node.collapsed) {
@@ -263,7 +263,7 @@ module.exports = {
     if (id === this.view.root || (node.children.length && !node.collapsed)) {
       pos = {
         pid: id,
-        type: node.type,
+        type: node.type === 'symlink' ? 'normal' : node.type,
         ix: 0
       }
     } else {

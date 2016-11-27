@@ -18,6 +18,7 @@ var ContextMenu = require('../lib/context-menu')
 
 module.exports = {
   set: function (id, attr, value, squash) {
+    if (this.db.nodes[id][attr] === value) return // skip
     return this.executeCommand('set', {id, attr, value}, squash)
   },
 

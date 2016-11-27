@@ -40,10 +40,14 @@ const emojis = {
   ':D': '😀',
   ':/': '😕',
   ':(': '🙁',
+  ':|': '😐',
+  ':umok:': '🙃',
   ';)': '😉',
   '>.<': '😣',
   ':p:': '🎉',
 }
+
+const emojiRx = new RegExp(Object.keys(emojis).map(k => emojis[k]).join('|'))
 
 // TODO use these
 const emoji_names = {
@@ -60,6 +64,10 @@ const replaceEmojis = text => {
   return emojiRegexes.reduce(replaceReduce, text)
 }
 
+const enlargeEmojis = text => {
+  return text.replace(emojiRx, x => '<span class="inline-emoji">' + x + '</span>')
+}
+
 var DefaultRenderer = React.createClass({
   _onClick(e) {
     if (e.target.nodeName === 'A') return
@@ -69,7 +77,7 @@ var DefaultRenderer = React.createClass({
     return <span className="treed_body_rendered"
       onClick={this._onClick}
       dangerouslySetInnerHTML={{
-        __html: this.props.content ?  marked(replaceEmojis(this.props.content + '')) : ''
+        __html: this.props.content ?  enlargeEmojis(marked(replaceEmojis(this.props.content + ''))) : ''
       }}/>
   }
 })

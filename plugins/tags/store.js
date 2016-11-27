@@ -10,11 +10,9 @@ module.exports = {
     taggingMode: function (id) {
       if (!arguments.length) id = this.view.active
       this.setActive(id)
-      console.log('pre mode', this.view.mode)
       this.view.mode = 'tagging'
       this.changed(this.events.modeChanged())
       this.changed(this.events.nodeViewChanged(id))
-      console.log('tagging mode', this.view.mode)
     },
 
     setTags(id, tags) {

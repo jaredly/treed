@@ -13,6 +13,7 @@ var ImageBase = React.createClass({
     title: PT.string,
     onUpload: PT.func,
     onClick: PT.func,
+    minimized: PT.bool,
   },
 
   getInitialState() {
@@ -47,7 +48,7 @@ var ImageBase = React.createClass({
     if (!this.props.src) {
       return <div
           className={classnames('ImageBase', this.state.dragging && 'ImageBase-dragging')}
-          onClick={this.props.onClick} 
+          onClick={this.props.onClick}
           onDragEnter={this._dragOver}
           onDragOver={this._dragOver}
           onDragLeave={this._dragEnd}
@@ -58,13 +59,17 @@ var ImageBase = React.createClass({
     }
     return <div
         className={classnames('ImageBase', this.state.dragging && 'ImageBase-dragging')}
-        onClick={this.props.onClick} 
+        onClick={this.props.onClick}
         onDragEnter={this._dragOver}
         onDragOver={this._dragOver}
         onDragLeave={this._dragEnd}
         onDragEnd={this._dragEnd}
         onDrop={this._drop}>
-      <img src={this.props.src} title={this.props.title}/>
+      <img
+        src={this.props.src}
+        title={this.props.title}
+        height={this.props.minimized ? 100 : undefined}
+      />
       <div onClick={e => {
         e.stopPropagation()
         this.props.onUpload(null)
@@ -76,6 +81,7 @@ var ImageBase = React.createClass({
 var ImageRenderer = React.createClass({
   render: function () {
     var img = <ImageBase
+      minimized={this.props.minimized}
       src={this.props.src}
       title={this.props.title}
       onClick={this.props.onClick}
@@ -124,15 +130,26 @@ module.exports = {
     image: {
       title: 'Image',
       shortcut: 'i',
+      newNodesAreNormal: true, // TODO this does nothing
     }
+  },
+
+  keys: {
+    'minimize image': {
+      type: 'image',
+      normal: 'space',
+    },
   },
 
   contextMenu: function (node, store) {
     if (node.imageSrc) {
-      return {
+      return [{
         title: 'Remove image',
         action: 'removeImage',
-      }
+      }, {
+        title: 'Minimize image',
+        action: 'minimizeImage',
+      }]
     }
   },
 
@@ -142,13 +159,22 @@ module.exports = {
         if (!id) id = this.view.active
         this.set(id, 'imageSrc', null)
       },
+      minimizeImage(id) {
+        if (!id) id = this.view.active
+        if (this.db.nodes[id].type === 'symlink') {
+          const rid = this.db.nodes[id].content
+          if (this.db.nodes[rid]) id = rid
+        }
+        if (this.db.nodes[id].type !== 'image') return
+        this.set(id, 'minimized', !this.db.nodes[id].minimized)
+      },
     },
   },
 
   node: {
     bodies: {
       image: {
-        renderer: function (props, onFocus) {
+        renderer(props, onFocus) {
           var click = () => {
             if (props.editState) return
             props.actions.edit(props.node.id)
@@ -156,7 +182,8 @@ module.exports = {
           var setSrc = props.store.actions.set.bind(props.store.actions, props.node.id, 'imageSrc')
           return <ImageRenderer
             onClick={click}
-            setSrc={setSrc} 
+            setSrc={setSrc}
+            minimized={props.node.minimized}
             src={props.node.imageSrc}
             title={props.node.content}/>
         },

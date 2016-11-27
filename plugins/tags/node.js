@@ -29,7 +29,6 @@ module.exports = {
         />
       }
       return <Tagger
-        fetchTags={() => store.getTags()}
         tags={node.tags}
         onDone={(tags) => {
           actions.setTags(node.id, tags)

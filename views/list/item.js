@@ -115,6 +115,7 @@ const TreeItem = React.createClass({
     var belowbody = this.fromMix('belowbody')
     const props = {
       node: this.state.node,
+      bodies: this.props.bodies,
       isActive: this.state.isActive,
       editState: this.state.editState,
       actions: this.props.store.actions,

@@ -79,7 +79,13 @@ function bindKeys(keys, typed, actions) {
       var id = actions.view.active
       type = actions.db.nodes[id].type || 'base'
       if (!camels[type]) {
-        return console.warn('Keybinding not defined for type: ' + type)
+        const content = actions.db.nodes[id].content
+        if (type === 'symlink' && actions.db.nodes[content] && camels[actions.db.nodes[content].type || 'base']) {
+          type = actions.db.nodes[content].type
+          id = content
+        } else {
+          return console.warn('Keybinding not defined for type: ' + type)
+        }
       }
       return actions[camels[type]](id)
     }

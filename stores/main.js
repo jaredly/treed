@@ -5,7 +5,7 @@
  * make a MultiViewStore that knows about multiple views, multiple "actives",
  * "selections", and "roots". And a view can register itself and say "hey I'm
  * a new view, I care about x".
- * 
+ *
  * But when an individual node wants to listen to a store, I don't want to
  * update it when a different view is getting a selection update. And so for
  * view specific updates (like active, selection, etc), I'll have the nodes
@@ -159,6 +159,10 @@ MainStore.prototype = extend(Object.create(BaseStore.prototype), {
       on: this.on.bind(this),
       off: this.off.bind(this),
     }
+  },
+
+  currentView() {
+    return this.views[this.activeView]
   },
 
   currentViewActions: function () {
