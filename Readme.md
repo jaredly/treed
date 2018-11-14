@@ -3,7 +3,7 @@ A Powerful Tree Editing Component
 
 [![Join the chat at https://gitter.im/jaredly/treed](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jaredly/treed?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Treed wants to be for tree editing what ace is for text editing. Extensible, customizible, powerful, and just plain easy to use. Perhaps that's a little ambitious, but that's the idea.
+Treed wants to be for tree editing what ace is for text editing. Extensible, customizable, powerful, and just plain easy to use. Perhaps that's a little ambitious, but that's the idea.
 
 [Play with a demo](http://jaredly.github.io/treed/)
 
@@ -57,7 +57,7 @@ I made this version in a weekend, so there are still some things to do :)
 
 ## Future Awesomeness
 
-I want to implement a view layer similar to each of the following sevices:
+I want to implement a view layer similar to each of the following services:
 
 - workflowy
 - trello
