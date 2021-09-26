@@ -146,11 +146,11 @@ Db.prototype = {
   },
 
   set: function (id, attr, value, done) {
-    this.nodes[id] = {
-      ...this.nodes[id],
+    this.nodes[id] = Object.assign({},
+      this.nodes[id], {
       [attr]: value,
       modified: Date.now()
-    }
+    })
     this.pl.set('node', id, attr, value, done)
   },
 

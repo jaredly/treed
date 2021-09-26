@@ -18,28 +18,31 @@ dirs.forEach(function (name) {
 module.exports = {
   entry: entries,
   output: {
-    path: './',
+    path: path.resolve(__dirname),
     filename: '[name]/build.js',
   },
 
   module: {
     loaders: [
-      { test: /\.js$/, exclude: /node_modules/, loader: 'babel-loader?optional=runtime' },
-      { test: /\.json$/, loader: 'json' },
+      { test: /\.js$/
+      , exclude: /node_modules/
+      , loader: 'babel-loader'
+      }
 
-      {
-          test: /\.css$/,
-          loader: ExtractTextPlugin.extract("style-loader", "css-loader")
+    , { test: /\.json$/, loader: 'json' }
+
+    , { test: /\.css$/,
+        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
       },
       {
           test: /\.less$/,
-          loader: ExtractTextPlugin.extract("style-loader", "css-loader!less-loader")
+          loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: "css-loader!less-loader"})
       }
     ],
   },
 
   devtool: 'eval',
-  colors: true,
+  // colors: true,
 
   plugins: [
       new ExtractTextPlugin("[name]/build.css")

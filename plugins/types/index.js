@@ -88,7 +88,9 @@ module.exports = {
               return data
             }
           } else {
-            getUpdate = () => ({...update, type})
+            getUpdate = () => {
+                return Object.assign({}, update, {type})
+            }
           }
 
           if (ids.length > 1) {
