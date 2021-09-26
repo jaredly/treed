@@ -197,20 +197,20 @@ Db.prototype = {
     const update = {}
     if (Array.isArray(value)) {
       ids.forEach((id, i) => {
-        this.nodes[id] = {
-          ...this.nodes[id],
+        this.nodes[id] = Object.assign({},
+          this.nodes[id], {
           [attr]: value[i],
           modified: now,
-        }
+        })
         update[id] = this.nodes[id]
       })
     } else {
       ids.forEach((id, i) => {
-        this.nodes[id] = {
-          ...this.nodes[id],
+        this.nodes[id] = Object.assign({},
+          this.nodes[id], {
           [attr]: value,
           modified: now,
-        }
+        })
         update[id] = this.nodes[id]
       })
     }
@@ -219,11 +219,11 @@ Db.prototype = {
   },
 
   update: function (id, update, done) {
-    this.nodes[id] = {
-      ...this.nodes[id],
-      ...update,
-      modified: Date.now(),
-    }
+    this.nodes[id] = Object.assign({},
+      this.nodes[id],
+      update,
+      { modified: Date.now() }
+    )
     this.pl.update('node', id, update, done)
   },
 }
